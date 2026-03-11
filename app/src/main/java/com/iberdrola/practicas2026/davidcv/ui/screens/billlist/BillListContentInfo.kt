@@ -1,7 +1,9 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.Fireplace
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -28,10 +31,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 import com.iberdrola.practicas2026.davidcv.ui.base.common.cardColors
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfLastBill
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
@@ -128,7 +134,6 @@ fun LastInvoiceCard(
         colors = cardColors,
         modifier = modifier
             .fillMaxWidth()
-
     ) {
         Column(
             modifier = modifier
@@ -154,7 +159,7 @@ fun LastInvoiceCard(
                     )
                 }
                 Icon(
-                    imageVector = Icons.Outlined.Lightbulb,
+                    imageVector = if(bill.type == BillType.LIGHT) Icons.Outlined.Lightbulb else Icons.Outlined.Fireplace,
                     contentDescription = null,
                     tint = Color(0xFF006633)
                 )
@@ -184,9 +189,13 @@ fun FacturaItem(
     modifier: Modifier,
     bill: Bill
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(
+                onClick = { Toast.makeText(context , "Factura no disponible", Toast.LENGTH_SHORT).show() }
+            )
             .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

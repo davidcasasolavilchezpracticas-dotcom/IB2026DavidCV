@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -7,11 +8,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 
 /**
  * Nav host screen
@@ -25,9 +30,10 @@ fun NavigationWrapper(
     modifier: Modifier,
     navController: NavHostController,
 ){
+    var bsCounter: Int = 0
     NavHost(
         navController = navController,
-        startDestination = Routes.LIST,
+        startDestination = Routes.INITIAL,
         modifier = modifier,
         enterTransition = {
             slideInHorizontally(
@@ -62,6 +68,45 @@ fun NavigationWrapper(
             BillListScreen(
                 modifier = Modifier
             )
+        }
+
+        composable(
+            Routes.INITIAL
+        ){
+            InitialScreen(
+                navController = navController,
+                modifier = Modifier
+            )
+        }
+
+        composable(
+            Routes.BACK
+        ) {
+            val context = LocalContext.current
+
+            if(bsCounter == 0) {
+                OpinionBottomSheet(
+                    onDismiss = {
+                        navController.popBackStack()
+                    },
+                    onLaterClick = {
+                        bsCounter += 3
+                        navController.popBackStack()
+                    },
+                    onRatingSelected = {
+                        Toast.makeText(context , "Gracias por su opinión", Toast.LENGTH_SHORT).show()
+                        bsCounter += 10
+                        navController.popBackStack()
+                    }
+                )
+
+            }
+            else {
+                LaunchedEffect(Unit) {
+                    bsCounter -= 1
+                    navController.popBackStack()
+                }
+            }
         }
     }
 }
