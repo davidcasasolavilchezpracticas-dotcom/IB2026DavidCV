@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.iberdrola.practicas2026.davidcv.domain.di.AppModule.USE_NETWORK
+import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.ServiceItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.SettingSwitchItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.SummaryCard
@@ -36,9 +36,9 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 @Composable
 fun InitialScreen(
     navController: NavHostController,
-    modifier: Modifier,
+    modifier: Modifier
+
 ) {
-    var networkState by remember { mutableStateOf(USE_NETWORK) }
 
     Scaffold(
         topBar = {
@@ -98,10 +98,9 @@ fun InitialScreen(
 
             SettingSwitchItem(
                 label = "Uso de Mock",
-                checked = networkState,
+                checked = DataSourceConfig.useNetwork,
                 onCheckedChange = {
-                    USE_NETWORK = it
-                    networkState = it
+                    DataSourceConfig.useNetwork = it
                 }
             )
         }

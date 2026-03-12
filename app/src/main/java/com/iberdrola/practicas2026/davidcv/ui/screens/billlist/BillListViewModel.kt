@@ -25,6 +25,7 @@ class BillListViewModel @Inject constructor(
     val billsState: StateFlow<BillListState> = _billsState
 
 
+
     fun getLightBills() {
         viewModelScope.launch {
             _billsState.value = BillListState.Loading

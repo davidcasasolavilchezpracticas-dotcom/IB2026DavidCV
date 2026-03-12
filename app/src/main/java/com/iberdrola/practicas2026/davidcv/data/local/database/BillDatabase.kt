@@ -7,18 +7,22 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.reflect.TypeToken
 import com.iberdrola.practicas2026.davidcv.data.local.converters.BillTypeConverter
 import com.iberdrola.practicas2026.davidcv.data.local.converters.DateConverter
 import com.iberdrola.practicas2026.davidcv.data.local.dao.BillDao
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Database(
-    version = 6,
+    version = 8,
     entities = [BillEntity::class],
     exportSchema = false,
 )
@@ -42,15 +46,22 @@ abstract class BillDatabase : RoomDatabase() {
                         .fallbackToDestructiveMigration()
                         .addCallback(
                             object : Callback() {
+                                override fun onCreate(db: SupportSQLiteDatabase) {
+                                    super.onCreate(db)
+                                    INSTANCE?.let { database ->
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            prepopulateDatabase(context, database)
+                                        }
+                                    }
+                                }
+                                
                                 override fun onOpen(db: SupportSQLiteDatabase) {
                                     super.onOpen(db)
-                                    // Comprobamos si está vacía cada vez que se abre
-                                    // por si el onCreate falló
                                     INSTANCE?.let { database ->
                                         CoroutineScope(Dispatchers.IO).launch {
                                             val dao = database.billDao()
                                             if (dao.getAll().isEmpty()) {
-                                                prepopulateDatabase(database)
+                                                prepopulateDatabase(context, database)
                                             }
                                         }
                                     }
@@ -61,24 +72,33 @@ abstract class BillDatabase : RoomDatabase() {
                 instance
             }
 
-        private suspend fun prepopulateDatabase(database: BillDatabase) {
-            Log.d("Comprobaciones", "Poblando base de datos...")
-            val dao = database.billDao()
-            val now = LocalDateTime.now()
+        private suspend fun prepopulateDatabase(context: Context, database: BillDatabase) {
+            Log.d("Comprobaciones", "Poblando base de datos desde el nuevo formato JSON...")
+            try {
+                val dao = database.billDao()
+                
+                // 1. Leer el archivo de assets
+                val jsonString = context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
+                
+                // 2. Configurar Gson con el adaptador de fechas
+                val gson = GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime::class.java, JsonDeserializer { json, _, _ ->
+                        val dateStr = json.asString.replace("Z", "") 
+                        LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    })
+                    .create()
 
-            val bills = listOf(
-                BillEntity(id = 1, type = BillType.GAS, value = 20, startDate = now.minusMonths(1), endDate = now, paymentStatus = true),
-                BillEntity(id = 2, type = BillType.GAS, value = 60, startDate = now.minusMonths(2), endDate = now.minusMonths(1), paymentStatus = false),
-                BillEntity(id = 3, type = BillType.GAS, value = 20, startDate = now.minusMonths(3), endDate = now.minusMonths(2), paymentStatus = true),
-                BillEntity(id = 4, type = BillType.LIGHT, value = 60, startDate = now.minusMonths(1), endDate = now, paymentStatus = false),
-                BillEntity(id = 5, type = BillType.LIGHT, value = 150, startDate = now.minusYears(1).minusMonths(1), endDate = now.minusYears(1), paymentStatus = true),
-                BillEntity(id = 6, type = BillType.LIGHT, value = 150, startDate = now.minusMonths(2), endDate = now.minusMonths(1), paymentStatus = true),
-                BillEntity(id = 7, type = BillType.LIGHT, value = 150, startDate = now.minusYears(1).minusMonths(2), endDate = now.minusYears(1).minusMonths(1), paymentStatus = true),
-                BillEntity(id = 8, type = BillType.LIGHT, value = 150, startDate = now.minusYears(2).minusMonths(1), endDate = now.minusYears(2).minusMonths(2), paymentStatus = true)
-            )
+                // 3. Parsear la lista directamente
+                val type = object : TypeToken<List<BillEntity>>() {}.type
+                val bills: List<BillEntity> = gson.fromJson(jsonString, type)
 
-            bills.forEach { dao.insert(it) }
-            Log.d("Comprobaciones", "¡Base de datos poblada con éxito!")
+                // 4. Insertar en la BD
+                bills.forEach { dao.insert(it) }
+                Log.d("Comprobaciones", "¡Base de datos poblada con éxito desde Assets!")
+                
+            } catch (e: Exception) {
+                Log.e("Comprobaciones", "Error al poblar base de datos: ${e.message}")
+            }
         }
     }
 }

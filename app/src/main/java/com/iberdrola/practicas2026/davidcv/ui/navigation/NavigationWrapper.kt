@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -35,6 +37,20 @@ fun NavigationWrapper(
     navController: NavHostController,
 ){
     var bsCounter by rememberSaveable { mutableIntStateOf(0) }
+    var viewSelected by rememberSaveable { mutableStateOf(true) }
+
+    /*// Observar y loguear toda la cola de navegación
+    LaunchedEffect(navController) {
+        navController.currentBackStack.collect { stack ->
+            val debugStack = stack
+                .mapNotNull { entry -> entry.destination.route } // Filtramos solo los que tienen ruta
+                .joinToString(separator = "  |  ")
+
+            Log.d("NavigationStack", "COLA ACTUAL: [ $debugStack ]")
+            Log.d("NavigationStack", "Tamaño de la cola: ${stack.size}")
+        }
+    }*/
+
     NavHost(
         navController = navController,
         startDestination = Routes.INITIAL,
@@ -71,7 +87,8 @@ fun NavigationWrapper(
         ){
             BillListScreen(
                 modifier = Modifier,
-                navController = navController
+                navController = navController,
+                viewSelected = viewSelected
             )
         }
 
@@ -81,7 +98,7 @@ fun NavigationWrapper(
             BillListScreen(
                 modifier = Modifier,
                 navController = navController,
-                viewSelected = false
+                viewSelected = !viewSelected
             )
         }
 
@@ -99,29 +116,33 @@ fun NavigationWrapper(
         ) {
             val context = LocalContext.current
 
-            if(bsCounter == 0) {
-                OpinionBottomSheet(
-                    onDismiss = {
-                        navController.popBackStack()
-                    },
-                    onLaterClick = {
-                        bsCounter += 3
-                        navController.popBackStack()
-                    },
-                    onRatingSelected = {
-                        Toast.makeText(context , "Gracias por su opinión", Toast.LENGTH_SHORT).show()
-                        bsCounter += 10
-                        navController.popBackStack()
-                    }
-                )
+            //navController.
+                //.value.forEach{ Log.d("Comprobaciones", "popstack: ${it}") }
 
-            }
-            else {
+            if (bsCounter > 0) {
                 LaunchedEffect(Unit) {
                     bsCounter -= 1
                     navController.popBackStack()
                     navController.popBackStack()
                 }
+            } else {
+                // Si el contador es 0, mostramos el BottomSheet
+                OpinionBottomSheet(
+                    onDismiss = {
+                        navController.popBackStack()
+                    },
+                    onLaterClick = {
+                        // Si pulsa luego, sumamos 3 para que no vuelva a salir pronto
+                        bsCounter = 3
+                        //navController.popBackStack()
+                    },
+                    onRatingSelected = {
+                        Toast.makeText(context, "Gracias por su opinión", Toast.LENGTH_SHORT).show()
+                        // Si puntúa, sumamos mucho para que no salga casi nunca
+                        bsCounter = 10
+                        //navController.popBackStack()
+                    }
+                )
             }
         }
     }
