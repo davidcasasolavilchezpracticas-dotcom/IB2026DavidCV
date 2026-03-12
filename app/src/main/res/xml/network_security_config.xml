@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+      Habilitamos el tráfico HTTP (sin cifrar) globalmente para el desarrollo.
+      Esto permite que funcione:
+      1. El Emulador (10.0.2.2)
+      2. Teléfonos externos en la misma Wi-Fi (cualquier IP 192.168.x.x o 172.16.x.x)
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

@@ -67,10 +67,21 @@ fun NavigationWrapper(
         //º Se define la navegación de nuestra aplicación vinculada
 
         composable(
-            Routes.LIST
+            Routes.LIST_LIGHT
         ){
             BillListScreen(
-                modifier = Modifier
+                modifier = Modifier,
+                navController = navController
+            )
+        }
+
+        composable(
+            Routes.LIST_GAS
+        ){
+            BillListScreen(
+                modifier = Modifier,
+                navController = navController,
+                viewSelected = false
             )
         }
 
@@ -108,6 +119,7 @@ fun NavigationWrapper(
             else {
                 LaunchedEffect(Unit) {
                     bsCounter -= 1
+                    navController.popBackStack()
                     navController.popBackStack()
                 }
             }

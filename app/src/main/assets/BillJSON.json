@@ -5,7 +5,7 @@
   "endpointPrefix": "",
   "latency": 0,
   "port": 3000,
-  "hostname": "",
+  "hostname": "0.0.0.0",
   "rootChildren": [
     {
       "type": "route",
@@ -17,13 +17,13 @@
     {
       "uuid": "24df0af1-a3ec-4273-8356-5e4b96ed3303",
       "type": "http",
-      "documentation": "http://localhost:3000/Bills/",
+      "documentation": "http://localhost:3000/Bills",
       "method": "get",
-      "endpoint": "Bills/",
+      "endpoint": "Bills",
       "responses": [
         {
           "uuid": "748f25d8-c568-4e0e-a2cc-bee2fa56b078",
-          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"value\": 20,\r\n    \"startDate\": \"2026-02-11T10:00:00Z\",\r\n    \"endDate\": \"2026-03-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"GAS\",\r\n    \"value\": 60,\r\n    \"startDate\": \"2026-01-11T10:00:00Z\",\r\n    \"endDate\": \"2026-02-11T10:00:00Z\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 3,\r\n    \"type\": \"GAS\",\r\n    \"value\": 20,\r\n    \"startDate\": \"2025-12-11T10:00:00Z\",\r\n    \"endDate\": \"2026-01-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 4,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 60,\r\n    \"startDate\": \"2026-02-11T10:00:00Z\",\r\n    \"endDate\": \"2026-03-11T10:00:00Z\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 5,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-02-11T10:00:00Z\",\r\n    \"endDate\": \"2025-03-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 6,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2026-01-11T10:00:00Z\",\r\n    \"endDate\": \"2026-02-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 7,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-01-11T10:00:00Z\",\r\n    \"endDate\": \"2025-02-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 8,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2024-02-11T10:00:00Z\",\r\n    \"endDate\": \"2024-03-11T10:00:00Z\",\r\n    \"paymentStatus\": true\r\n  }\r\n]",
+          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"value\": 20432,\r\n    \"startDate\": \"2026-02-11T10:00:00\",\r\n    \"endDate\": \"2026-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"GAS\",\r\n    \"value\": 60,\r\n    \"startDate\": \"2026-01-11T10:00:00\",\r\n    \"endDate\": \"2026-02-11T10:00:00\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 3,\r\n    \"type\": \"GAS\",\r\n    \"value\": 20,\r\n    \"startDate\": \"2025-12-11T10:00:00\",\r\n    \"endDate\": \"2026-01-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 4,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 60,\r\n    \"startDate\": \"2026-02-11T10:00:00\",\r\n    \"endDate\": \"2026-03-11T10:00:00\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 5,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-02-11T10:00:00\",\r\n    \"endDate\": \"2025-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 6,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2026-01-11T10:00:00\",\r\n    \"endDate\": \"2026-02-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 7,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-01-11T10:00:00\",\r\n    \"endDate\": \"2025-02-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 8,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2024-02-11T10:00:00\",\r\n    \"endDate\": \"2024-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  }\r\n]",
           "latency": 0,
           "statusCode": 200,
           "label": "",

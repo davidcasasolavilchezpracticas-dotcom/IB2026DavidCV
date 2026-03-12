@@ -35,7 +35,7 @@ class BillListViewModel @Inject constructor(
                         _billsState.value = BillListState.Success(billsList.data)
                     }
                     is BaseResult.Error -> {
-                        Log.d("Comprobaciones", "Pasa por Error")
+                        Log.d("Comprobaciones", "Pasa por Error: ${billsList.exception.message}")
                         _billsState.value = BillListState.Error(billsList.exception)
                     }
                 }

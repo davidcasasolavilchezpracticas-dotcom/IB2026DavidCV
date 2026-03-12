@@ -1,109 +1,98 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
-
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.LocalGasStation
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.ServiceItem
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.SummaryCard
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialScreen(
     navController: NavHostController,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hola, Juan", style = MaterialTheme.typography.headlineSmall) },
+                title = {
+                    Text(
+                        text = "Hola, Juan",
+                        style = MaterialTheme.typography.headlineSmall
+                        )
+                    },
                 actions = {
                     IconButton(onClick = { /* Perfil */ }) {
                         Icon(
                             Icons.Default.AccountCircle,
                             contentDescription = null,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(32.dp),
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // Tarjeta de Resumen Rápido
-            SummaryCard({ navController.navigate("list") })
+            SummaryCard(
+                onClick = { navController.navigate(Routes.LIST_LIGHT) }
+            )
 
             // Otras secciones (Ejemplo: Consumo actual)
-            Text(text = "Mis servicios", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(
+                text = "Mis servicios",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ServiceItem(Icons.Default.Lightbulb, "Luz", Modifier.weight(1f))
-                ServiceItem(Icons.Default.LocalGasStation, "Gas", Modifier.weight(1f))
+                ServiceItem(
+                    icon = Icons.Default.Lightbulb,
+                    label = "Luz",
+                    modifier = Modifier.weight(1f),
+                    onClick = { navController.navigate(Routes.LIST_LIGHT) },
+                )
+                ServiceItem(
+                    icon = Icons.Default.LocalGasStation,
+                    label = "Gas",
+                    modifier = Modifier.weight(1f),
+                    onClick = { navController.navigate(Routes.LIST_GAS) }
+                )
             }
         }
     }
 }
 
-@Composable
-fun SummaryCard(onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF006633))
-    ) {
-        Column(modifier = Modifier.padding(24.dp)) {
-            Text("Tu última factura", color = Color.White.copy(alpha = 0.8f))
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("20,00 €", style = MaterialTheme.typography.headlineLarge, color = Color.White)
-                Button(
-                    onClick = onClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Ver facturas", color = Color(0xFF006633))
-                }
-            }
-        }
-    }
-}
 
-@Composable
-fun ServiceItem(icon: ImageVector, label: String, modifier: Modifier = Modifier) {
-    OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(icon, contentDescription = null, tint = Color(0xFF006633))
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(label, fontWeight = FontWeight.Medium)
-        }
-    }
-}
+
+
+
+

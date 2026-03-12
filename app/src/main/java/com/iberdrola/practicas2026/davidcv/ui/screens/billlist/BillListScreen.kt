@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,18 +29,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.TabItem
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
 
 
 @Composable
 fun BillListScreen(
     viewModel: BillListViewModel = hiltViewModel(),
-    modifier: Modifier
+    navController: NavController,
+    modifier: Modifier,
+    viewSelected: Boolean = true
 ) {
     val currentState by viewModel.billsState.collectAsStateWithLifecycle()
 
-    var lightViewSelected by remember { mutableStateOf(true) }
+    var lightViewSelected by remember { mutableStateOf(viewSelected) }
+
+    BackHandler {
+        navController.navigate("back")
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getLightBills()
@@ -108,11 +118,10 @@ fun BillListScreen(
                 BillListContentEmpty(modifier = modifier)
             }
             is BillListState.Error -> {
-                Column(
+                ErrorScreen(
+                    message = (currentState as BillListState.Error).message.message ?: "Error desconocido",
                     modifier = modifier
-                        .fillMaxSize()
-                        .background(Color.Red)
-                ) {}
+                )
             }
             is BillListState.Success -> {
                 val bills = (currentState as BillListState.Success).bills
@@ -146,5 +155,5 @@ fun BillListScreen(
 @Preview
 @Composable
 fun PreviewBLS(){
-    BillListScreen(modifier = Modifier)
+    BillListScreen(modifier = Modifier, navController = rememberNavController())
 }

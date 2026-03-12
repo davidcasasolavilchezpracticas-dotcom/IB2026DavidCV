@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.data.repository
 
 import com.iberdrola.practicas2026.davidcv.data.local.dao.BillDao
-import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import com.iberdrola.practicas2026.davidcv.data.mappers.toEntity
 import com.iberdrola.practicas2026.davidcv.data.mappers.toModel
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class BillRepositoryImplementation @Inject constructor(
+class BillRepositoryRoom @Inject constructor(
     private val _dao: BillDao,
 ) : BillRepositoryInterface {
     override fun getBills(): Flow<BaseResult<List<Bill>>> =
