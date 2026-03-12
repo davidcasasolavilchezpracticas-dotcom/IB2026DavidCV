@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingSwitchItem(
     label: String,
-    icon: ImageVector,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -42,13 +41,6 @@ fun SettingSwitchItem(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = Color(0xFF006633),
-                    modifier = Modifier.size(24.dp),
-                )
-                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodyLarge,

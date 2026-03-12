@@ -39,6 +39,7 @@ foundationLayout = "1.10.2"
 animation = "1.10.2"
 ui = "1.10.4"
 sqliteJdbc = "3.45.3.0"
+foundationLayoutVersion = "1.10.4"
 
 # Retrofit
 
@@ -97,6 +98,7 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 #Librerías para Picasso
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
 
 
 

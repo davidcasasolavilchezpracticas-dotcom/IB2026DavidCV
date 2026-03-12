@@ -31,7 +31,7 @@ import kotlin.text.format
 object AppModule {
 
     // Configuración de la fuente de datos
-    private const val USE_NETWORK = true
+    var USE_NETWORK = true
     
     // CONFIGURACIÓN DE RED:
     // true -> Si usas el emulador de Android Studio
