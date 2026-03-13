@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,109 +41,93 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.cardColors
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfLastBill
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
-import java.time.Year
 
 @Composable
 fun BillListContentInfo(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     bills: List<Bill>
 ) {
     var actualYear: Int = 0
 
-    // Tarjeta de Última Factura
-    LastInvoiceCard(
-        modifier = modifier,
-        bill = bills[0]
-    )
-
-    Spacer(modifier = modifier.height(24.dp))
-
-    // Histórico
-    Row(
+    Column(
         modifier = modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Text(
-            text = "Histórico de facturas",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-        OutlinedButton(
-            onClick = { /* Filtrar */ },
-            shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(1.dp, Color(0xFF006633))
+        // Tarjeta de Última Factura
+        LastInvoiceCard(bill = bills[0])
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Histórico
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.Tune,
-                contentDescription = null,
-                tint = Color(0xFF006633),
-                modifier = Modifier
-                    .size(18.dp)
-            )
             Text(
-                text = "Filtrar",
-                style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFF006633)
+                text = "Histórico de facturas",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
-        }
-    }
-
-
-    // Lista de historial
-    LazyColumn {
-        items(bills.subList(1, bills.size)) { bill ->
-            if (actualYear != bill.endDate.year)
-            {
-                actualYear = bill.endDate.year
+            OutlinedButton(
+                onClick = { /* Filtrar */ },
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(1.dp, Color(0xFF006633))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tune,
+                    contentDescription = null,
+                    tint = Color(0xFF006633),
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
-                    text = actualYear.toString(),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = modifier
-                        .padding(vertical = 16.dp)
+                    text = "Filtrar",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFF006633)
                 )
             }
-            else {
-                Divider(
-                    color = Color.LightGray,
-                    thickness = 0.5.dp
-                )
-            }
+        }
 
-            FacturaItem(
-                modifier = modifier,
-                bill = bill
-            )
+        // Lista de historial
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(bills.subList(1, bills.size)) { bill ->
+                if (actualYear != bill.endDate.year) {
+                    actualYear = bill.endDate.year
+                    Text(
+                        text = actualYear.toString(),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                } else {
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 0.5.dp
+                    )
+                }
+
+                FacturaItem(bill = bill)
+            }
         }
     }
-
 }
 
-
 @Composable
-fun LastInvoiceCard(
-    modifier: Modifier,
-    bill: Bill
-) {
+fun LastInvoiceCard(bill: Bill) {
     Card(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color(0xFFD1E0DB)),
         colors = cardColors,
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(16.dp)
-                .background(
-                    color = White
-                )
+                .background(color = White)
         ) {
             Row(
-                modifier = modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
@@ -159,12 +142,12 @@ fun LastInvoiceCard(
                     )
                 }
                 Icon(
-                    imageVector = if(bill.type == BillType.LIGHT) Icons.Outlined.Lightbulb else Icons.Outlined.Fireplace,
+                    imageVector = if (bill.type == BillType.LIGHT) Icons.Outlined.Lightbulb else Icons.Outlined.Fireplace,
                     contentDescription = null,
                     tint = Color(0xFF006633)
                 )
             }
-            Spacer(modifier = modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "${bill.value} €",
                 style = MaterialTheme.typography.headlineLarge,
@@ -177,24 +160,27 @@ fun LastInvoiceCard(
                 color = Color.Gray
             )
 
-            Spacer(modifier = modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            StatusBadge(modifier = modifier, isPaid = bill.paymentStatus)
+            StatusBadge(isPaid = bill.paymentStatus)
         }
     }
 }
 
 @Composable
-fun FacturaItem(
-    modifier: Modifier,
-    bill: Bill
-) {
+fun FacturaItem(bill: Bill) {
     val context = LocalContext.current
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                onClick = { Toast.makeText(context , "Factura no disponible", Toast.LENGTH_SHORT).show() }
+                onClick = {
+                    Toast.makeText(
+                        context,
+                        "Factura no disponible",
+                        Toast.LENGTH_SHORT,
+
+                    ).show() }
             )
             .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -210,12 +196,10 @@ fun FacturaItem(
                 text = bill.type.label,
                 style = MaterialTheme.typography.bodySmall
             )
-            Spacer(modifier = modifier.height(4.dp))
-            StatusBadge(modifier = modifier, isPaid = bill.paymentStatus)
+            Spacer(modifier = Modifier.height(4.dp))
+            StatusBadge(isPaid = bill.paymentStatus)
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "${bill.value} €",
                 style = MaterialTheme.typography.bodyMedium,
@@ -232,10 +216,7 @@ fun FacturaItem(
 }
 
 @Composable
-fun StatusBadge(
-    isPaid: Boolean,
-    modifier: Modifier
-) {
+fun StatusBadge(isPaid: Boolean) {
     val bgColor = if (isPaid) Color(0xFFD1F2E1) else Color(0xFFF9D5D5)
     val textColor = if (isPaid) Color(0xFF006633) else Color(0xFFB03A2E)
     val label = if (isPaid) "Pagada" else "Pendiente de Pago"
@@ -247,7 +228,7 @@ fun StatusBadge(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             fontWeight = FontWeight.Bold,
             color = textColor
         )

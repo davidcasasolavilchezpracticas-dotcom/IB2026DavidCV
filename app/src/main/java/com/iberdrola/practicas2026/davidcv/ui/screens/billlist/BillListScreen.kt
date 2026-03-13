@@ -11,15 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,9 +31,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -43,9 +45,14 @@ fun BillListScreen(
     modifier: Modifier,
     viewSelected: Boolean = true
 ) {
-    val currentState by viewModel.billsState.collectAsStateWithLifecycle()
+    val lightBillsState by viewModel.lightBillsState.collectAsStateWithLifecycle()
+    val gasBillsState by viewModel.gasBillsState.collectAsStateWithLifecycle()
 
-    var lightViewSelected by remember { mutableStateOf(viewSelected) }
+    val pagerState = rememberPagerState(
+        initialPage = if (viewSelected) 0 else 1,
+        pageCount = { 2 }
+    )
+    val coroutineScope = rememberCoroutineScope()
 
     BackHandler {
         navController.navigate("back")
@@ -53,6 +60,7 @@ fun BillListScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getLightBills()
+        viewModel.getGasBills()
     }
 
 
@@ -86,10 +94,11 @@ fun BillListScreen(
         ) {
             TabItem(
                 text = "Luz",
-                isSelected = lightViewSelected,
+                isSelected = pagerState.currentPage == 0,
                 onClick = {
-                    lightViewSelected = true
-                    viewModel.getLightBills()
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
                 }
             )
 
@@ -97,13 +106,13 @@ fun BillListScreen(
 
             TabItem(
                 text = "Gas",
-                isSelected = !lightViewSelected,
+                isSelected = pagerState.currentPage == 1,
                 onClick = {
-                    lightViewSelected = false
-                    viewModel.getGasBills()
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(1)
+                    }
                 }
             )
-
         }
 
         Divider(
@@ -113,44 +122,65 @@ fun BillListScreen(
 
         Spacer(modifier = modifier.height(24.dp))
 
-        when (currentState) {
-            is BillListState.Loading -> {
-                BillListContentEmpty(modifier = modifier)
-            }
-            is BillListState.Error -> {
-                ErrorScreen(
-                    message = (currentState as BillListState.Error).message.message ?: "Error desconocido",
-                    modifier = modifier
-                )
-            }
-            is BillListState.Success -> {
-                val bills = (currentState as BillListState.Success).bills
-                if (bills.isEmpty()) {
-                    Column(
-                        modifier = modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "No tienes facturas disponibles",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color.Gray
-                        )
-                    }
-                } else {
-                    BillListContentInfo(
-                        bills = bills,
-                        modifier = modifier
-                    )
+        HorizontalPager(
+            state = pagerState,
+            modifier = modifier.fillMaxSize()
+        ) { page ->
+            val currentState = if (page == 0) lightBillsState else gasBillsState
+            BillListContent(
+                state = currentState,
+                modifier = modifier,
+                onErrorClick = {
+                    DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
+                    navController.popBackStack()
                 }
-            }
+            )
         }
     }
 }
 
-
-
-
+@Composable
+private fun BillListContent(
+    state: BillListState,
+    modifier: Modifier,
+    onErrorClick: () -> Unit
+) {
+    when (state) {
+        is BillListState.Loading -> {
+            BillListContentEmpty(modifier = modifier)
+        }
+        is BillListState.Error -> {
+            ErrorScreen(
+                message = state.message.message ?: "Error desconocido",
+                modifier = modifier,
+                onClick = {
+                    onErrorClick()
+                }
+            )
+        }
+        is BillListState.Success -> {
+            val bills = state.bills
+            if (bills.isEmpty()) {
+                Column(
+                    modifier = modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No tienes facturas disponibles",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                BillListContentInfo(
+                    bills = bills,
+                    modifier = modifier
+                )
+            }
+        }
+    }
+}
 
 @Preview
 @Composable

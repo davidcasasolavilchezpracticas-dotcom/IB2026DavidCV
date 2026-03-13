@@ -1,0 +1,94 @@
+{
+  "uuid": "2e1d7d26-53a0-4c37-b1a4-e4793b28d776",
+  "lastMigration": 33,
+  "name": "LocalEnvironments",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3000,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "ae725a6a-6d65-4fcc-8e10-9baf7d522a43",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "Bills",
+      "responses": [
+        {
+          "uuid": "bf326f6d-2136-4ecb-9088-caa83ca2bb0b",
+          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"value\": 117235,\r\n    \"startDate\": \"2026-02-11T10:00:00\",\r\n    \"endDate\": \"2026-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"GAS\",\r\n    \"value\": 60,\r\n    \"startDate\": \"2026-01-11T10:00:00\",\r\n    \"endDate\": \"2026-02-11T10:00:00\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 3,\r\n    \"type\": \"GAS\",\r\n    \"value\": 20,\r\n    \"startDate\": \"2025-12-11T10:00:00\",\r\n    \"endDate\": \"2026-01-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 4,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 1000,\r\n    \"startDate\": \"2026-02-11T10:00:00\",\r\n    \"endDate\": \"2026-03-11T10:00:00\",\r\n    \"paymentStatus\": false\r\n  },\r\n  {\r\n    \"id\": 5,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-02-11T10:00:00\",\r\n    \"endDate\": \"2025-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 6,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2026-01-11T10:00:00\",\r\n    \"endDate\": \"2026-02-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 7,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2025-01-11T10:00:00\",\r\n    \"endDate\": \"2025-02-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  },\r\n  {\r\n    \"id\": 8,\r\n    \"type\": \"LIGHT\",\r\n    \"value\": 150,\r\n    \"startDate\": \"2024-02-11T10:00:00\",\r\n    \"endDate\": \"2024-03-11T10:00:00\",\r\n    \"paymentStatus\": true\r\n  }\r\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "ae725a6a-6d65-4fcc-8e10-9baf7d522a43"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

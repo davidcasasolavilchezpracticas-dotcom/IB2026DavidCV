@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 fun CreditCardImage(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .width(180.dp) // Ancho fijo para la tarjeta
-            .height(110.dp), // Alto fijo
+            .width(162.dp) // Ancho fijo para la tarjeta
+            .height(99.dp), // Alto fijo
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.2f)) // Tarjeta semitransparente
     ) {

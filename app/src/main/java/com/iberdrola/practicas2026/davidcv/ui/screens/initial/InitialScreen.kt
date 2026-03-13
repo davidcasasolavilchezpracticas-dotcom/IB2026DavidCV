@@ -24,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.ServiceItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.SettingSwitchItem
@@ -107,8 +109,12 @@ fun InitialScreen(
     }
 }
 
-
-
-
-
-
+@Preview
+@Composable
+fun InitialScreenPreview() {
+    val navController = rememberNavController()
+    InitialScreen(
+        navController = navController,
+        modifier = Modifier
+    )
+}

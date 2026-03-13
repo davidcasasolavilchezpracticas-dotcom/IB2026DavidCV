@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Thread.sleep
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -21,23 +20,24 @@ class BillListViewModel @Inject constructor(
     private val _getGasBillsUseCase: GetGasBillsUseCase,
 ) : ViewModel() {
 
-    private val _billsState = MutableStateFlow<BillListState>(BillListState.Loading)
-    val billsState: StateFlow<BillListState> = _billsState
+    private val _lightBillsState = MutableStateFlow<BillListState>(BillListState.Loading)
+    val lightBillsState: StateFlow<BillListState> = _lightBillsState
 
-
+    private val _gasBillsState = MutableStateFlow<BillListState>(BillListState.Loading)
+    val gasBillsState: StateFlow<BillListState> = _gasBillsState
 
     fun getLightBills() {
         viewModelScope.launch {
-            _billsState.value = BillListState.Loading
+            _lightBillsState.value = BillListState.Loading
             delay(Random.nextLong(1000, 3000))
             _getLightBillsUseCase().collect { billsList ->
                 when (billsList) {
                     is BaseResult.Success -> {
-                        _billsState.value = BillListState.Success(billsList.data)
+                        _lightBillsState.value = BillListState.Success(billsList.data)
                     }
                     is BaseResult.Error -> {
                         Log.d("Comprobaciones", "Pasa por Error: ${billsList.exception.message}")
-                        _billsState.value = BillListState.Error(billsList.exception)
+                        _lightBillsState.value = BillListState.Error(billsList.exception)
                     }
                 }
             }
@@ -46,19 +46,18 @@ class BillListViewModel @Inject constructor(
 
     fun getGasBills() {
         viewModelScope.launch {
-            _billsState.value = BillListState.Loading
+            _gasBillsState.value = BillListState.Loading
             delay(Random.nextLong(1000, 3000))
             _getGasBillsUseCase().collect { billsList ->
                 when (billsList) {
                     is BaseResult.Success -> {
-                        _billsState.value = BillListState.Success(billsList.data)
+                        _gasBillsState.value = BillListState.Success(billsList.data)
                     }
                     is BaseResult.Error -> {
-                        _billsState.value = BillListState.Error(billsList.exception)
+                        _gasBillsState.value = BillListState.Error(billsList.exception)
                     }
                 }
             }
         }
     }
-
 }
