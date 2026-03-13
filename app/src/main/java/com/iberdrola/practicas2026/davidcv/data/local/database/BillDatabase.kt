@@ -58,15 +58,12 @@ abstract class BillDatabase : RoomDatabase() {
                                         }
                                     }
                                 }
-                                
+
                                 override fun onOpen(db: SupportSQLiteDatabase) {
                                     super.onOpen(db)
                                     INSTANCE?.let { database ->
                                         CoroutineScope(Dispatchers.IO).launch {
-                                            val dao = database.billDao()
-                                            if (dao.getAll().isEmpty()) {
-                                                prepopulateDatabase(context, database)
-                                            }
+                                            prepopulateDatabase(context, database)
                                         }
                                     }
                                 }
@@ -80,12 +77,12 @@ abstract class BillDatabase : RoomDatabase() {
             Log.d("Comprobaciones", "Poblando base de datos desde el nuevo formato JSON...")
             try {
                 val dao = database.billDao()
-                
+
                 val jsonString = context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
-                
+
                 val gson = GsonBuilder()
                     .registerTypeAdapter(LocalDateTime::class.java, JsonDeserializer { json, _, _ ->
-                        val dateStr = json.asString.replace("Z", "") 
+                        val dateStr = json.asString.replace("Z", "")
                         LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                     })
                     .create()
@@ -93,7 +90,7 @@ abstract class BillDatabase : RoomDatabase() {
                 val type = object : TypeToken<List<BillEntity>>() {}.type
                 val bills: List<BillEntity> = gson.fromJson(jsonString, type)
 
-                bills.forEach { dao.insert(it) }
+                //bills.forEach { dao.insert(it) }
 
             } catch (e: Exception) {
                 Log.e("Comprobaciones", "Error al poblar base de datos: ${e.message}")
