@@ -136,6 +136,10 @@ fun BillListScreen(
                 onErrorClick = {
                     DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
                     navController.popBackStack()
+                },
+                onEmptyClick = {
+                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             )
         }

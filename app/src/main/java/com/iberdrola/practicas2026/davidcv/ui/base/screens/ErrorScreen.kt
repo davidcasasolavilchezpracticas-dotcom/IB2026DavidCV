@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 fun ErrorScreen(
     message: String,
     modifier: Modifier = Modifier,
+    img: ImageVector,
     onClick: () -> Unit
 ) {
     Column(
@@ -41,7 +43,7 @@ fun ErrorScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.ErrorOutline,
+            imageVector = img,
             contentDescription = "Error",
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(80.dp)

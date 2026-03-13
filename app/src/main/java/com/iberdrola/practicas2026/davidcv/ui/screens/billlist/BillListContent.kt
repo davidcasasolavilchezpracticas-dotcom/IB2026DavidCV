@@ -1,14 +1,12 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 
 /**
@@ -23,7 +21,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 fun BillListContent(
     state: BillListState,
     modifier: Modifier,
-    onErrorClick: () -> Unit
+    onErrorClick: () -> Unit,
+    onEmptyClick: () -> Unit
 ) {
     when (state) {
         is BillListState.Loading -> {
@@ -31,8 +30,9 @@ fun BillListContent(
         }
         is BillListState.Error -> {
             ErrorScreen(
-                message = state.message.message ?: "Error desconocido",
+                message = state.exception.message ?: "Error desconocido",
                 modifier = modifier,
+                img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                 onClick = {
                     onErrorClick()
                 }
@@ -41,17 +41,12 @@ fun BillListContent(
         is BillListState.Success -> {
             val bills = state.bills
             if (bills.isEmpty()) {
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "No tienes facturas disponibles",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Gray
-                    )
-                }
+                EmptyBillsScreen(
+                    modifier = modifier,
+                    onRefresh = {
+                        onEmptyClick()
+                    }
+                )
             } else {
                 BillListContentInfo(
                     bills = bills,

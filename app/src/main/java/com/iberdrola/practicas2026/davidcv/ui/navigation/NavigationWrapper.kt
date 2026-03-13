@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -10,14 +9,14 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavBackStackEntry
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,7 +38,8 @@ fun NavigationWrapper(
     modifier: Modifier,
     navController: NavHostController,
 ){
-    var bsCounter by rememberSaveable { mutableIntStateOf(0) }
+    val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
+    val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
     var viewSelected by rememberSaveable { mutableStateOf(true) }
 
 
@@ -110,7 +110,7 @@ fun NavigationWrapper(
             if(navController.currentDestination != NavDestination(Routes.INITIAL)){
                 if (bsCounter > 0) {
                     LaunchedEffect(Unit) {
-                        bsCounter -= 1
+                        dataStoreViewModel.updateBsCounter(bsCounter - 1)
                         navController.popBackStack()
                         navController.popBackStack()
                     }
@@ -120,12 +120,12 @@ fun NavigationWrapper(
                             navController.popBackStack()
                         },
                         onLaterClick = {
-                            bsCounter = 3
+                            dataStoreViewModel.updateBsCounter(3)
                         },
                         onRatingSelected = {
                             Toast.makeText(context, "Gracias por su opinión", Toast.LENGTH_SHORT)
                                 .show()
-                            bsCounter = 10
+                            dataStoreViewModel.updateBsCounter(10)
                         }
                     )
                 }

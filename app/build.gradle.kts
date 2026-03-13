@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.datastore.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,6 +77,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    //? DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     //? Librerías para Animaciones
     implementation(libs.lottie.compose)

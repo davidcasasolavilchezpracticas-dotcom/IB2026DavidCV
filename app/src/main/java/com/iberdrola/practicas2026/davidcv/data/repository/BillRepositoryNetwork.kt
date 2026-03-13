@@ -3,14 +3,17 @@ package com.iberdrola.practicas2026.davidcv.data.repository
 import com.iberdrola.practicas2026.davidcv.data.mappers.toEntity
 import com.iberdrola.practicas2026.davidcv.data.mappers.toModel
 import com.iberdrola.practicas2026.davidcv.data.remote.retrofit.ApiService
+import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
 import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
+import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult.Error
 import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -28,10 +31,13 @@ class BillRepositoryNetwork @Inject constructor(
                 val bills = response.body()!!.map { it.toModel() }
                 emit(BaseResult.Success(bills))
             } else {
-                emit(BaseResult.Error(Exception("Error GET: ${response.code()}")))
+                emit(Error(Exception("Error GET: ${response.code()}")))
             }
-        } catch (e: Exception) {
-            emit(BaseResult.Error(e))
+        } catch (e: IOException) {
+            emit(Error(BillException.ConexionFailed))
+        }
+        catch (e: Exception) {
+            emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -44,10 +50,13 @@ class BillRepositoryNetwork @Inject constructor(
                     .map { it.toModel() }
                 emit(BaseResult.Success(bills))
             } else {
-                emit(BaseResult.Error(Exception("Error GET Type: ${response.code()}")))
+                emit(Error(BillException.ResponseError("Error GET Type: ${response.code()}")))
             }
-        } catch (e: Exception) {
-            emit(BaseResult.Error(e))
+        } catch (e: IOException) {
+            emit(Error(BillException.ConexionFailed))
+        }
+        catch (e: Exception) {
+            emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -57,10 +66,13 @@ class BillRepositoryNetwork @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 emit(BaseResult.Success(response.body()!!.toModel()))
             } else {
-                emit(BaseResult.Error(Exception("Error GET ID: ${response.code()}")))
+                emit(Error(Exception("Error GET ID: ${response.code()}")))
             }
-        } catch (e: Exception) {
-            emit(BaseResult.Error(e))
+        } catch (e: IOException) {
+            emit(Error(BillException.ConexionFailed))
+        }
+        catch (e: Exception) {
+            emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -70,10 +82,10 @@ class BillRepositoryNetwork @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 emit(BaseResult.Success(response.body()!!.toModel()))
             } else {
-                emit(BaseResult.Error(Exception("Error PUT: ${response.code()}")))
+                emit(Error(Exception("Error PUT: ${response.code()}")))
             }
         } catch (e: Exception) {
-            emit(BaseResult.Error(e))
+            emit(Error(e))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -83,10 +95,10 @@ class BillRepositoryNetwork @Inject constructor(
             if (response.isSuccessful) {
                 emit(BaseResult.Success(true))
             } else {
-                emit(BaseResult.Error(Exception("Error DELETE: ${response.code()}")))
+                emit(Error(Exception("Error DELETE: ${response.code()}")))
             }
         } catch (e: Exception) {
-            emit(BaseResult.Error(e))
+            emit(Error(e))
         }
     }.flowOn(Dispatchers.IO)
 }

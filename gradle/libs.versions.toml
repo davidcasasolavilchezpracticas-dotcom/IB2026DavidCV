@@ -21,6 +21,9 @@ runtime = "1.9.5"
 composeMaterialCore = "1.5.3"
 constraintlayoutCompose = "1.1.1"
 
+#DataStore
+datastorePreferences = "1.1.2"
+
 #Animaciones
 lottieCompose = "6.7.0"
 
@@ -40,6 +43,7 @@ animation = "1.10.2"
 ui = "1.10.4"
 sqliteJdbc = "3.45.3.0"
 foundationLayoutVersion = "1.10.4"
+datastoreCore = "1.2.0"
 
 # Retrofit
 
@@ -63,6 +67,10 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 androidx-compose-material-core = { group = "androidx.wear.compose", name = "compose-material-core", version.ref = "composeMaterialCore" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+
+#DataStore
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -99,6 +107,7 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 
 
 
