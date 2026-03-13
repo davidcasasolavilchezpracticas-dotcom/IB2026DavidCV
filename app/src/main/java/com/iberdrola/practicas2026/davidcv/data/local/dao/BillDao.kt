@@ -9,6 +9,10 @@ import androidx.room.Update
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 
+/**
+ * BillDao
+ * Interfaz para acceder a la base de datos
+ */
 @Dao
 interface BillDao {
     @Query("SELECT * FROM bills")

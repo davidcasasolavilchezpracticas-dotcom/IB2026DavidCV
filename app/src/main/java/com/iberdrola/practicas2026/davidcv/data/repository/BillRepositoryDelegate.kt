@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * BillRepositoryDelegate
+ * Repositorio que hace de nexo entre ambos para poder hacer uso de los dos indistintamente
+ */
 @Singleton
 class BillRepositoryDelegate @Inject constructor(
     private val networkRepository: BillRepositoryNetwork,

@@ -5,6 +5,10 @@ import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * BillRepositoryInterface
+ * Interfaz para el repositorio de facturas
+ */
 interface BillRepositoryInterface {
     fun getBills(): Flow<BaseResult<List<Bill>>>
     fun getBillsByType(type: BillType): Flow<BaseResult<List<Bill>>>

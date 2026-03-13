@@ -17,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,10 +27,11 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 
 /**
- * Nav host screen
+ * NavigationWrapper
  * Se define el contenedor del grafo de navegación
  *
  * @param navController
+ * @param modifier
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -39,17 +42,6 @@ fun NavigationWrapper(
     var bsCounter by rememberSaveable { mutableIntStateOf(0) }
     var viewSelected by rememberSaveable { mutableStateOf(true) }
 
-    /*// Observar y loguear toda la cola de navegación
-    LaunchedEffect(navController) {
-        navController.currentBackStack.collect { stack ->
-            val debugStack = stack
-                .mapNotNull { entry -> entry.destination.route } // Filtramos solo los que tienen ruta
-                .joinToString(separator = "  |  ")
-
-            Log.d("NavigationStack", "COLA ACTUAL: [ $debugStack ]")
-            Log.d("NavigationStack", "Tamaño de la cola: ${stack.size}")
-        }
-    }*/
 
     NavHost(
         navController = navController,
@@ -80,7 +72,6 @@ fun NavigationWrapper(
             ) + fadeOut()
         }
     ){
-        //º Se define la navegación de nuestra aplicación vinculada
 
         composable(
             Routes.LIST_LIGHT
@@ -116,33 +107,28 @@ fun NavigationWrapper(
         ) {
             val context = LocalContext.current
 
-            //navController.
-                //.value.forEach{ Log.d("Comprobaciones", "popstack: ${it}") }
-
-            if (bsCounter > 0) {
-                LaunchedEffect(Unit) {
-                    bsCounter -= 1
-                    navController.popBackStack()
-                    navController.popBackStack()
-                }
-            } else {
-                // Si el contador es 0, mostramos el BottomSheet
-                OpinionBottomSheet(
-                    onDismiss = {
+            if(navController.currentDestination != NavDestination(Routes.INITIAL)){
+                if (bsCounter > 0) {
+                    LaunchedEffect(Unit) {
+                        bsCounter -= 1
                         navController.popBackStack()
-                    },
-                    onLaterClick = {
-                        // Si pulsa luego, sumamos 3 para que no vuelva a salir pronto
-                        bsCounter = 3
-                        //navController.popBackStack()
-                    },
-                    onRatingSelected = {
-                        Toast.makeText(context, "Gracias por su opinión", Toast.LENGTH_SHORT).show()
-                        // Si puntúa, sumamos mucho para que no salga casi nunca
-                        bsCounter = 10
-                        //navController.popBackStack()
+                        navController.popBackStack()
                     }
-                )
+                } else {
+                    OpinionBottomSheet(
+                        onDismiss = {
+                            navController.popBackStack()
+                        },
+                        onLaterClick = {
+                            bsCounter = 3
+                        },
+                        onRatingSelected = {
+                            Toast.makeText(context, "Gracias por su opinión", Toast.LENGTH_SHORT)
+                                .show()
+                            bsCounter = 10
+                        }
+                    )
+                }
             }
         }
     }

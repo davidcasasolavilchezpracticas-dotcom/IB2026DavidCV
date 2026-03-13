@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.base.composables
+package com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +13,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
+/**
+ * TabItem
+ * Muestra el tab que gestiona la muestra de pantalla
+ *
+ * @param text Texto del tab
+ * @param isSelected Indica si el tab está seleccionado
+ * @param onClick Función a ejecutar al hacer clic en el tab
+ */
 @Composable
 fun TabItem(
     text: String,

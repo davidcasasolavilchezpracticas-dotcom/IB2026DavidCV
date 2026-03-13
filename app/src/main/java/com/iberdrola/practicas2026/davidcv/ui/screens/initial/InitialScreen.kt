@@ -18,10 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,17 +25,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.ServiceItem
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.SettingSwitchItem
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.SummaryCard
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ServiceItem
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSwitchItem
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SummaryCard
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
+/**
+ * InitialScreen
+ * Se define la pantalla principal de la aplicación con el resumen de servicios
+ *
+ * @param navController
+ * @param modifier
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialScreen(
     navController: NavHostController,
     modifier: Modifier
-
 ) {
 
     Scaffold(
@@ -52,7 +54,7 @@ fun InitialScreen(
                         )
                     },
                 actions = {
-                    IconButton(onClick = { /* Perfil */ }) {
+                    IconButton(onClick = { /*TODO Perfil */ }) {
                         Icon(
                             Icons.Default.AccountCircle,
                             contentDescription = null,
@@ -71,12 +73,10 @@ fun InitialScreen(
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            // Tarjeta de Resumen Rápido
             SummaryCard(
                 onClick = { navController.navigate(Routes.LIST_LIGHT) }
             )
 
-            // Otras secciones (Ejemplo: Consumo actual)
             Text(
                 text = "Mis servicios",
                 style = MaterialTheme.typography.titleLarge,
@@ -109,6 +109,10 @@ fun InitialScreen(
     }
 }
 
+/**
+ * InitialScreenPreview
+ * Vista previa de la pantalla inicial
+ */
 @Preview
 @Composable
 fun InitialScreenPreview() {

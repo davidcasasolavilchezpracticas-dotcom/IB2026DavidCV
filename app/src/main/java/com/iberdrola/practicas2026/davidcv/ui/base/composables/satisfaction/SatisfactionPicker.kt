@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.base.composables
+package com.iberdrola.practicas2026.davidcv.ui.base.composables.satisfaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,6 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+
+/**
+ * SatisfactionPicker
+ * Muestra un selector de satisfacción para la encuesta de satisfacción del usuario
+ *
+ * @param modifier
+ * @param onRatingSelected Función a ejecutar al seleccionar una calificación
+ */
 @Composable
 fun SatisfactionPicker(
     modifier: Modifier = Modifier,

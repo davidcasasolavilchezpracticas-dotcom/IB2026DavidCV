@@ -21,6 +21,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * BillDatabase
+ * Modelo de datos para la base de datos
+ */
 @Database(
     version = 8,
     entities = [BillEntity::class],
@@ -77,10 +81,8 @@ abstract class BillDatabase : RoomDatabase() {
             try {
                 val dao = database.billDao()
                 
-                // 1. Leer el archivo de assets
                 val jsonString = context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
                 
-                // 2. Configurar Gson con el adaptador de fechas
                 val gson = GsonBuilder()
                     .registerTypeAdapter(LocalDateTime::class.java, JsonDeserializer { json, _, _ ->
                         val dateStr = json.asString.replace("Z", "") 
@@ -88,14 +90,11 @@ abstract class BillDatabase : RoomDatabase() {
                     })
                     .create()
 
-                // 3. Parsear la lista directamente
                 val type = object : TypeToken<List<BillEntity>>() {}.type
                 val bills: List<BillEntity> = gson.fromJson(jsonString, type)
 
-                // 4. Insertar en la BD
                 bills.forEach { dao.insert(it) }
-                Log.d("Comprobaciones", "¡Base de datos poblada con éxito desde Assets!")
-                
+
             } catch (e: Exception) {
                 Log.e("Comprobaciones", "Error al poblar base de datos: ${e.message}")
             }

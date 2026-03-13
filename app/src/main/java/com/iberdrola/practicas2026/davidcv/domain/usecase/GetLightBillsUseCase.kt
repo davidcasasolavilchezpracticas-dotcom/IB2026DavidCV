@@ -8,6 +8,10 @@ import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInter
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/**
+ * GetLightBillsUseCase
+ * Caso de uso para obtener las facturas de luz
+ */
 class GetLightBillsUseCase @Inject constructor(
     private val _repository: BillRepositoryInterface
 ) {

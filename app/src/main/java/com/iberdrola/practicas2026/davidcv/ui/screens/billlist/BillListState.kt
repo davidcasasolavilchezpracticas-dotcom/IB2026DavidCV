@@ -2,6 +2,9 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
 
+/**
+ * Gestiona el estado de la pantalla BilllList
+ */
 sealed class BillListState {
     data object Loading : BillListState()
     data class Error(val message: Exception) : BillListState()

@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.base.composables
+package com.iberdrola.practicas2026.davidcv.ui.base.composables.initial
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+/**
+ * SummaryCard
+ * Muestra un resumen de la tarjeta de crédito con un botón para ver las facturas
+ *
+ * @param onClick Función a ejecutar al hacer clic en el botón
+ */
 @Composable
 fun SummaryCard(
     onClick: () -> Unit
@@ -31,7 +37,7 @@ fun SummaryCard(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF006633)) // Mantenemos el color verde
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF006633))
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
             Row(
@@ -39,12 +45,10 @@ fun SummaryCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Aquí colocamos la imagen de la tarjeta
                 CreditCardImage()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Mantenemos el botón "Ver facturas" a la derecha
                 Button(
                     onClick = onClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),

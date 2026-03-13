@@ -8,6 +8,11 @@ import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInter
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/**
+ * GetGasBillsUseCase
+ * Caso de uso para obtener las facturas de gas
+ *
+ */
 class GetGasBillsUseCase @Inject constructor(
     private val _repository: BillRepositoryInterface
 ) {

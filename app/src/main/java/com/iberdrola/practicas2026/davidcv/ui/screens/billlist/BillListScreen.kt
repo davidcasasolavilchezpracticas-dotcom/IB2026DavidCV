@@ -2,7 +2,6 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +30,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.TabItem
-import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
 import kotlinx.coroutines.launch
 
-
+/**
+ * BillListScreen
+ * Se define la pantalla que muestra el listado de facturas con soporte para deslizamiento entre tipos
+ *
+ * @param viewModel
+ * @param navController
+ * @param modifier
+ * @param viewSelected
+ */
 @Composable
 fun BillListScreen(
     viewModel: BillListViewModel = hiltViewModel(),
@@ -70,7 +75,6 @@ fun BillListScreen(
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Encabezado
         Text(
             text = "Mis facturas",
             style = MaterialTheme.typography.headlineSmall,
@@ -85,7 +89,6 @@ fun BillListScreen(
 
         Spacer(modifier = modifier.height(16.dp))
 
-        // Tabs (Luz / Gas)
         Row(
             modifier = modifier
                 .zIndex(1f)
@@ -139,49 +142,10 @@ fun BillListScreen(
     }
 }
 
-@Composable
-private fun BillListContent(
-    state: BillListState,
-    modifier: Modifier,
-    onErrorClick: () -> Unit
-) {
-    when (state) {
-        is BillListState.Loading -> {
-            BillListContentEmpty(modifier = modifier)
-        }
-        is BillListState.Error -> {
-            ErrorScreen(
-                message = state.message.message ?: "Error desconocido",
-                modifier = modifier,
-                onClick = {
-                    onErrorClick()
-                }
-            )
-        }
-        is BillListState.Success -> {
-            val bills = state.bills
-            if (bills.isEmpty()) {
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "No tienes facturas disponibles",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Gray
-                    )
-                }
-            } else {
-                BillListContentInfo(
-                    bills = bills,
-                    modifier = modifier
-                )
-            }
-        }
-    }
-}
-
+/**
+ * PreviewBLS
+ * Vista previa de la pantalla de listado de facturas
+ */
 @Preview
 @Composable
 fun PreviewBLS(){

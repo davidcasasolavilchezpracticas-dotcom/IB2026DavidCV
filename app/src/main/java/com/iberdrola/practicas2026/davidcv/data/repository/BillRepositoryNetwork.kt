@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/**
+ * BillRepositoryNetwork
+ * Implementacion del repositorio para el network
+ */
 class BillRepositoryNetwork @Inject constructor(
     private val _apiService: ApiService
 ) : BillRepositoryInterface {

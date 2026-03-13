@@ -1,7 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.screens
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +21,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.SatisfactionPicker
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.satisfaction.SatisfactionPicker
 
+
+/**
+ * OpinionBottomSheet
+ * Muestra un BottomSheet con una encuesta de satisfacción del usuario
+ *
+ * @param onDismiss Función a ejecutar al cerrar el BottomSheet
+ * @param onLaterClick Función a ejecutar al hacer clic en el botón "Responder más tarde"
+ * @param onRatingSelected Función a ejecutar al seleccionar una calificación
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpinionBottomSheet(
@@ -37,7 +44,7 @@ fun OpinionBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() }, // La barrita horizontal superior
+        dragHandle = { BottomSheetDefaults.DragHandle() },
         containerColor = Color.White
     ) {
         Column(
@@ -46,7 +53,6 @@ fun OpinionBottomSheet(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título
             Text(
                 text = "Tu opinión nos importa",
                 style = MaterialTheme.typography.titleLarge,
@@ -56,7 +62,6 @@ fun OpinionBottomSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Pregunta
             Text(
                 text = "¿Cómo de probable es que recomiendes esta app a amigos o familiares para que realicen sus gestiones?",
                 style = MaterialTheme.typography.bodyLarge,
@@ -69,7 +74,6 @@ fun OpinionBottomSheet(
             HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Selector de Emojis
             SatisfactionPicker(
                 onRatingSelected = {
                     onRatingSelected()
@@ -78,15 +82,13 @@ fun OpinionBottomSheet(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón "Responder más tarde"
             TextButton(onClick = onLaterClick) {
                 Text(
                     text = "Responder más tarde",
                     style = MaterialTheme.typography.labelLarge.copy(
                         textDecoration = TextDecoration.Underline,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF006633) // Verde del tema anterior
-                    )
+                        color = Color(0xFF006633)                     )
                 )
             }
 

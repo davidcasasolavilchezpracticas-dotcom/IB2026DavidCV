@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/**
+ * BillRepositoryRoom
+ * Implementacion del repositorio para room
+ */
 class BillRepositoryRoom @Inject constructor(
     private val _dao: BillDao,
 ) : BillRepositoryInterface {

@@ -21,7 +21,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
-
+/**
+ * Pantalla que muestra un mensaje de error en caso de fallo en la conexión con el servidor
+ * @param message Mensaje de error a mostrar
+ * @param modifier Modificador para personalizar la apariencia de la pantalla
+ * @param onClick Función a ejecutar al hacer clic en el botón de acción
+ */
 @Composable
 fun ErrorScreen(
     message: String,
@@ -35,7 +40,6 @@ fun ErrorScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Icono grande de error
         Icon(
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = "Error",
@@ -45,7 +49,6 @@ fun ErrorScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Título del error
         Text(
             text = "¡Algo salió mal con el servidor!",
             style = MaterialTheme.typography.headlineSmall,
@@ -56,7 +59,6 @@ fun ErrorScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mensaje de error detallado
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,

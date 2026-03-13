@@ -9,6 +9,10 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
+/**
+ * ApiService
+ * Interfaz para las peticiones a la API
+ */
 interface ApiService {
     @GET("Bills")
     suspend fun getBills(): Response<List<BillEntity>>

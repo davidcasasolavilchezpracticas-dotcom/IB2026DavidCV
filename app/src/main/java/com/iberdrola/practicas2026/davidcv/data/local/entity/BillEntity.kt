@@ -6,11 +6,15 @@ import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
+/**
+ * BillEntity
+ * Modelo de datos para la base de datos
+ */
 @Entity(tableName = "bills")
 data class BillEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    // @NotNull
+
     val type: BillType,
     val value: Int,
     val startDate: LocalDateTime,
