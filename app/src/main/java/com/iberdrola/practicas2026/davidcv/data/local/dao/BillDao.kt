@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import kotlinx.coroutines.flow.Flow
 
 /**
  * BillDao
@@ -16,13 +17,13 @@ import com.iberdrola.practicas2026.davidcv.domain.model.BillType
 @Dao
 interface BillDao {
     @Query("SELECT * FROM bills")
-    suspend fun getAll(): List<BillEntity>
+    fun getAll(): Flow<List<BillEntity>>
 
     @Query("SELECT * FROM bills WHERE type = :type ORDER BY endDate DESC")
-    suspend fun getAllBillsByType(type: BillType): List<BillEntity>
+    fun getAllBillsByType(type: BillType): Flow<List<BillEntity>>
 
     @Query("SELECT * FROM bills WHERE id = :id")
-    suspend fun getById(id: Int): BillEntity
+    fun getById(id: Int): Flow<BillEntity>
 
     @Delete
     suspend fun delete(bill: BillEntity)
@@ -32,4 +33,10 @@ interface BillDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(bill: BillEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(bills: List<BillEntity>)
+
+    @Query("DELETE FROM bills")
+    suspend fun deleteAll()
 }
