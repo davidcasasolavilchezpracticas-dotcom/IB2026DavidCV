@@ -24,11 +24,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 
+
+/**
+ * PriceRangeSelector
+ * Componente que permite seleccionar un rango de precios mediante un RangeSlider de Material 3
+ *
+ * @param selectedRange Rango de precios seleccionado
+ * @param totalRange Rango de precios total
+ * @param onSliderChange Callback cuando se cambia el valor
+ */
 @Composable
-fun PriceRangeSelector(range: ClosedFloatingPointRange<Float>, onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit) {
-    var sliderPosition by remember { mutableStateOf(range) }
+fun PriceRangeSelector(
+    selectedRange: ClosedFloatingPointRange<Float>,
+    totalRange: ClosedFloatingPointRange<Float>,
+    onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit
+) {
+    // Usamos remember(selectedRange) para que se actualice si el valor cambia externamente (ej: borrar filtros)
+    var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = "Por un importe", fontWeight = FontWeight.Bold)
@@ -49,8 +62,11 @@ fun PriceRangeSelector(range: ClosedFloatingPointRange<Float>, onSliderChange: (
 
         RangeSlider(
             value = sliderPosition,
-            onValueChange = { pos ->  onSliderChange(pos) },
-            valueRange = range,
+            onValueChange = { pos ->
+                sliderPosition = pos
+                onSliderChange(pos)
+            },
+            valueRange = totalRange,
             colors = SliderDefaults.colors(
                 thumbColor = Color(0xFF006633),
                 activeTrackColor = Color(0xFF006633)
@@ -58,8 +74,8 @@ fun PriceRangeSelector(range: ClosedFloatingPointRange<Float>, onSliderChange: (
         )
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "${range.start} €", color = Color.Gray, fontSize = 12.sp)
-            Text(text = "${range.endInclusive} €", color = Color.Gray, fontSize = 12.sp)
+            Text(text = "${totalRange.start.toInt()} €", color = Color.Gray, fontSize = 12.sp)
+            Text(text = "${totalRange.endInclusive.toInt()} €", color = Color.Gray, fontSize = 12.sp)
         }
     }
 }

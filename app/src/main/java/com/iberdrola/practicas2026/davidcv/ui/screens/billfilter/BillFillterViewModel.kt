@@ -1,6 +1,8 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billfilter
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.localeEs
@@ -26,28 +28,26 @@ class BillViewModel @Inject constructor(
 
     //region Dates
 
-    fun onStartDateSelected(date: String) {
-        Log.d("Comprobaciones", "Pasa por onStartDateSelected: $date")
+    fun onStartDateSelected(date: String, context: Context) {
         try {
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
             val parsedDate = LocalDate.parse(date, formatter).atStartOfDay()
             if(_state.value.endDate == null || _state.value.endDate!! > parsedDate)
             {
                 _state.value = _state.value.copy(startDate = parsedDate)
-                Log.d("Comprobaciones", "startDate actualizado: ${_state.value.startDate}")
             } else
             {
                 throw BillException.DateInvalid
             }
         } catch (e: Exception) {
             Log.e("BillViewModel", "Error parsing start date: $date", e)
-        }
-        catch (e: BillException.DateInvalid) {
+        }catch (e: BillException.DateInvalid) {
             Log.e("BillViewModel", "${e.message}")
+            Toast.makeText(context, "La fecha de inicio no puede ser posterior a la fecha de fin", Toast.LENGTH_SHORT).show()
         }
     }
 
-    fun onEndDateSelected(date: String) {
+    fun onEndDateSelected(date: String, context: Context) {
         Log.d("Comprobaciones", "Pasa por onEndDateSelected: $date")
         try {
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
@@ -64,6 +64,7 @@ class BillViewModel @Inject constructor(
             Log.e("BillViewModel", "Error parsing end date: $date", e)
         }catch (e: BillException.DateInvalid) {
             Log.e("BillViewModel", "${e.message}")
+            Toast.makeText(context, "La fecha de inicio no puede ser posterior a la fecha de fin", Toast.LENGTH_SHORT).show()
         }
     }
 

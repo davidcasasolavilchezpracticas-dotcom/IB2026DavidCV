@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
 import kotlinx.coroutines.launch
 
@@ -59,6 +61,18 @@ fun BillListScreen(
         pageCount = { 2 }
     )
     val coroutineScope = rememberCoroutineScope()
+
+    // Observar el resultado de los filtros desde el SavedStateHandle de la navegación
+    val filterResult by navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<BillFilterState>("filters_result")
+        ?.observeAsState() ?: androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(null) }
+
+    LaunchedEffect(filterResult) {
+        filterResult?.let { filters ->
+            viewModel.applyFilters(filters)
+        }
+    }
 
     BackHandler {
         navController.navigate("back")

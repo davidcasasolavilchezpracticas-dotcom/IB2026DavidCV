@@ -106,7 +106,7 @@ fun NavigationWrapper(
         composable(
             Routes.FILTER
         ) {
-            FilterScreen()
+            FilterScreen(navController = navController)
         }
 
         composable(

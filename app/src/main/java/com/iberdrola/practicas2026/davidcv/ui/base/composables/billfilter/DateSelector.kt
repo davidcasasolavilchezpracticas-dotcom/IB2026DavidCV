@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter
 
-import android.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -22,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -30,17 +31,28 @@ import java.util.Locale
  * Componente que permite seleccionar una fecha mediante un DatePicker de Material 3
  *
  * @param label Etiqueta para el campo de texto
+ * @param date Fecha actual (LocalDateTime) para mostrar en el campo
  * @param modifier Modificador de Compose
+ * @param onConfirm Callback cuando se confirma una fecha
+ * @param onValidDate Callback para validar si la fecha seleccionada es permitida
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSelector(label: String, modifier: Modifier = Modifier, onConfirm: (String) -> Unit, onValidDate: (String) -> Boolean) {
+fun DateSelector(
+    label: String,
+    date: LocalDateTime?,
+    modifier: Modifier = Modifier,
+    onConfirm: (String) -> Unit,
+    onValidDate: (String) -> Boolean
+) {
     var showDialog by remember { mutableStateOf(false) }
-    var selectedDateText by remember { mutableStateOf("") }
     val datePickerState = rememberDatePickerState()
 
     // Formateador de fecha
     val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val selectedDateText = date?.let {
+        formatter.format(Date.from(it.atZone(ZoneId.systemDefault()).toInstant()))
+    } ?: ""
 
     if (showDialog) {
         DatePickerDialog(
@@ -48,17 +60,14 @@ fun DateSelector(label: String, modifier: Modifier = Modifier, onConfirm: (Strin
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showDialog = false
-                        var auxText: String = ""
                         datePickerState.selectedDateMillis?.let { millis ->
-                            auxText = formatter.format(Date(millis))
+                            val auxText = formatter.format(Date(millis))
+                            if (onValidDate(auxText)) {
+                                onConfirm(auxText)
+                            }
                         }
-                        if (onValidDate(auxText))
-                        {
-                            selectedDateText =  auxText
-                        }
-                        onConfirm(selectedDateText)
-                }) {
+                        showDialog = false
+                    }) {
                     Text("OK")
                 }
             },
@@ -87,7 +96,7 @@ fun DateSelector(label: String, modifier: Modifier = Modifier, onConfirm: (Strin
             .fillMaxWidth()
             .clickable { showDialog = true },
         readOnly = true,
-        enabled = false, // Para que el clic funcione en todo el componente
+        enabled = false,
         colors = TextFieldDefaults.colors(
             disabledTextColor = Color.Black,
             disabledContainerColor = Color.Transparent,

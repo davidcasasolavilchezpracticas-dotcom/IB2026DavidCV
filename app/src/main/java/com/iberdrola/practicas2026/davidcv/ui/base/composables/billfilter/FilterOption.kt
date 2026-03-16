@@ -11,27 +11,29 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+/**
+ * Funciones para el composable FilterOption
+ *
+ * @param label Etiqueta del checkbox
+ * @param value Valor del checkbox
+ * @param onCheckedChange Callback cuando se cambia el valor del checkbox
+ */
 @Composable
 fun FilterOption(label: String, value: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    var checked by remember { mutableStateOf(value) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { checked = !checked }
+            .clickable { onCheckedChange(!value) }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = checked,
+            checked = value,
             onCheckedChange = { onCheckedChange(it) },
             colors = CheckboxDefaults.colors(checkedColor = Color(0xFF006633))
         )
