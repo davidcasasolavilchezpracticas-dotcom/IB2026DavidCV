@@ -22,7 +22,8 @@ fun BillListContent(
     state: BillListState,
     modifier: Modifier,
     onErrorClick: () -> Unit,
-    onEmptyClick: () -> Unit
+    onEmptyClick: () -> Unit,
+    onFilterClick: () -> Unit
 ) {
     when (state) {
         is BillListState.Loading -> {
@@ -50,7 +51,8 @@ fun BillListContent(
             } else {
                 BillListContentInfo(
                     bills = bills,
-                    modifier = modifier
+                    modifier = modifier,
+                    onFilterClick = onFilterClick
                 )
             }
         }

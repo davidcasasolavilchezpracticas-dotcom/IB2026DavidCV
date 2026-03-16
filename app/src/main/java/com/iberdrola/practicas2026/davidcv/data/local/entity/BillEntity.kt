@@ -3,6 +3,7 @@ package com.iberdrola.practicas2026.davidcv.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
@@ -19,5 +20,5 @@ data class BillEntity(
     val value: Int,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
-    val paymentStatus: Boolean,
+    val paymentStatus: PaymentStatus,
 )

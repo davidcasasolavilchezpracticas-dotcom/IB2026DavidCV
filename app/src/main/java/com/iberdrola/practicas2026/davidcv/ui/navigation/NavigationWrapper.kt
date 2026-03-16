@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
+import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 
@@ -100,6 +101,12 @@ fun NavigationWrapper(
                 navController = navController,
                 modifier = Modifier
             )
+        }
+
+        composable(
+            Routes.FILTER
+        ) {
+            FilterScreen()
         }
 
         composable(

@@ -5,7 +5,7 @@
     "value": 123,
     "startDate": "2026-02-11T10:00:00",
     "endDate": "2026-03-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "PAID"
   },
   {
     "id": 2,
@@ -13,7 +13,7 @@
     "value": 60,
     "startDate": "2026-01-11T10:00:00",
     "endDate": "2026-02-11T10:00:00",
-    "paymentStatus": false
+    "paymentStatus": "PENDING"
   },
   {
     "id": 3,
@@ -21,7 +21,7 @@
     "value": 20,
     "startDate": "2025-12-11T10:00:00",
     "endDate": "2026-01-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "PAID"
   },
   {
     "id": 4,
@@ -29,7 +29,7 @@
     "value": 456,
     "startDate": "2026-02-11T10:00:00",
     "endDate": "2026-03-11T10:00:00",
-    "paymentStatus": false
+    "paymentStatus": "PENDING"
   },
   {
     "id": 5,
@@ -37,7 +37,7 @@
     "value": 150,
     "startDate": "2025-02-11T10:00:00",
     "endDate": "2025-03-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "PAID"
   },
   {
     "id": 6,
@@ -45,7 +45,7 @@
     "value": 150,
     "startDate": "2026-01-11T10:00:00",
     "endDate": "2026-02-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "TRAMITED"
   },
   {
     "id": 7,
@@ -53,7 +53,7 @@
     "value": 150,
     "startDate": "2025-01-11T10:00:00",
     "endDate": "2025-02-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "CANCELED"
   },
   {
     "id": 8,
@@ -61,6 +61,6 @@
     "value": 150,
     "startDate": "2024-02-11T10:00:00",
     "endDate": "2024-03-11T10:00:00",
-    "paymentStatus": true
+    "paymentStatus": "FIXED_PAYMENT"
   }
 ]

@@ -84,7 +84,7 @@ fun LastInvoiceCard(bill: Bill) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            StatusBadge(isPaid = bill.paymentStatus)
+            StatusBadge(status = bill.paymentStatus)
         }
     }
 }

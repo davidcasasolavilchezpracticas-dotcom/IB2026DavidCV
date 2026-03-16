@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
 import kotlinx.coroutines.launch
 
@@ -140,6 +141,9 @@ fun BillListScreen(
                 onEmptyClick = {
                     navController.popBackStack()
                     navController.navigateUp()
+                },
+                onFilterClick = {
+                    navController.navigate(Routes.FILTER)
                 }
             )
         }

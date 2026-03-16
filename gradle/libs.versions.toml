@@ -44,6 +44,7 @@ ui = "1.10.4"
 sqliteJdbc = "3.45.3.0"
 foundationLayoutVersion = "1.10.4"
 datastoreCore = "1.2.0"
+foundation = "1.10.4"
 
 # Retrofit
 
@@ -108,6 +109,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 
 

@@ -5,4 +5,6 @@ object Routes {
     const val LIST_LIGHT : String = "list_light"
     const val BACK : String = "back"
     const val INITIAL : String = "initial"
+    const val FILTER : String = "filter"
 }
+

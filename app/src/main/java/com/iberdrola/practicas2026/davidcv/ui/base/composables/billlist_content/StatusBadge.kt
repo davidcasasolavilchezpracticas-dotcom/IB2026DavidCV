@@ -10,25 +10,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
 
 /**
  * StatusBadge
  * Muestra un badge con el estado de la factura
  *
- * @param isPaid Indica si la factura está pagada
+ * @param status Indica el estado de la factura.
  */
 @Composable
-fun StatusBadge(isPaid: Boolean) {
-    val bgColor = if (isPaid) Color(0xFFD1F2E1) else Color(0xFFF9D5D5)
-    val textColor = if (isPaid) Color(0xFF006633) else Color(0xFFB03A2E)
-    val label = if (isPaid) "Pagada" else "Pendiente de Pago"
+fun StatusBadge(status: PaymentStatus) {
+    val (bgColor, textColor) = when (status) {
+        PaymentStatus.PAID -> Color(0xFFD1F2E1) to Color(0xFF006633)
+        PaymentStatus.PENDING -> Color(0xFFF9D5D5) to Color(0xFFB03A2E)
+        PaymentStatus.TRAMITED -> Color(0xFFE3F2FD) to Color(0xFF1976D2)
+        PaymentStatus.CANCELED -> Color(0xFFEEEEEE) to Color(0xFF757575)
+        PaymentStatus.FIXED_PAYMENT -> Color(0xFFFFF3E0) to Color(0xFFE65100)
+    }
 
     Surface(
         color = bgColor,
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
-            text = label,
+            text = status.label,
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             fontWeight = FontWeight.Bold,

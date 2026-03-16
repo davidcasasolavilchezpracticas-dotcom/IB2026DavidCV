@@ -8,5 +8,5 @@ data class Bill(
     val value: Int,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
-    val paymentStatus: Boolean,
+    val paymentStatus: PaymentStatus,
 )

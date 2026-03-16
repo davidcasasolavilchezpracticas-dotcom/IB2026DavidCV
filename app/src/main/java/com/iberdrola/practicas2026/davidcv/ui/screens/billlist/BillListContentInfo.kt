@@ -35,7 +35,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.
 @Composable
 fun BillListContentInfo(
     modifier: Modifier = Modifier,
-    bills: List<Bill>
+    bills: List<Bill>,
+    onFilterClick: () -> Unit
 ) {
     var actualYear: Int = 0
     val context = LocalContext.current
@@ -60,7 +61,7 @@ fun BillListContentInfo(
                 fontWeight = FontWeight.Bold
             )
             OutlinedButton(
-                onClick = { /*TODO  Filtrar */ },
+                onClick = { onFilterClick() },
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(1.dp, Color(0xFF006633))
             ) {

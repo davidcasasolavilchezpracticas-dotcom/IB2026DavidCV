@@ -13,6 +13,7 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.reflect.TypeToken
 import com.iberdrola.practicas2026.davidcv.data.local.converters.BillTypeConverter
 import com.iberdrola.practicas2026.davidcv.data.local.converters.DateConverter
+import com.iberdrola.practicas2026.davidcv.data.local.converters.PaymentStatusConverter
 import com.iberdrola.practicas2026.davidcv.data.local.dao.BillDao
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import kotlinx.coroutines.CoroutineScope
@@ -26,11 +27,11 @@ import java.time.format.DateTimeFormatter
  * Modelo de datos para la base de datos
  */
 @Database(
-    version = 8,
+    version = 9,
     entities = [BillEntity::class],
     exportSchema = false,
 )
-@TypeConverters(value = [DateConverter::class, BillTypeConverter::class])
+@TypeConverters(value = [DateConverter::class, BillTypeConverter::class, PaymentStatusConverter::class])
 abstract class BillDatabase : RoomDatabase() {
     abstract fun billDao(): BillDao
 

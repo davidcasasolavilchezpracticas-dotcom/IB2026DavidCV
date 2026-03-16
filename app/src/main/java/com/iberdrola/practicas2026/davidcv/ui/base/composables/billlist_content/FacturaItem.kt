@@ -58,7 +58,7 @@ fun FacturaItem(
                 style = MaterialTheme.typography.bodySmall
             )
             Spacer(modifier = Modifier.height(4.dp))
-            StatusBadge(isPaid = bill.paymentStatus)
+            StatusBadge(status = bill.paymentStatus)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
