@@ -43,7 +43,6 @@ fun PriceRangeSelector(
     totalRange: ClosedFloatingPointRange<Float>,
     onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit
 ) {
-    // Usamos remember(selectedRange) para que se actualice si el valor cambia externamente (ej: borrar filtros)
     var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
 
     Column(modifier = Modifier.fillMaxWidth()) {

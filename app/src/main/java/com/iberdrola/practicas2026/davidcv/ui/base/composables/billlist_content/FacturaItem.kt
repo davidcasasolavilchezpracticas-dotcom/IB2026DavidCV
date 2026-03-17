@@ -63,7 +63,7 @@ fun FacturaItem(
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "${bill.value} €",
+                text = "${"%.2f".format(bill.value)} €",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 color = Color.DarkGray

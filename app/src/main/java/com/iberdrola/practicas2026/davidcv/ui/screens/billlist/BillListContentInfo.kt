@@ -104,7 +104,7 @@ fun BillListContentInfo(
                     onClick = {
                         Toast.makeText(
                             context,
-                            R.string.blciToast.toString(),
+                            R.string.blciToast,
                             Toast.LENGTH_SHORT
                         ).show()
                     }

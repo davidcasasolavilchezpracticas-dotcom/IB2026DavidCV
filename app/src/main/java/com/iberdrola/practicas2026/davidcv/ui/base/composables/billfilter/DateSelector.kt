@@ -8,9 +8,9 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.iberdrola.practicas2026.davidcv.R
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -70,7 +71,7 @@ fun DateSelector(
                         }
                         showDialog = false
                     }) {
-                    Text("OK")
+                    Text(stringResource(R.string.confirm))
                 }
             },
             dismissButton = {
@@ -83,7 +84,7 @@ fun DateSelector(
         }
     }
 
-    OutlinedTextField(
+    TextField(
         value = selectedDateText,
         onValueChange = {},
         label = { Text("* $label") },
@@ -104,7 +105,20 @@ fun DateSelector(
             disabledContainerColor = Color.Transparent,
             disabledIndicatorColor = Color.Gray,
             disabledLabelColor = Color.Gray,
-            disabledTrailingIconColor = Color.Gray
+            disabledTrailingIconColor = Color.Gray,
+            unfocusedIndicatorColor = Color.Gray,
+            focusedIndicatorColor = Color.Gray
         )
+    )
+}
+
+@Preview
+@Composable
+fun pwDateSelector(){
+    DateSelector(
+        label = "Fecha",
+        date = LocalDateTime.now(),
+        onConfirm = {},
+        onValidDate = {true}
     )
 }

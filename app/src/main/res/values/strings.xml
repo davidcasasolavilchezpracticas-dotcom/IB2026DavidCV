@@ -37,4 +37,6 @@
     <string name="blcUnknownError">Error desconocido</string>
     <string name="blciToast">Factura no disponible</string>
     <string name="bsToast">Gracias por su opinión</string>
+    <string name="fsTituloFiltros">Filtrar</string>
+    <string name="confirm">Ok</string>
 </resources>

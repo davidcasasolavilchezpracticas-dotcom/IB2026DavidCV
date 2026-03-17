@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter
  * Modelo de datos para la base de datos
  */
 @Database(
-    version = 9,
+    version = 10,
     entities = [BillEntity::class],
     exportSchema = false,
 )

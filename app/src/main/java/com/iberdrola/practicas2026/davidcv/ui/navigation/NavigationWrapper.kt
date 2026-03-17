@@ -131,7 +131,7 @@ fun NavigationWrapper(
                             dataStoreViewModel.updateBsCounter(3)
                         },
                         onRatingSelected = {
-                            Toast.makeText(context, R.string.bsToast.toString(), Toast.LENGTH_SHORT)
+                            Toast.makeText(context, R.string.bsToast, Toast.LENGTH_SHORT)
                                 .show()
                             dataStoreViewModel.updateBsCounter(10)
                         }

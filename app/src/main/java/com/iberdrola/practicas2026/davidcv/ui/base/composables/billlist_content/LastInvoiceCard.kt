@@ -74,7 +74,7 @@ fun LastInvoiceCard(bill: Bill) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "${bill.value} €",
+                text = "${"%.2f".format(bill.value)} €",
                 style = MaterialTheme.typography.headlineLarge,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold

@@ -40,6 +40,13 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.Filter
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
+/**
+ * FilterScreen
+ * Componente que muestra la pantalla de filtros de búsqueda de facturas.
+ *
+ * @param navController Controlador de navegación de Jetpack Compose
+ * @param viewModel Modelo de vista asociado a la pantalla de filtros
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
@@ -59,6 +66,8 @@ fun FilterScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Column {
+            Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
             Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 DateSelector(

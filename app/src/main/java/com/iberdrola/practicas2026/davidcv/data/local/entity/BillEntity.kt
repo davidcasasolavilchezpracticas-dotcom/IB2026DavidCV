@@ -17,7 +17,7 @@ data class BillEntity(
     val id: Int,
 
     val type: BillType,
-    val value: Int,
+    val value: Float,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
     val paymentStatus: PaymentStatus,
