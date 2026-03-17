@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,6 +68,8 @@ fun FilterScreen(
     ) {
         Column {
             Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
