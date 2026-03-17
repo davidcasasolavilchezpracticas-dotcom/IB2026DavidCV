@@ -20,8 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 /**
  * CreditCardImage
@@ -41,7 +44,7 @@ fun CreditCardImage(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
+                .padding(LocalSpacing.current.md),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // Icono de chip o logo de banco
@@ -55,7 +58,7 @@ fun CreditCardImage(modifier: Modifier = Modifier) {
             }
 
             Text(
-                text = "**** 1234",
+                text = stringResource(R.string.numCard),
                 color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold

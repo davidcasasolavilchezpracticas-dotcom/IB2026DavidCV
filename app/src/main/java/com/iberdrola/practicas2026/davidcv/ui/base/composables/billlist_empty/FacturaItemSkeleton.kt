@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
 
 /**
@@ -31,7 +32,7 @@ fun FacturaItemSkeleton(modifier: Modifier) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(vertical = LocalSpacing.current.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(modifier = modifier

@@ -25,9 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
 
@@ -44,7 +47,7 @@ fun BillListContentInfo(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(LocalSpacing.current.lg)
     ) {
         LastInvoiceCard(bill = bills[0])
 
@@ -56,7 +59,7 @@ fun BillListContentInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Histórico de facturas",
+                text = stringResource(R.string.blciTitle),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -72,7 +75,7 @@ fun BillListContentInfo(
                     modifier = Modifier.size(18.dp)
                 )
                 Text(
-                    text = "Filtrar",
+                    text = stringResource(R.string.blciButtonFilter),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(0xFF006633)
                 )
@@ -87,7 +90,7 @@ fun BillListContentInfo(
                         text = actualYear.toString(),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 16.dp)
+                        modifier = Modifier.padding(vertical = LocalSpacing.current.lg)
                     )
                 } else {
                     Divider(
@@ -101,7 +104,7 @@ fun BillListContentInfo(
                     onClick = {
                         Toast.makeText(
                             context,
-                            "Factura no disponible",
+                            R.string.blciToast.toString(),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

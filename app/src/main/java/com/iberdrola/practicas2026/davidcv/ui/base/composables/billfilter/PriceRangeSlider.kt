@@ -21,9 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 
 /**
@@ -44,14 +47,14 @@ fun PriceRangeSelector(
     var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = "Por un importe", fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.tituloPriceRangeSelector), fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .background(Color(0xFFE0E8E3), RoundedCornerShape(4.dp))
-                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .padding(horizontal = LocalSpacing.current.md, vertical = LocalSpacing.current.xs)
         ) {
             Text(
                 text = "${sliderPosition.start.toInt()} € - ${sliderPosition.endInclusive.toInt()} €",

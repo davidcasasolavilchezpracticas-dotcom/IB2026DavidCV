@@ -3,8 +3,11 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billfilter
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.ui.base.common.dfValidateDate
 import com.iberdrola.practicas2026.davidcv.ui.base.common.localeEs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,8 +33,7 @@ class BillViewModel @Inject constructor(
 
     fun onStartDateSelected(date: String, context: Context) {
         try {
-            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
-            val parsedDate = LocalDate.parse(date, formatter).atStartOfDay()
+            val parsedDate = LocalDate.parse(date, dfValidateDate).atStartOfDay()
             if(_state.value.endDate == null || _state.value.endDate!! > parsedDate)
             {
                 _state.value = _state.value.copy(startDate = parsedDate)
@@ -43,15 +45,14 @@ class BillViewModel @Inject constructor(
             Log.e("BillViewModel", "Error parsing start date: $date", e)
         }catch (e: BillException.DateInvalid) {
             Log.e("BillViewModel", "${e.message}")
-            Toast.makeText(context, "La fecha de inicio no puede ser posterior a la fecha de fin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.bfvmToastStartDate.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
     fun onEndDateSelected(date: String, context: Context) {
         Log.d("Comprobaciones", "Pasa por onEndDateSelected: $date")
         try {
-            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
-            val parsedDate = LocalDate.parse(date, formatter).atStartOfDay()
+            val parsedDate = LocalDate.parse(date, dfValidateDate).atStartOfDay()
             if(_state.value.startDate == null || _state.value.startDate!! < parsedDate)
             {
                 _state.value = _state.value.copy(endDate = parsedDate)
@@ -64,19 +65,17 @@ class BillViewModel @Inject constructor(
             Log.e("BillViewModel", "Error parsing end date: $date", e)
         }catch (e: BillException.DateInvalid) {
             Log.e("BillViewModel", "${e.message}")
-            Toast.makeText(context, "La fecha de inicio no puede ser posterior a la fecha de fin", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.bfvmToastEndDate.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
     fun onValidEndDate(date: String): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
-        val parsedDate = LocalDate.parse(date, formatter).atStartOfDay()
+        val parsedDate = LocalDate.parse(date, dfValidateDate).atStartOfDay()
         return _state.value.startDate == null || _state.value.startDate!! < parsedDate
     }
 
     fun onValidStartDate(date: String): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
-        val parsedDate = LocalDate.parse(date, formatter).atStartOfDay()
+        val parsedDate = LocalDate.parse(date, dfValidateDate).atStartOfDay()
         return _state.value.endDate == null || _state.value.endDate!! > parsedDate
     }
     //endregion

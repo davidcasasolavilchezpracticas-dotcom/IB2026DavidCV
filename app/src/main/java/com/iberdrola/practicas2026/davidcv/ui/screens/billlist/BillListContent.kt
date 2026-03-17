@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
@@ -31,7 +32,7 @@ fun BillListContent(
         }
         is BillListState.Error -> {
             ErrorScreen(
-                message = state.exception.message ?: "Error desconocido",
+                message = state.exception.message ?: R.string.blcUnknownError.toString(),
                 modifier = modifier,
                 img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                 onClick = {

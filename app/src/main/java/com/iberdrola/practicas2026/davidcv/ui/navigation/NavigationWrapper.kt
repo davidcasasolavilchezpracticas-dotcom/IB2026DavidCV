@@ -21,6 +21,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
@@ -130,7 +131,7 @@ fun NavigationWrapper(
                             dataStoreViewModel.updateBsCounter(3)
                         },
                         onRatingSelected = {
-                            Toast.makeText(context, "Gracias por su opinión", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, R.string.bsToast.toString(), Toast.LENGTH_SHORT)
                                 .show()
                             dataStoreViewModel.updateBsCounter(10)
                         }

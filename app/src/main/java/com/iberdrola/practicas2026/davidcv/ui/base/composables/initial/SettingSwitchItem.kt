@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 /**
  * SettingSwitchItem
@@ -39,7 +40,7 @@ fun SettingSwitchItem(
         Row(
             modifier =
                 Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = LocalSpacing.current.lg, vertical = LocalSpacing.current.sm),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {

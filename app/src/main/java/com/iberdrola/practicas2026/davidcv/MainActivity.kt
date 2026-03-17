@@ -24,11 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.navigation.NavigationWrapper
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
@@ -54,9 +57,9 @@ class MainActivity : ComponentActivity() {
                         ) {
                             IconButton(
                                 onClick = {
-                                    navController.navigate("back")
+                                    navController.navigate(Routes.BACK)
                                 },
-                                modifier = Modifier.padding(end = 8.dp),
+                                modifier = Modifier.padding(end = LocalSpacing.current.sm),
                                 content = {
                                     Icon(
                                         imageVector = Icons.Default.ChevronLeft,
@@ -66,7 +69,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                             Text(
-                                text = "Atrás",
+                                text = stringResource(R.string.matbTitle),
                                 color = EnergyGreen
                             )
                         }

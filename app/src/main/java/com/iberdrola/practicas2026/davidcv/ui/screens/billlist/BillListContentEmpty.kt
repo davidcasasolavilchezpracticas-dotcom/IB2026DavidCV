@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.FacturaItemSkeleton
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.LastInvoiceSkeleton
 
@@ -28,7 +29,7 @@ fun BillListContentEmpty(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(LocalSpacing.current.lg),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         LastInvoiceSkeleton(modifier)

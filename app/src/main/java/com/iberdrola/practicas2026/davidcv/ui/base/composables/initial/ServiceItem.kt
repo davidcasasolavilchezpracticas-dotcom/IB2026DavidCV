@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 /**
  * ServiceItem
@@ -45,7 +46,7 @@ fun ServiceItem(
         Column(
             modifier =
                 Modifier
-                    .padding(16.dp)
+                    .padding(LocalSpacing.current.lg)
                     .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

@@ -22,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +31,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
@@ -75,7 +78,7 @@ fun BillListScreen(
     }
 
     BackHandler {
-        navController.navigate("back")
+        navController.navigate(Routes.BACK)
     }
 
     LaunchedEffect(Unit) {
@@ -88,18 +91,18 @@ fun BillListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(16.dp)
+            .padding(LocalSpacing.current.lg)
     ) {
         Text(
-            text = "Mis facturas",
+            text = stringResource(R.string.blsTitle),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "C/ PALMA - ARTA KM 49, 5 , 4°A - PINTO - MADRID",
+            text = stringResource(R.string.blsSubtitleAddress),
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Gray,
-            modifier = modifier.padding(vertical = 8.dp)
+            modifier = modifier.padding(vertical = LocalSpacing.current.sm)
         )
 
         Spacer(modifier = modifier.height(16.dp))
@@ -107,11 +110,11 @@ fun BillListScreen(
         Row(
             modifier = modifier
                 .zIndex(1f)
-                .padding(bottom = 3.dp)
+                .padding(bottom = LocalSpacing.current.xxs)
                 .fillMaxWidth()
         ) {
             TabItem(
-                text = "Luz",
+                text = stringResource(R.string.blsTabText1),
                 isSelected = pagerState.currentPage == 0,
                 onClick = {
                     coroutineScope.launch {
@@ -123,7 +126,7 @@ fun BillListScreen(
             Spacer(modifier = modifier.width(24.dp))
 
             TabItem(
-                text = "Gas",
+                text = stringResource(R.string.blsTabText2),
                 isSelected = pagerState.currentPage == 1,
                 onClick = {
                     coroutineScope.launch {

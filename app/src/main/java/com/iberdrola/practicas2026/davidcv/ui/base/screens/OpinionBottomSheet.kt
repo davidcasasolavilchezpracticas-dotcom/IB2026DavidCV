@@ -17,10 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.satisfaction.SatisfactionPicker
 
 
@@ -50,11 +53,11 @@ fun OpinionBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+                .padding(horizontal = LocalSpacing.current.xl, vertical = LocalSpacing.current.lg),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Tu opinión nos importa",
+                text = stringResource(R.string.opinion),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -63,11 +66,11 @@ fun OpinionBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "¿Cómo de probable es que recomiendes esta app a amigos o familiares para que realicen sus gestiones?",
+                text = stringResource(R.string.bsText),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = LocalSpacing.current.sm)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -84,7 +87,7 @@ fun OpinionBottomSheet(
 
             TextButton(onClick = onLaterClick) {
                 Text(
-                    text = "Responder más tarde",
+                    text = stringResource(R.string.respondLater),
                     style = MaterialTheme.typography.labelLarge.copy(
                         textDecoration = TextDecoration.Underline,
                         fontWeight = FontWeight.Bold,

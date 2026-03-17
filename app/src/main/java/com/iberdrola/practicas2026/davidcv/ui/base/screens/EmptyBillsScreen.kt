@@ -21,9 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 
 @Composable
@@ -34,13 +37,13 @@ fun EmptyBillsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(LocalSpacing.current.xl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = Icons.Default.Description,
-            contentDescription = "No hay facturas",
+            contentDescription = stringResource(R.string.noBills),
             tint = Color.LightGray.copy(alpha = 0.7f),
             modifier = Modifier.size(100.dp)
         )
@@ -48,7 +51,7 @@ fun EmptyBillsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "No hay facturas disponibles",
+            text = stringResource(R.string.noAviableBills),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -64,7 +67,7 @@ fun EmptyBillsScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Recargar",
+                    text = stringResource(R.string.recargar),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )

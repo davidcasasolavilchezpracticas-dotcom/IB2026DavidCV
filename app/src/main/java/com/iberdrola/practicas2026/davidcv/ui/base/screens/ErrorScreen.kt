@@ -17,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
@@ -38,13 +41,13 @@ fun ErrorScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(LocalSpacing.current.xl),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = img,
-            contentDescription = "Error",
+            contentDescription = stringResource(R.string.error),
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(80.dp)
         )
@@ -52,7 +55,7 @@ fun ErrorScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "¡Algo salió mal con el servidor!",
+            text = stringResource(R.string.serverFail),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -66,21 +69,21 @@ fun ErrorScreen(
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = { onClick() },
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = LocalSpacing.current.lg)
         ) {
             Text(
-                text = "Usar datos en local",
+                text = stringResource(R.string.useLocal),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = White,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
             )
         }
 

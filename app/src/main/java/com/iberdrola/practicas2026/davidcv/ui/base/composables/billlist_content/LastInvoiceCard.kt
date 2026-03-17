@@ -20,11 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
 import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.common.cardColors
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfLastBill
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
@@ -45,7 +48,7 @@ fun LastInvoiceCard(bill: Bill) {
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(LocalSpacing.current.lg)
                 .background(color = White)
         ) {
             Row(
@@ -54,7 +57,7 @@ fun LastInvoiceCard(bill: Bill) {
             ) {
                 Column {
                     Text(
-                        text = "Última factura",
+                        text = stringResource(R.string.LastInvoiceCard),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )

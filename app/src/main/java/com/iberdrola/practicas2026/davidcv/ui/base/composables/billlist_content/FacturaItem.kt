@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
 
 /**
@@ -43,7 +44,7 @@ fun FacturaItem(
             .clickable(
                 onClick = { onClick() }
             )
-            .padding(vertical = 12.dp),
+            .padding(vertical = LocalSpacing.current.md),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

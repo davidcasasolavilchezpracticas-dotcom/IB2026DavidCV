@@ -19,12 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ServiceItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSwitchItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SummaryCard
@@ -49,7 +52,7 @@ fun InitialScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Hola, Juan",
+                        text = stringResource(R.string.isTitle),
                         style = MaterialTheme.typography.headlineSmall
                         )
                     },
@@ -70,7 +73,7 @@ fun InitialScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp),
+                    .padding(LocalSpacing.current.lg),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SummaryCard(
@@ -78,7 +81,7 @@ fun InitialScreen(
             )
 
             Text(
-                text = "Mis servicios",
+                text = stringResource(R.string.isSubtitle),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -86,20 +89,20 @@ fun InitialScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ServiceItem(
                     icon = Icons.Default.Lightbulb,
-                    label = "Luz",
+                    label = stringResource(R.string.isServiceLight),
                     modifier = Modifier.weight(1f),
                     onClick = { navController.navigate(Routes.LIST_LIGHT) },
                 )
                 ServiceItem(
                     icon = Icons.Default.LocalGasStation,
-                    label = "Gas",
+                    label = stringResource(R.string.isServiceGas),
                     modifier = Modifier.weight(1f),
                     onClick = { navController.navigate(Routes.LIST_GAS) }
                 )
             }
 
             SettingSwitchItem(
-                label = "Uso de Mock",
+                label = stringResource(R.string.isSwitchDataOrigin),
                 checked = DataSourceConfig.useNetwork,
                 onCheckedChange = {
                     DataSourceConfig.useNetwork = it

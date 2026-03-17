@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 /**
  * StatusBadge
@@ -35,7 +36,7 @@ fun StatusBadge(status: PaymentStatus) {
         Text(
             text = status.label,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = LocalSpacing.current.sm, vertical = LocalSpacing.current.xs),
             fontWeight = FontWeight.Bold,
             color = textColor
         )

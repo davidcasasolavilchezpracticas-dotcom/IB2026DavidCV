@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.Spacing
 
 /**
  * Funciones para el composable FilterOption
@@ -29,7 +31,7 @@ fun FilterOption(label: String, value: Boolean, onCheckedChange: (Boolean) -> Un
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onCheckedChange(!value) }
-            .padding(vertical = 8.dp),
+            .padding(vertical = LocalSpacing.current.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
 
 /**
@@ -33,7 +34,7 @@ fun LastInvoiceSkeleton(modifier: Modifier) {
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
     ) {
-        Column(modifier = modifier.padding(16.dp)) {
+        Column(modifier = modifier.padding(LocalSpacing.current.lg)) {
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween

@@ -22,6 +22,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.DateSelector
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
@@ -43,30 +47,32 @@ fun FilterScreen(
     viewModel: BillViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(LocalSpacing.current.la)
             .background(White)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Column {
-            Text(text = "Por fecha", fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 DateSelector(
-                    label = "Desde",
+                    label = stringResource(R.string.fsSubtituloFecha1),
                     date = state.startDate,
                     modifier = Modifier.weight(1f),
-                    onConfirm = { date -> viewModel.onStartDateSelected(date) },
+                    onConfirm = { date -> viewModel.onStartDateSelected(date, context) },
                     onValidDate = viewModel::onValidStartDate
                 )
                 DateSelector(
-                    label = "Hasta",
+                label = stringResource(R.string.fsSubtituloFecha2),
                     date = state.endDate,
                     modifier = Modifier.weight(1f),
-                    onConfirm = { date -> viewModel.onEndDateSelected(date) },
+                    onConfirm = { date -> viewModel.onEndDateSelected(date, context) },
                     onValidDate = viewModel::onValidEndDate
                 )
             }
@@ -79,7 +85,7 @@ fun FilterScreen(
         )
 
         Column {
-            Text(text = "Por estado", fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.fsTituloEstado), fontWeight = FontWeight.Bold)
 
             FilterOption(
                 label = PaymentStatus.PAID.label,
@@ -111,7 +117,6 @@ fun FilterScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Button(
                 onClick = {
-                    // Pasamos el resultado de vuelta a la pantalla anterior
                     navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
                     navController.popBackStack()
                 },
@@ -122,7 +127,7 @@ fun FilterScreen(
                 shape = RoundedCornerShape(28.dp)
             ) {
                 Text(
-                    text = "Aplicar filtros",
+                    text = stringResource(R.string.fsButtonApply),
                     color = Color.White,
                     fontSize = 16.sp
                 )
@@ -132,7 +137,7 @@ fun FilterScreen(
                 onClick = { viewModel.deleteFilters() }
             ) {
                 Text(
-                    text = "Borrar filtros",
+                    text = stringResource(R.string.fsButtonDelete),
                     color = Color(0xFF2E5D4B),
                     textDecoration = TextDecoration.Underline,
                     fontWeight = FontWeight.Bold
