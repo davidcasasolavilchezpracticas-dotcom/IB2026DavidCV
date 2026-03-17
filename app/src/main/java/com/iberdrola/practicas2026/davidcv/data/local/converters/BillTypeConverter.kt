@@ -1,7 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.data.local.converters
 
 import androidx.room.TypeConverter
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 
 /**
  * BillTypeConverter

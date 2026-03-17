@@ -39,4 +39,8 @@
     <string name="bsToast">Gracias por su opinión</string>
     <string name="fsTituloFiltros">Filtrar</string>
     <string name="confirm">Ok</string>
+    <string name="isSubtitleBills">Facturas</string>
+    <string name="isSubtitleContracts">Contratos</string>
+    <string name="isServiceContract">Contratos</string>
+    <string name="clsTitle">Factura electrónica</string>
 </resources>

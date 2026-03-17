@@ -34,7 +34,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.R
-import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.DateSelector
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption

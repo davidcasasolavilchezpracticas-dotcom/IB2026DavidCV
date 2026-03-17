@@ -25,8 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.R
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.common.cardColors
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfLastBill

@@ -1,7 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 
 /**
  * Gestiona el estado de la pantalla BilllList

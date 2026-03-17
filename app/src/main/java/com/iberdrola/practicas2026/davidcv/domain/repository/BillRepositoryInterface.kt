@@ -1,7 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.domain.repository
 
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import kotlinx.coroutines.flow.Flow
 

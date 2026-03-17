@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,6 +87,12 @@ fun InitialScreen(
                 fontWeight = FontWeight.Bold
             )
 
+            Text(
+                text = stringResource(R.string.isSubtitleBills),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ServiceItem(
                     icon = Icons.Default.Lightbulb,
@@ -98,6 +105,21 @@ fun InitialScreen(
                     label = stringResource(R.string.isServiceGas),
                     modifier = Modifier.weight(1f),
                     onClick = { navController.navigate(Routes.LIST_GAS) }
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.isSubtitleContracts),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                ServiceItem(
+                    icon = Icons.Default.Description,
+                    label = stringResource(R.string.isServiceContract),
+                    modifier = Modifier.weight(1f),
+                    onClick = { /*TODO Navigate a List Contracts*/ }
                 )
             }
 

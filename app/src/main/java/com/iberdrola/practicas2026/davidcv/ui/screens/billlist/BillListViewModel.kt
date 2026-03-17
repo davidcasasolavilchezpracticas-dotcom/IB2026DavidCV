@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
-import com.iberdrola.practicas2026.davidcv.domain.model.PaymentStatus
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetGasBillsUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetLightBillsUseCase

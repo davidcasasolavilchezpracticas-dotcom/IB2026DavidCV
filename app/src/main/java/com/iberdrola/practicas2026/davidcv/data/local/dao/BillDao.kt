@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import kotlinx.coroutines.flow.Flow
 
 /**

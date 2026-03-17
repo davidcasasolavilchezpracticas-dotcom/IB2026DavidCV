@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard

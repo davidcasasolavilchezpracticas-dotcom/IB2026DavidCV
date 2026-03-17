@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
 

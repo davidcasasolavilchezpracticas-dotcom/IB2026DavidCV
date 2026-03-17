@@ -1,5 +1,7 @@
-package com.iberdrola.practicas2026.davidcv.domain.model
+package com.iberdrola.practicas2026.davidcv.domain.model.bill
 
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import java.time.LocalDateTime
 
 data class Bill(

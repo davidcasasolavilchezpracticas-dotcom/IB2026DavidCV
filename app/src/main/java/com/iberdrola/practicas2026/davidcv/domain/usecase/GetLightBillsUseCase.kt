@@ -1,8 +1,8 @@
 package com.iberdrola.practicas2026.davidcv.domain.usecase
 
 import com.iberdrola.practicas2026.davidcv.data.repository.BillRepositoryNetwork
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInterface
 import kotlinx.coroutines.flow.Flow

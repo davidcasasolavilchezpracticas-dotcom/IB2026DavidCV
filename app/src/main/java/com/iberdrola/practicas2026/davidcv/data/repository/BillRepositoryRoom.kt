@@ -3,8 +3,8 @@ package com.iberdrola.practicas2026.davidcv.data.repository
 import com.iberdrola.practicas2026.davidcv.data.local.dao.BillDao
 import com.iberdrola.practicas2026.davidcv.data.mappers.toEntity
 import com.iberdrola.practicas2026.davidcv.data.mappers.toModel
-import com.iberdrola.practicas2026.davidcv.domain.model.Bill
-import com.iberdrola.practicas2026.davidcv.domain.model.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInterface
 import kotlinx.coroutines.Dispatchers

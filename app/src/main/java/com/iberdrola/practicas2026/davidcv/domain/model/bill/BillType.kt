@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.domain.model
+package com.iberdrola.practicas2026.davidcv.domain.model.bill
 
 /**
  * BillType
