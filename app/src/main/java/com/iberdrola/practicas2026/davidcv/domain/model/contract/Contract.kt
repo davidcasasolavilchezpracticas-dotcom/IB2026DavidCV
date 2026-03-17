@@ -4,6 +4,6 @@ data class Contract (
     val id: Int,
     val type: ContractType,
     val status: ContractStatus,
-    val email: String
+    val email: String? = null
 ) {
 }

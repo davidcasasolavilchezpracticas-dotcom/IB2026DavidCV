@@ -25,6 +25,7 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 
 /**
@@ -108,6 +109,12 @@ fun NavigationWrapper(
             Routes.FILTER
         ) {
             FilterScreen(navController = navController)
+        }
+
+        composable(
+            Routes.CONTRACTS
+        ) {
+            ContractListScreen(navController = navController)
         }
 
         composable(

@@ -8,12 +8,15 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializer
 import com.iberdrola.practicas2026.davidcv.data.local.dao.BillDao
+import com.iberdrola.practicas2026.davidcv.data.local.dao.ContractDao
 import com.iberdrola.practicas2026.davidcv.data.local.database.BillDatabase
 import com.iberdrola.practicas2026.davidcv.data.remote.retrofit.ApiService
 import com.iberdrola.practicas2026.davidcv.data.repository.BillRepositoryDelegate
 import com.iberdrola.practicas2026.davidcv.data.repository.BillRepositoryRoom
 import com.iberdrola.practicas2026.davidcv.data.repository.BillRepositoryNetwork
+import com.iberdrola.practicas2026.davidcv.data.repository.ContractRepositoryDelegate
 import com.iberdrola.practicas2026.davidcv.domain.repository.BillRepositoryInterface
+import com.iberdrola.practicas2026.davidcv.domain.repository.ContractRepositoryInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +48,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideBillDao(database: BillDatabase): BillDao = database.billDao()
+
+    @Provides
+    @Singleton
+    fun provideContractDao(database: BillDatabase): ContractDao = database.contractDao()
 
     @Provides
     @Singleton
@@ -87,4 +94,10 @@ object AppModule {
     fun provideBillRepository(
         delegate: BillRepositoryDelegate
     ): BillRepositoryInterface = delegate
+
+    @Provides
+    @Singleton
+    fun provideContractRepository(
+        delegate: ContractRepositoryDelegate
+    ): ContractRepositoryInterface = delegate
 }

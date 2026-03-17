@@ -119,7 +119,7 @@ fun InitialScreen(
                     icon = Icons.Default.Description,
                     label = stringResource(R.string.isServiceContract),
                     modifier = Modifier.weight(1f),
-                    onClick = { /*TODO Navigate a List Contracts*/ }
+                    onClick = { navController.navigate(Routes.CONTRACTS) }
                 )
             }
 

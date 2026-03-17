@@ -1,32 +1,38 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractlist
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.R
-import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
-import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
-import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractType
+import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.ContractItem
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyContractsScreen
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun ContractListScreen(
-
+    viewModel: ContractListViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
+    val state = viewModel.contractsState.collectAsState()
+
     Scaffold(
         topBar = {
             Column {
@@ -39,26 +45,38 @@ fun ContractListScreen(
             }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = LocalSpacing.current.lg)
-        ) {
-
-            val list = listOf(
-                Contract( 1,ContractType.LIGHT,ContractStatus.ACTIVE,"john.mckinley@examplepetstore.com")
-            )
-
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(list) { contract ->
-
-                    ContractItem(
-                        contract = contract,
-                        onClick = { /* Navegar a detalle luz */ }
+        when (state.value) {
+            is ContractListState.Error -> {
+                ErrorScreen(
+                    message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
+                    modifier = Modifier,
+                    img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
+                    onClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            is ContractListState.Success -> {
+                val contracts = (state.value as ContractListState.Success).contracts
+                if (contracts.isEmpty()) {
+                    EmptyContractsScreen(
+                        modifier = Modifier,
+                        onRefresh = {
+                            navController.navigateUp()
+                        }
+                    )
+                } else {
+                    ContractListContent(
+                        contracts = contracts,
+                        modifier = Modifier.padding(padding),
+                        onClick = {}
                     )
                 }
             }
+
+            else -> {}
         }
+
+
     }
 }

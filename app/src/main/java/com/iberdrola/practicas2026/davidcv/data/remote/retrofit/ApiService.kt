@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.data.remote.retrofit
 
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
+import com.iberdrola.practicas2026.davidcv.data.local.entity.ContractEntity
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,6 +18,8 @@ interface ApiService {
     @GET("Bills")
     suspend fun getBills(): Response<List<BillEntity>>
 
+    @GET("Contracts")
+    suspend fun getContracts(): Response<List<ContractEntity>>
     @GET("Bills/{id}")
     suspend fun getBillById(@Path("id") id: Int): Response<BillEntity>
 

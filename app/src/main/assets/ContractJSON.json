@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "type": "GAS",
+    "status": "ACTIVE",
+    "email": "usuario.gas@example.com"
+  },
+  {
+    "id": 2,
+    "type": "LIGHT",
+    "status": "INACTIVE",
+    "email": null
+  }
+]

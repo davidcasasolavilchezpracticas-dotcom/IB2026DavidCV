@@ -43,4 +43,6 @@
     <string name="isSubtitleContracts">Contratos</string>
     <string name="isServiceContract">Contratos</string>
     <string name="clsTitle">Factura electrónica</string>
+    <string name="noAviableContracts">No hay contratos disponibles</string>
+    <string name="noContracts">No hay contratos</string>
 </resources>

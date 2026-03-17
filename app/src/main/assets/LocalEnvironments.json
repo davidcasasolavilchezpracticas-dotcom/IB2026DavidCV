@@ -38,12 +38,47 @@
       "responseMode": null,
       "streamingMode": null,
       "streamingInterval": 0
+    },
+    {
+      "uuid": "44d4ccad-73c6-4ffe-9280-326fbf64099a",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "Contracts",
+      "responses": [
+        {
+          "uuid": "590060c3-a6af-4ddd-9972-64852d55ac5b",
+          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"status\": \"INACTIVE\",\r\n    \"email\": \"usuario.gas@example.com\"\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"LIGHT\",\r\n    \"status\": \"ACTIVE\",\r\n    \"email\": null\r\n  }\r\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     }
   ],
   "rootChildren": [
     {
       "type": "route",
       "uuid": "ae725a6a-6d65-4fcc-8e10-9baf7d522a43"
+    },
+    {
+      "type": "route",
+      "uuid": "44d4ccad-73c6-4ffe-9280-326fbf64099a"
     }
   ],
   "proxyMode": false,

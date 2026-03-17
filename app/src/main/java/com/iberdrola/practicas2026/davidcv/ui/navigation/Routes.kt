@@ -6,5 +6,6 @@ object Routes {
     const val BACK : String = "back"
     const val INITIAL : String = "initial"
     const val FILTER : String = "filter"
+    const val CONTRACTS: String = "contracts"
 }
 
