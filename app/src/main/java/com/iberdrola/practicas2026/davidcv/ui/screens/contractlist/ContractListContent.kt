@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.ContractItem
@@ -15,7 +16,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.Cont
 fun ContractListContent(
     contracts: List<Contract>,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -24,10 +25,9 @@ fun ContractListContent(
     ) {
         LazyColumn(modifier = modifier.weight(1f)) {
             items(contracts) { contract ->
-
                 ContractItem(
                     contract = contract,
-                    onClick = onClick
+                    onClick = { onClick(contract.id) }
                 )
             }
         }

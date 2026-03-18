@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractlist
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -20,11 +19,10 @@ import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
-import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyContractsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractListScreen(
@@ -69,7 +67,9 @@ fun ContractListScreen(
                     ContractListContent(
                         contracts = contracts,
                         modifier = Modifier.padding(padding),
-                        onClick = {}
+                        onClick = { id ->
+                            navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
+                        }
                     )
                 }
             }

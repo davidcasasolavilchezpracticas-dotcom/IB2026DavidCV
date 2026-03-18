@@ -12,19 +12,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess.ContractActionSuccessScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractemailchange.ContractEmailChangeScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 
@@ -116,6 +123,49 @@ fun NavigationWrapper(
         ) {
             ContractListScreen(navController = navController)
         }
+
+        navigation(
+            route = "contract_flow/{contractId}",
+            startDestination = Routes.CONTRACT_ACTIONS + "/{contractId}"
+        ) {
+            composable(Routes.CONTRACT_ACTIONS + "/{contractId}") { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("contract_flow/{contractId}")
+                }
+                val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+                ContractActionsScreen(
+                    contractId = entry.arguments?.getString("contractId")!!.toInt(),
+                    navController = navController,
+                    viewModel = viewModel
+                )
+            }
+
+            composable(Routes.CONTRACT_EMAIL_CHANGE) { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("contract_flow/{contractId}")
+                }
+                val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+                ContractEmailChangeScreen(navController, viewModel)
+            }
+
+            composable(Routes.CONTRACT_VERIFY) { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("contract_flow/{contractId}")
+                }
+                val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+                ContractVerifyScreen(navController, viewModel)
+            }
+
+            composable(Routes.CONTRACT_SUCCESS) { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("contract_flow/{contractId}")
+                }
+                val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+                ContractActionSuccessScreen(navController, viewModel)
+            }
+        }
+
+
 
         composable(
             Routes.BACK

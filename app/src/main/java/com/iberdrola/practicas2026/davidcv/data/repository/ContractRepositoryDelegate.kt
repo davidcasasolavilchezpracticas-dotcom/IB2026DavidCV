@@ -9,7 +9,9 @@ import com.iberdrola.practicas2026.davidcv.data.local.entity.ContractEntity
 import com.iberdrola.practicas2026.davidcv.data.mappers.toModel
 import com.iberdrola.practicas2026.davidcv.data.remote.retrofit.ApiService
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
+import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.repository.ContractRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,16 +19,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * ContractRepositoryDelegate
- * Repositorio para la gestión de contratos siguiendo el patrón Single Source of Truth.
- */
 @Singleton
 class ContractRepositoryDelegate @Inject constructor(
     private val _apiService: ApiService,
@@ -35,48 +36,103 @@ class ContractRepositoryDelegate @Inject constructor(
     @ApplicationContext private val _context: Context
 ) : ContractRepositoryInterface {
 
-    private suspend fun syncContracts() {
+    private val MOCK_FILE_NAME = "ContractJSON_Internal.json"
+
+    /**
+     * Obtiene el contenido del JSON desde el almacenamiento interno o assets.
+     */
+    private fun getMockJsonContent(): String? {
+        val internalFile = File(_context.filesDir, MOCK_FILE_NAME)
+        return if (internalFile.exists()) {
+            internalFile.readText()
+        } else {
+            // Si no existe en interno, lo leemos de assets y lo inicializamos
+            try {
+                val assetContent = _context.assets.open("ContractJSON.json").bufferedReader().use { it.readText() }
+                internalFile.writeText(assetContent)
+                assetContent
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    /**
+     * Guarda el estado actual de la DB en el archivo JSON interno.
+     */
+    private suspend fun saveCurrentDbToJson() {
         try {
-            if (DataSourceConfig.useNetwork) {
-                Log.d("ContractRepository", "Sincronizando contratos desde RED...")
-                val response = _apiService.getContracts()
-                if (response.isSuccessful) {
-                    response.body()?.let { contracts ->
+            val currentEntities = _dao.getAll().first()
+            val jsonString = _gson.toJson(currentEntities)
+            val internalFile = File(_context.filesDir, MOCK_FILE_NAME)
+            internalFile.writeText(jsonString)
+            Log.d("ContractRepository", "JSON Local actualizado con los cambios.")
+        } catch (e: Exception) {
+            Log.e("ContractRepository", "Error al guardar en JSON: ${e.message}")
+        }
+    }
+
+    private suspend fun syncContracts(forceRefresh: Boolean) {
+        try {
+
+            if (DataSourceConfig.useNetwork || forceRefresh) {
+                if (DataSourceConfig.useNetwork) {
+                    Log.d("ContractRepository", "Sincronizando desde RED...")
+                    val response = _apiService.getContracts()
+                    if (response.isSuccessful) {
+                        response.body()?.let { contracts ->
+                            if (forceRefresh) _dao.deleteAll()
+                            _dao.insertAll(contracts)
+                            // Opcional: Al recibir de red, también actualizamos nuestro mock local
+                            saveCurrentDbToJson()
+                        }
+                    }
+                    else {
+                        throw ContractException.ConexionFailed
+                    }
+                } else {
+                    Log.d("ContractRepository", "Sincronizando desde MOCK JSON...")
+                    getMockJsonContent()?.let { jsonString ->
+                        val type = object : TypeToken<List<ContractEntity>>() {}.type
+                        val contracts: List<ContractEntity> = _gson.fromJson(jsonString, type)
                         if (contracts.isNotEmpty()) {
-                            _dao.deleteAll()
+                            if (forceRefresh) _dao.deleteAll()
                             _dao.insertAll(contracts)
                         }
                     }
                 }
-            } else {
-                Log.d("ContractRepository", "Sincronizando contratos desde MOCK LOCAL...")
-                val jsonString = try {
-                    _context.assets.open("ContractJSON.json").bufferedReader().use { it.readText() }
-                } catch (e: Exception) {
-                    null
-                }
-                
-                jsonString?.let {
-                    val type = object : TypeToken<List<ContractEntity>>() {}.type
-                    val contractsToInsert: List<ContractEntity> = _gson.fromJson(it, type)
-                    if (contractsToInsert.isNotEmpty()) {
-                        _dao.insertAll(contractsToInsert)
-                    }
-                }
             }
         } catch (e: Exception) {
-            Log.e("ContractRepository", "Error sincronizando contratos: ${e.message}")
+            throw ContractException.ConexionFailed
         }
     }
 
-    override fun getContracts(): Flow<BaseResult<List<Contract>>> = flow {
-        syncContracts()
-        emitAll(
-            _dao.getAll().map { entities ->
-                BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Contract>>
-            }
-        )
+    override fun getContracts(forceRefresh: Boolean): Flow<BaseResult<List<Contract>>> = flow {
+        syncContracts(forceRefresh)
+        emitAll(_dao.getAll().map { entities ->
+            BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Contract>>
+        })
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e)))
+        emit(BaseResult.Error(if (e is Exception) e else Exception(e.message)))
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun updateContractEmail(id: Int, email: String): BaseResult<Unit> = withContext(Dispatchers.IO) {
+        try {
+            _dao.updateEmail(id, email)
+            saveCurrentDbToJson() // PERSISTENCIA EN EL JSON
+            BaseResult.Success(Unit)
+        } catch (e: Exception) {
+            BaseResult.Error(e)
+        }
+    }
+
+    override suspend fun updateContractEmail(id: Int, email: String, status: ContractStatus): BaseResult<Unit> = withContext(Dispatchers.IO) {
+        try {
+            _dao.updateEmailAndStatus(id, email, status.name)
+            saveCurrentDbToJson() // PERSISTENCIA EN EL JSON
+            BaseResult.Success(Unit)
+        } catch (e: Exception) {
+            BaseResult.Error(e)
+        }
+    }
 }

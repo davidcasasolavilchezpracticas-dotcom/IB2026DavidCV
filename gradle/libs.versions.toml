@@ -45,6 +45,7 @@ sqliteJdbc = "3.45.3.0"
 foundationLayoutVersion = "1.10.4"
 datastoreCore = "1.2.0"
 foundation = "1.10.4"
+cameraCamera2Pipe = "1.7.0-alpha01"
 
 # Retrofit
 
@@ -111,6 +112,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
 
 
 

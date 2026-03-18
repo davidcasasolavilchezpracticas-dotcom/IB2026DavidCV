@@ -45,4 +45,52 @@
     <string name="clsTitle">Factura electrónica</string>
     <string name="noAviableContracts">No hay contratos disponibles</string>
     <string name="noContracts">No hay contratos</string>
+    <string name="cacTitleAccount">Email vinculado a tu cuenta:</string>
+    <string name="cacTextAccountEmail">a*****a@a.com</string>
+    <string name="cacTitleAccountEmail">Email vinculado a tu cuenta:</string>
+    <string name="cacTitletEmail">¿En qué email deseas recibir tus facturas?</string>
+    <string name="cacTitleEmailLinked">¿En qué email deseas recibir tus facturas?</string>
+    <string name="cacLabelEmail">¿En qué email deseas recibir tus facturas?</string>
+    <string name="cscBasicInfo">Información básica sobre protección de datos</string>
+    <string name="cscLegalTextResponsable">Responsable</string>
+    <string name="cscLegalTextFinalidad">Finalidad</string>
+    <string name="cscLegalTextDerechos">Derechos</string>
+    <string name="cscLegalTextResponsableDescription">Iberdrola Clientes S.A.U.</string>
+    <string name="cscLegalTextFinalidadDescription">Gestión de la factura electrónica.</string>
+    <string name="cscLegalTextDerechosDescription">Acceso, rectificación, supresión, limitación del tratamiento...</string>
+    <string name="moreInfo">Más info</string>
+    <string name="cscPolicy">He leído y acepto la Política de privacidad, acepto las Condiciones Generales y Particulares...</string>
+    <string name="cscBack">Anterior</string>
+    <string name="cscNext">Siguiente</string>
+
+    <!-- ContractActiveInfoContent Strings -->
+    <string name="caicTitleLight">Contrato de Luz</string>
+    <string name="caicAddress">c/ apartado de correos 184, 5, 1°b - los dolores-el plan - murcia</string>
+    <string name="caicInfoText">Actualmente recibes las facturas electrónicas de este contrato al:</string>
+    <string name="caicEmailTitle">Recibes tus facturas en este email</string>
+    <string name="caicEmailValue">pepe2@gmail.com</string>
+    <string name="caicAlertText">Recuerda que la factura electrónica es un requisito de este Plan, por lo que no es posible desactivarla.</string>
+    <string name="caicButtonModify">Modificar email</string>
+
+    <!-- ContractEmailChangeContent Strings -->
+    <string name="ceccTitle">Modificar email</string>
+    <string name="ceccLabelNewEmail">* Nuevo email</string>
+    <string name="ceccClose">Cerrar</string>
+    <string name="rcibTextResendCode">Volver a enviar</string>
+    <string name="rcibTitleResendCode">¿No has recibido el código?</string>
+    <string name="rcibTextFindCode">Si no lo encuentras, podemos volver a enviar el SMS.</string>
+    <string name="cvcClose">Cerrar</string>
+    <string name="cvcTitleActivate">Activa tu factura electrónica</string>
+    <string name="cvcSubtitleInsertCode">Introduce tu código de verificación</string>
+    <string name="cvcTextFieldVerifyCode">* Código de verificación</string>
+    <string name="Back">Anterior</string>
+    <string name="Next">Siguiente</string>
+    <string name="close">Cerrar</string>
+    <string name="sbTitle">Hemos vuelto a enviar un SMS con tu código de verificación</string>
+    <string name="cacErrorInvalidEmail">Introduce un email válido</string>
+    <string name="cacActivateElectronicBill">Activa tu factura electrónica</string>
+    <string name="cacLabelEmailText">* Email</string>
+    <string name="cascTitleModify">¡Has modificado correctamente tu email!</string>
+    <string name="cascTitleActivate">¡Has activado correctamente tu factura electrónica!</string>
+    <string name="cascAccept">Aceptar</string>
 </resources>

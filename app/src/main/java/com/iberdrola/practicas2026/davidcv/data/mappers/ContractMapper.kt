@@ -11,6 +11,7 @@ fun Contract.toEntity(): ContractEntity {
         id = this.id,
         type = this.type,
         status = this.status,
+        phone = this.phone,
         email = this.email
     )
 }
@@ -23,6 +24,7 @@ fun ContractEntity.toModel(): Contract {
         id = this.id,
         type = this.type,
         status = this.status,
+        phone = this.phone,
         email = this.email
     )
 }

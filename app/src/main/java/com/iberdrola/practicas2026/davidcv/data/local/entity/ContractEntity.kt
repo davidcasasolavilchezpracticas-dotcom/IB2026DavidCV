@@ -12,5 +12,6 @@ data class ContractEntity(
 
     val type: ContractType,
     val status: ContractStatus,
+    val phone: String? = null,
     val email: String? = null
 )

@@ -48,7 +48,7 @@
       "responses": [
         {
           "uuid": "590060c3-a6af-4ddd-9972-64852d55ac5b",
-          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"status\": \"INACTIVE\",\r\n    \"email\": \"usuario.gas@example.com\"\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"LIGHT\",\r\n    \"status\": \"ACTIVE\",\r\n    \"email\": null\r\n  }\r\n]",
+          "body": "[\r\n  {\r\n    \"id\": 1,\r\n    \"type\": \"GAS\",\r\n    \"status\": \"INACTIVE\",\r\n    \"phone\": \"654327698\",\r\n    \"email\": \"usuario.gas@example.com\"\r\n  },\r\n  {\r\n    \"id\": 2,\r\n    \"type\": \"LIGHT\",\r\n    \"status\": \"ACTIVE\",\r\n    \"phone\": null,\r\n    \"email\": null\r\n  }\r\n]",
           "latency": 0,
           "statusCode": 200,
           "label": "",

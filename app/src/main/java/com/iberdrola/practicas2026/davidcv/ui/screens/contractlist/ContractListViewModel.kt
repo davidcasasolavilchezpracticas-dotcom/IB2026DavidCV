@@ -16,8 +16,6 @@ import kotlin.random.Random
 /**
  * ContractListViewModel
  * ViewModel para la pantalla de listado de contratos
- *
- * @param _getContractsUseCase Caso de uso para obtener los contratos
  */
 @HiltViewModel
 class ContractListViewModel @Inject constructor(
@@ -28,29 +26,43 @@ class ContractListViewModel @Inject constructor(
     val contractsState: StateFlow<ContractListState> = _contractsState
 
     init {
-        getContracts()
+        // Carga inicial (usará caché local si existe)
+        getContracts(forceRefresh = false)
     }
 
     /**
      * getContracts
-     * Obtiene el listado de contratos
+     * @param forceRefresh Si es true, fuerza la carga desde la red o reinicia desde el JSON original
      */
-    fun getContracts() {
+    fun getContracts(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             _contractsState.value = ContractListState.Loading
-            // Simulación de carga para mostrar el shimmer o loading
-            delay(Random.nextLong(1000, 2000))
             
-            _getContractsUseCase().collect { result ->
+            // Delay para feedback visual (Shimmer)
+            delay(Random.nextLong(1000, 1500))
+            
+            _getContractsUseCase(forceRefresh).collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
                         _contractsState.value = ContractListState.Success(result.data)
                     }
                     is BaseResult.Error -> {
-                        _contractsState.value = ContractListState.Error(result.exception as ContractException)
+                        val contractException = if (result.exception is ContractException) {
+                            result.exception
+                        } else {
+                            ContractException.UnknownError(result.exception.message)
+                        }
+                        _contractsState.value = ContractListState.Error(contractException as ContractException)
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Función para refrescar manualmente desde la red o JSON
+     */
+    fun refreshContracts() {
+        getContracts(forceRefresh = true)
     }
 }

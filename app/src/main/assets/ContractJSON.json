@@ -3,12 +3,14 @@
     "id": 1,
     "type": "GAS",
     "status": "ACTIVE",
+    "phone": "654327698",
     "email": "usuario.gas@example.com"
   },
   {
     "id": 2,
     "type": "LIGHT",
     "status": "INACTIVE",
+    "phone": null,
     "email": null
   }
 ]

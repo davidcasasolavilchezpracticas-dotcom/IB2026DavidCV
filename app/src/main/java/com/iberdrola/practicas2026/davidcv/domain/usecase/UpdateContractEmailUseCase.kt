@@ -3,17 +3,16 @@ package com.iberdrola.practicas2026.davidcv.domain.usecase
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.repository.ContractRepositoryInterface
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
- * GetContractsUseCase
- * Caso de uso para obtener el listado de contratos
+ * UpdateContractEmailUseCase
+ * Caso de uso para actualizar el email de un contrato
  */
-class GetContractsUseCase @Inject constructor(
+class UpdateContractEmailUseCase @Inject constructor(
     private val _repository: ContractRepositoryInterface
 ) {
-    operator fun invoke(forceRefresh: Boolean = false): Flow<BaseResult<List<Contract>>> {
-        return _repository.getContracts(forceRefresh)
+    suspend operator fun invoke(id: Int, email: String): BaseResult<Unit> {
+        return _repository.updateContractEmail(id, email)
     }
 }
