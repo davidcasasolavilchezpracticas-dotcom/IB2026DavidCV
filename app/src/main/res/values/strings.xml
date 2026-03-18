@@ -93,4 +93,6 @@
     <string name="cascTitleModify">¡Has modificado correctamente tu email!</string>
     <string name="cascTitleActivate">¡Has activado correctamente tu factura electrónica!</string>
     <string name="cascAccept">Aceptar</string>
+    <string name="caicButtonDesactivate">Desactivar factura</string>
+    <string name="cascTitleDesactivate">¡Se ha desactivado el contrato con éxito!</string>
 </resources>

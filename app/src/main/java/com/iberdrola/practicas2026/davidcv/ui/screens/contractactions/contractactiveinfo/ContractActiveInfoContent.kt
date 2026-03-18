@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Info
@@ -40,7 +41,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 @Composable
 fun ContractActiveInfoContent(
     contract: Contract,
-    onModifyEmail: () -> Unit
+    onModifyEmail: () -> Unit,
+    onDesactivate: () -> Unit
 ) {
     Scaffold(
     ) { padding ->
@@ -113,6 +115,31 @@ fun ContractActiveInfoContent(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            // Botón Desactivar
+            Button(
+                onClick = onDesactivate,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xDA2E5D4B)),
+                shape = RoundedCornerShape(28.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+                    Text(
+                        text = stringResource(R.string.caicButtonDesactivate),
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Botón Modificar
             Button(

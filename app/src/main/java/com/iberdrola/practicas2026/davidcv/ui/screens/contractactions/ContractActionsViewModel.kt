@@ -8,6 +8,7 @@ import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetContractByIdUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractEmailAndStatusUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractEmailUseCase
+import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ class ContractActionsViewModel @Inject constructor(
     private val _updateContractEmailAndStatusUseCase: UpdateContractEmailAndStatusUseCase,
     private val _updateContractEmailUseCase: UpdateContractEmailUseCase,
     private val _getContractByIdUseCase: GetContractByIdUseCase,
+    private val _updateContractStatusUseCase: UpdateContractStatusUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ContractActionsState())
@@ -50,16 +52,38 @@ class ContractActionsViewModel @Inject constructor(
     }
 
     fun censurator(email: String) : String{
-        if ( email.length <= 7)
-            return String.format("*", 5) + email.substring((email.lastIndexOf('@') - 1), email.length)
-        else
-            return StringBuilder(email.substring(0, 1) + String.format("*", 5) + email.substring((email.lastIndexOf('@') - 1), email.length-1)).toString()
+        if(email.isNotEmpty()){
+            if (email.length <= 7)
+                return String.format("*", 5) + email.substring(
+                    (email.lastIndexOf('@') - 1),
+                    email.length
+                )
+            else
+                return StringBuilder(
+                    email.substring(0, 1) + String.format(
+                        "*",
+                        5
+                    ) + email.substring((email.lastIndexOf('@') - 1), email.length - 1)
+                ).toString()
+        }
+        return "a*****z@gmail.com"
     }
 
     fun updateContractEmail(email: String) {
         viewModelScope.launch {
             if ( _updateContractEmailUseCase(_state.value.contract?.id!!, email) is BaseResult.Success) {
                 Log.d("ContractActionsViewModel", "Email actualizado correctamente")
+                _state.update { it.copy(emailChanged = true) }
+            } else {
+                _state.update { it.copy(errorMessage = "Error al actualizar el email") }
+            }
+        }
+    }
+
+    fun updateContractStatus(status: ContractStatus) {
+        viewModelScope.launch {
+            if ( _updateContractStatusUseCase(_state.value.contract?.id!!, status) is BaseResult.Success) {
+                Log.d("ContractActionsViewModel", "Status actualizado correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -84,7 +108,7 @@ class ContractActionsViewModel @Inject constructor(
             _getContractByIdUseCase(id).collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
-                        _state.update { it.copy(isLoading = false, contract = result.data, isActivation = result.data.status == ContractStatus.ACTIVE) }
+                        _state.update { it.copy(isLoading = false, contract = result.data, action = if(result.data.status == ContractStatus.ACTIVE) ContractActions.MODIFYEMAIL else ContractActions.MODIFYSTATUSEMAIL) }
                     }
                     is BaseResult.Error -> {
                         _state.update { it.copy(

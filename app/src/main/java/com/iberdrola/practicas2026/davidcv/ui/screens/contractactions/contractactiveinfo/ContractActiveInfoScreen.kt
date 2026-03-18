@@ -11,8 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
 @Composable
@@ -42,7 +44,14 @@ fun ContractActiveInfoScreen(
             state.contract != null -> {
                 ContractActiveInfoContent(
                     contract = state.contract!!,
-                    onModifyEmail = { navController.navigate(Routes.CONTRACT_EMAIL_CHANGE) }
+                    onModifyEmail = {
+                        navController.navigate(Routes.CONTRACT_EMAIL_CHANGE)
+                        state.action = ContractActions.MODIFYEMAIL
+                    },
+                    onDesactivate = {
+                        navController.navigate(Routes.CONTRACT_VERIFY)
+                        state.action = ContractActions.MODIFYSTATUS
+                    }
                 )
             }
         }

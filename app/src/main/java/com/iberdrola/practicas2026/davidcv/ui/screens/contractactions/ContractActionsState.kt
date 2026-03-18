@@ -19,7 +19,7 @@ data class ContractActionsState(
     val isLoading: Boolean = false,
     val emailChanged: Boolean = false,
 
-    var isActivation: Boolean = false
+    var action: ContractActions = ContractActions.MODIFYEMAIL
 ) : Parcelable {
     val canSubmitVerify: Boolean
         get() = verifyCodeTry == verifyCode

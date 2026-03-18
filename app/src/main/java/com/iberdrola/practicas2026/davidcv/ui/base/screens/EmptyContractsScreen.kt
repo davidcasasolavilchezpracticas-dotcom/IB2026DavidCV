@@ -32,7 +32,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 @Composable
 fun EmptyContractsScreen(
     modifier: Modifier = Modifier,
-    onRefresh: (() -> Unit)? = null
+    onRefresh: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -58,20 +58,19 @@ fun EmptyContractsScreen(
             color = Color.LightGray.copy(alpha = 0.7f)
         )
 
-        onRefresh?.let {
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = it,
-                modifier = Modifier.fillMaxWidth(0.6f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006633)),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.recargar),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
-            }
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(
+            onClick = { onRefresh() },
+            modifier = Modifier.fillMaxWidth(0.6f),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006633)),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.recargar),
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
         }
+
     }
 }

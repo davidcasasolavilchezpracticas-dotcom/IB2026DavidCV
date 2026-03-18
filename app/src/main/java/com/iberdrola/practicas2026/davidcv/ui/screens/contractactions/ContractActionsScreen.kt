@@ -23,12 +23,13 @@ fun ContractActionsScreen(
     }
 
     if (state.contract != null && state.contract!!.status == ContractStatus.ACTIVE) {
+        state.action = ContractActions.MODIFYEMAIL
         ContractActiveInfoScreen(
             navController = navController,
             viewModel = viewModel
         )
     } else {
-        state.isActivation = true
+        state.action = ContractActions.MODIFYSTATUSEMAIL
         ContractActivateScreen(
             navController = navController,
             viewModel = viewModel

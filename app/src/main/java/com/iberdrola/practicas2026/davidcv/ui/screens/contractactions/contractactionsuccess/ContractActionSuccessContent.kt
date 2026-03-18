@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 
 @Composable
 fun ContractActionSuccessContent(
@@ -67,7 +68,13 @@ fun ContractActionSuccessContent(
 
             // Título de éxito
             Text(
-                text = stringResource(if(state.isActivation) R.string.cascTitleModify else R.string.cascTitleActivate),
+                text = stringResource(
+                    when(state.action) {
+                        ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
+                        ContractActions.MODIFYSTATUS -> R.string.cascTitleDesactivate
+                        ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
+                    }
+                ),
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,

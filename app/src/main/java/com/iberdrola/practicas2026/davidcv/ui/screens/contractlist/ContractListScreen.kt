@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyContractsScreen
@@ -50,6 +51,7 @@ fun ContractListScreen(
                     modifier = Modifier,
                     img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                     onClick = {
+                        DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
                         navController.popBackStack()
                     }
                 )
@@ -73,7 +75,6 @@ fun ContractListScreen(
                     )
                 }
             }
-
             else -> {}
         }
 

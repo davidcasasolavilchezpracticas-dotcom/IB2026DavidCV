@@ -45,4 +45,13 @@ class ContractRepositoryRoom @Inject constructor(
             BaseResult.Error(e)
         }
     }
+
+    override suspend fun updateContractStatus(id: Int, status: ContractStatus): BaseResult<Unit> {
+        return try {
+            _dao.updateStatus(id, status.name)
+            BaseResult.Success(Unit)
+        } catch (e: Exception) {
+            BaseResult.Error(e)
+        }
+    }
 }
