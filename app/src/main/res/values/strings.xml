@@ -95,4 +95,6 @@
     <string name="cascAccept">Aceptar</string>
     <string name="caicButtonDesactivate">Desactivar factura</string>
     <string name="cascTitleDesactivate">¡Se ha desactivado el contrato con éxito!</string>
+    <string name="cvcTitleModifyEmail">Verificar la modificación del email</string>
+    <string name="cvcTitleDesactivate">Desactivar el contrato</string>
 </resources>

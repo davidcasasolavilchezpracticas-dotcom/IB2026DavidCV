@@ -43,6 +43,7 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.ResendCodeInfoBox
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.SuccessBanner
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +69,11 @@ fun ContractVerifyContent(
                     )
                 }
                 Text(
-                    stringResource(R.string.cvcTitleActivate),
+                    text = stringResource(when (state.action) {
+                        ContractActions.MODIFYEMAIL -> R.string.cvcTitleModifyEmail
+                        ContractActions.MODIFYSTATUS -> R.string.cvcTitleDesactivate
+                        ContractActions.MODIFYSTATUSEMAIL -> R.string.cvcTitleActivate
+                    }) ,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
