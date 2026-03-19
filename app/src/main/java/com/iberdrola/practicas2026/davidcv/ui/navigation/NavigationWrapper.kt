@@ -34,6 +34,8 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractem
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.EditProfileScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScreen
 
 /**
  * NavigationWrapper
@@ -82,6 +84,19 @@ fun NavigationWrapper(
             ) + fadeOut()
         }
     ){
+
+        composable(
+            Routes.ACCOUNT_INFO
+        ) {
+            UserAccountScreen(navController = navController)
+        }
+
+
+        composable(
+            Routes.ACCOUNT_EDIT
+        ){
+            EditProfileScreen ( navController = navController )
+        }
 
         composable(
             Routes.LIST_LIGHT

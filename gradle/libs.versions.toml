@@ -47,7 +47,8 @@ datastoreCore = "1.2.0"
 foundation = "1.10.4"
 cameraCamera2Pipe = "1.7.0-alpha01"
 
-# Retrofit
+#Coil
+coilCompose = "2.5.0"
 
 
 
@@ -114,6 +115,8 @@ androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
 
+#Librerías para Coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
 
 [plugins]

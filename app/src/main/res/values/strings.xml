@@ -97,4 +97,9 @@
     <string name="cascTitleDesactivate">¡Se ha desactivado el contrato con éxito!</string>
     <string name="cvcTitleModifyEmail">Verificar la modificación del email</string>
     <string name="cvcTitleDesactivate">Desactivar el contrato</string>
+    <string name="isTitleLogged">"Hola, "</string>
+    <string name="epsTitle">Editar Perfil</string>
+    <string name="epsName">Nombre</string>
+    <string name="epsEmail">Email</string>
+    <string name="epsSaveChanges">Guardar cambios</string>
 </resources>

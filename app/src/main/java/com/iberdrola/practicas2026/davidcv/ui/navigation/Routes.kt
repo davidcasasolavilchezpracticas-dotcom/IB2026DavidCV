@@ -11,4 +11,6 @@ object Routes {
     const val CONTRACT_EMAIL_CHANGE: String = "contract_email_change"
     const val CONTRACT_VERIFY: String = "contract_verify"
     const val CONTRACT_SUCCESS: String = "contract_success"
+    const val ACCOUNT_INFO: String = "account_info"
+    const val ACCOUNT_EDIT: String = "account_edit"
 }

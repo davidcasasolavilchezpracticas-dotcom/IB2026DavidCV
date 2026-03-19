@@ -116,4 +116,7 @@ dependencies {
     //? Librerías para Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    //? Librerías para Coil
+    implementation(libs.coil.compose)
 }

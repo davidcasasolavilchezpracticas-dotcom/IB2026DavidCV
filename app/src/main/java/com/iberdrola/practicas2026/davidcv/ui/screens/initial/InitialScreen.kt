@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.LocalGasStation
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,19 +19,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ServiceItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSwitchItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SummaryCard
+import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
 /**
@@ -45,36 +52,52 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 @Composable
 fun InitialScreen(
     navController: NavHostController,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    dataStoreViewModel: DataStoreViewModel = hiltViewModel()
 ) {
+    val account by dataStoreViewModel.account.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.isTitle),
+                        text =  if (account == null)
+                                    stringResource(R.string.isTitle)
+                                else
+                                    stringResource(R.string.isTitleLogged) + " ${account?.name}",
                         style = MaterialTheme.typography.headlineSmall
-                        )
-                    },
+                    )
+                },
                 actions = {
-                    IconButton(onClick = { /*TODO Perfil */ }) {
-                        Icon(
-                            Icons.Default.AccountCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                        )
+                    IconButton(onClick = {
+                        navController.navigate(Routes.ACCOUNT_INFO)
+                    }) {
+                        if (account?.profileImage == null) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                modifier = Modifier.size(60.dp),
+                                tint = Color(0xFF006633)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = account?.profileImage,
+                                contentDescription = "Imagen de perfil",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 },
             )
         },
     ) { padding ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(LocalSpacing.current.lg),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(LocalSpacing.current.lg),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SummaryCard(
