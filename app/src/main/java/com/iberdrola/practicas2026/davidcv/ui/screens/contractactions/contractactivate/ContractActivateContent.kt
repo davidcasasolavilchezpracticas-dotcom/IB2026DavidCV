@@ -36,14 +36,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.LegalTextItem
+import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractActivateContent(
     state: ContractActionsState,
+    account: Account?,
+    onCensurator: (String) -> String,
     onEmailChanged: (String) -> Unit,
     onAcceptedChanged: (Boolean) -> Unit,
     onBack: () -> Unit,
@@ -85,7 +89,7 @@ fun ContractActivateContent(
                 text = stringResource(R.string.cacTitleAccountEmail),
                 style = MaterialTheme.typography.bodySmall
             )
-            Text(text = stringResource(R.string.cacTextAccountEmail), fontWeight = FontWeight.Bold)
+            Text(text = onCensurator(account?.email ?: "correoejemplo@gmail.com"), fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
 

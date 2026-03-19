@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,25 +13,19 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
-import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.navigation.NavigationWrapper
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
-import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,34 +37,39 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
             IB2026DavidCVTheme {
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.safeDrawing)
-                    ,
+                        .windowInsetsPadding(WindowInsets.safeDrawing),
                     topBar = {
-                        Row(
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Routes.BACK)
-                                },
-                                modifier = Modifier.padding(end = LocalSpacing.current.sm),
-                                content = {
-                                    Icon(
-                                        imageVector = Icons.Default.ChevronLeft,
-                                        contentDescription = null,
-                                        tint = EnergyGreen
-                                    )
-                                }
-                            )
-                            Text(
-                                text = stringResource(R.string.matbTitle),
-                                color = EnergyGreen
-                            )
+                        // Solo mostramos la TopBar si NO estamos en la pantalla inicial
+                        if (currentRoute != Routes.INITIAL) {
+                            Row(
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate(Routes.BACK)
+                                    },
+                                    modifier = Modifier.padding(end = LocalSpacing.current.sm),
+                                    content = {
+                                        Icon(
+                                            imageVector = Icons.Default.ChevronLeft,
+                                            contentDescription = null,
+                                            tint = EnergyGreen
+                                        )
+                                    }
+                                )
+                                Text(
+                                    text = stringResource(R.string.matbTitle),
+                                    color = EnergyGreen
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->

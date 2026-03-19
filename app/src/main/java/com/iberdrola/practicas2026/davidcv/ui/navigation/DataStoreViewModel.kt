@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.data.local.datastore.DataStoreManager
 import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
+import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,8 +28,50 @@ class DataStoreViewModel @Inject constructor(
         id = 0,
         name = "Julian",
         email = "julian@gmail.com",
-        profileImage = R.drawable.profile_picture.toString() // Guardamos como String
+        profileImage = R.drawable.profile_picture.toString()
     )
+
+    val bsCounter: StateFlow<Int> = dataStoreManager.bsCounter
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
+    val uiState: StateFlow<UserAccountState> = dataStoreManager.account
+        .map { account -> 
+            UserAccountState(account = account ?: defaultAccount)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = UserAccountState(isLoading = true)
+        )
+
+    // Mantener 'account' para compatibilidad o simplificar si se prefiere
+    val account: StateFlow<Account?> = dataStoreManager.account
+        .map { savedAccount -> savedAccount ?: defaultAccount }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    fun updateBsCounter(counter: Int) {
+        viewModelScope.launch {
+            dataStoreManager.saveBsCounter(counter)
+        }
+    }
+
+    fun saveAccount(account: Account) {
+        viewModelScope.launch {
+            val persistentImage = when (val image = account.profileImage) {
+                is Uri -> image.toString()
+                else -> image?.toString()
+            }
+            dataStoreManager.saveAccount(account.copy(profileImage = persistentImage))
+        }
+    }
 
     fun saveImageToInternalStorage(context: Context, uri: Uri): Uri? {
         return try {
@@ -46,50 +89,6 @@ class DataStoreViewModel @Inject constructor(
         } catch (e: Exception) {
             null
         }
-    }
-
-    val bsCounter: StateFlow<Int> = dataStoreManager.bsCounter
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = 0
-        )
-
-    fun updateBsCounter(counter: Int) {
-        viewModelScope.launch {
-            dataStoreManager.saveBsCounter(counter)
-        }
-    }
-
-    val account: StateFlow<Account?> = dataStoreManager.account
-        .map { savedAccount -> savedAccount ?: defaultAccount }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
-
-    /**
-     * Guarda la cuenta asegurándose de que los tipos complejos se serialicen correctamente.
-     */
-    fun saveAccount(account: Account) {
-        viewModelScope.launch {
-            val persistentImage = when (val image = account.profileImage) {
-                is Uri -> image.toString()
-                else -> image?.toString()
-            }
-            dataStoreManager.saveAccount(account.copy(profileImage = persistentImage))
-        }
-    }
-
-    fun updateAccountInfo(name: String? = null, email: String? = null, profileImage: Any? = null) {
-        val current = account.value ?: defaultAccount
-        val updatedAccount = current.copy(
-            name = name ?: current.name,
-            email = email ?: current.email,
-            profileImage = profileImage ?: current.profileImage
-        )
-        saveAccount(updatedAccount)
     }
 
     fun logout() {

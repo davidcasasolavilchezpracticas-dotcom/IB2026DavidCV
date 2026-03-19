@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.useraccount
 
 import android.net.Uri
+import android.util.Patterns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -68,6 +69,8 @@ fun EditProfileScreen(
     var name by remember { mutableStateOf(account?.name ?: "") }
     var email by remember { mutableStateOf(account?.email ?: "") }
     var profileImage by remember { mutableStateOf(account?.profileImage) }
+    var isEmailValid by remember { mutableStateOf(email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(account?.email).matches()) }
+
 
     // Sincronizar estados locales cuando el account se cargue por primera vez o cambie externamente
     LaunchedEffect(account) {
@@ -75,6 +78,7 @@ fun EditProfileScreen(
             if (name.isEmpty()) name = it.name
             if (email.isEmpty()) email = it.email
             if (profileImage == null) profileImage = it.profileImage
+            isEmailValid = it.email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(it.email).matches()
         }
     }
 
@@ -139,7 +143,9 @@ fun EditProfileScreen(
             // Campos de entrada
             OutlinedTextField(
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = {
+                    name = it
+                },
                 label = { Text(stringResource(R.string.epsName)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -149,11 +155,24 @@ fun EditProfileScreen(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    isEmailValid = it.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                },
                 label = { Text(stringResource(R.string.epsEmail)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                isError = email.isNotEmpty() && !isEmailValid
             )
+
+            if (email.isNotEmpty() && !isEmailValid) {
+                Text(
+                    text = "Introduce un email válido",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -165,6 +184,7 @@ fun EditProfileScreen(
                         navController.popBackStack()
                     }
                 },
+                enabled = isEmailValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

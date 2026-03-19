@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.useraccount
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +52,8 @@ fun UserAccountScreen(
     viewModel: DataStoreViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
-    val account by viewModel.account.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val account = uiState.account
 
     // Estado para controlar la animación de refresco
     var isRefreshing by remember { mutableStateOf(false) }
@@ -70,99 +70,97 @@ fun UserAccountScreen(
     )
 
     Scaffold { padding ->
-        // PullToRefreshBox envuelve el contenido desplazable
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = {
-                scope.launch {
-                    isRefreshing = true
-                    // Simulamos una carga de datos de red (2 segundos)
-                    delay(2000)
-                    // Aquí podrías llamar a una función para refrescar la foto:
-                    // viewModel.updateAccountInfo(...) 
-                    isRefreshing = false
-                }
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            LazyColumn(
+        if (uiState.isLoading && account == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFF006633))
+            }
+        } else {
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    scope.launch {
+                        isRefreshing = true
+                        delay(2000)
+                        isRefreshing = false
+                    }
+                },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(padding)
             ) {
-                // HEADER: Información del usuario
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Círculo de imagen de perfil
-                        Box(
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    item {
+                        Column(
                             modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // Verificamos si hay imagen. Si es un ImageVector o URL, AsyncImage lo maneja.
-                            if (account?.profileImage != null) {
-                                AsyncImage(
-                                    model = account?.profileImage,
-                                    contentDescription = "Imagen de perfil",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(60.dp),
-                                    tint = Color(0xFF006633)
-                                )
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (account?.profileImage != null) {
+                                    AsyncImage(
+                                        model = account.profileImage,
+                                        contentDescription = "Imagen de perfil",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Person,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(60.dp),
+                                        tint = Color(0xFF006633)
+                                    )
+                                }
                             }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                text = account?.name ?: "Usuario",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = account?.email ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
                         }
+                    }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
+                    item {
                         Text(
-                            text = account?.name ?: "Usuario",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = account?.email ?: "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
+                            text = "Gestión de cuenta",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
                     }
-                }
 
-                item {
-                    Text(
-                        text = "Gestión de cuenta",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
+                    items(options) { option ->
+                        AccountOptionRow(option)
+                    }
 
-                // Opciones del menú
-                items(options) { option ->
-                    AccountOptionRow(option)
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Text(
-                        text = "ID de usuario: ${account?.id ?: 0} | Versión 2.4.1",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.LightGray,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                    item {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Text(
+                            text = "ID de usuario: ${account?.id ?: 0} | Versión 2.4.1",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.LightGray,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }
