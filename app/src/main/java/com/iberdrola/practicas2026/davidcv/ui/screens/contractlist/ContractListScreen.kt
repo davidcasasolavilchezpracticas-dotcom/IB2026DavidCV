@@ -27,6 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.ConfigUpdate
 import com.google.firebase.remoteconfig.ConfigUpdateListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -44,13 +46,20 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 fun ContractListScreen(
     viewModel: ContractListViewModel = hiltViewModel(),
     navController: NavHostController,
-    remoteConfig: FirebaseRemoteConfig
+    remoteConfig: FirebaseRemoteConfig,
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "ContractListScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val state = viewModel.contractsState.collectAsState()
-    
+
     // Usamos mutableStateOf para que Compose sepa que debe redibujar cuando cambie el valor
-    var gasContractActive by remember { 
-        mutableStateOf(remoteConfig.getBoolean("ContractGasAviable")) 
+    var gasContractActive by remember {
+        mutableStateOf(remoteConfig.getBoolean("ContractGasAviable"))
     }
 
     var lightContractActive by remember {
@@ -114,6 +123,9 @@ fun ContractListScreen(
                         modifier = Modifier,
                         onRefresh = {
                             navController.navigateUp()
+                            analytics.logEvent ( "RefreshContracts" ) {
+                                param("eventType", "RelevantMovements")
+                            }
                         }
                     )
                 } else {
@@ -122,6 +134,9 @@ fun ContractListScreen(
                         modifier = Modifier.padding(padding),
                         onClick = { id ->
                             navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
+                            analytics.logEvent ( "ButtonContractsInfo" ) {
+                                param("eventType", "Click")
+                            }
                         },
                         gasContractActive = gasContractActive,
                         lightContractActive = lightContractActive

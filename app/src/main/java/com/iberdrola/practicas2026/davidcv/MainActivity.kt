@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -48,6 +49,7 @@ class MainActivity : ComponentActivity() {
             val currentRoute = navBackStackEntry?.destination?.route
 
             val remoteConfig = Firebase.remoteConfig
+            val analytics = Firebase.analytics
             
             LaunchedEffect(Unit) {
                 val configSettings = remoteConfigSettings {
@@ -108,7 +110,8 @@ class MainActivity : ComponentActivity() {
                     NavigationWrapper(
                         modifier = Modifier.padding(innerPadding),
                         navController = navController,
-                        remoteConfig = remoteConfig
+                        remoteConfig = remoteConfig,
+                        analytics = analytics
                     )
                 }
             }

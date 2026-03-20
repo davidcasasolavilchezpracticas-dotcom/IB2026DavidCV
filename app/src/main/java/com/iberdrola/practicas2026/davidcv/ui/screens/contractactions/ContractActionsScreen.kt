@@ -6,6 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate.ContractActivateScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactiveinfo.ContractActiveInfoScreen
@@ -14,8 +16,15 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractac
 fun ContractActionsScreen(
     contractId: Int,
     navController: NavController,
-    viewModel: ContractActionsViewModel = hiltViewModel()
+    viewModel: ContractActionsViewModel = hiltViewModel(),
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "ContractActionsScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -26,13 +35,15 @@ fun ContractActionsScreen(
         state.action = ContractActions.MODIFYEMAIL
         ContractActiveInfoScreen(
             navController = navController,
-            viewModel = viewModel
+            viewModel = viewModel,
+            analytics = analytics
         )
     } else {
         state.action = ContractActions.MODIFYSTATUSEMAIL
         ContractActivateScreen(
             navController = navController,
-            viewModel = viewModel
+            viewModel = viewModel,
+            analytics =  analytics
         )
     }
 }

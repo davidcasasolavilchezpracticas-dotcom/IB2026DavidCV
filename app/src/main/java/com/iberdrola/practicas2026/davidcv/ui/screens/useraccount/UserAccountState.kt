@@ -13,5 +13,9 @@ import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
 data class UserAccountState(
     val isLoading: Boolean = false,
     val account: Account? = null,
+    val name: String = "",
+    val email: String = "",
+    val profileImage: Any? = null,
+    var isEmailValid: Boolean = true,
     val error: String? = null
 )

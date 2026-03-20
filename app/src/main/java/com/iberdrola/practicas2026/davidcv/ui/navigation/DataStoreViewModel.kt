@@ -2,6 +2,7 @@ package com.iberdrola.practicas2026.davidcv.ui.navigation
 
 import android.content.Context
 import android.net.Uri
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.R
@@ -9,9 +10,10 @@ import com.iberdrola.practicas2026.davidcv.data.local.datastore.DataStoreManager
 import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
 import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -24,12 +26,17 @@ class DataStoreViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
-    val defaultAccount = Account(
+    private val defaultAccount = Account(
         id = 0,
         name = "Julian",
         email = "julian@gmail.com",
         profileImage = R.drawable.profile_picture.toString()
     )
+
+    // Estados temporales para la edición
+    private val _editingName = MutableStateFlow<String?>(null)
+    private val _editingEmail = MutableStateFlow<String?>(null)
+    private val _editingProfileImage = MutableStateFlow<Any?>(null)
 
     val bsCounter: StateFlow<Int> = dataStoreManager.bsCounter
         .stateIn(
@@ -38,24 +45,59 @@ class DataStoreViewModel @Inject constructor(
             initialValue = 0
         )
 
-    val uiState: StateFlow<UserAccountState> = dataStoreManager.account
-        .map { account ->
-            UserAccountState(account = account ?: defaultAccount)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UserAccountState(isLoading = true)
-        )
+    /**
+     * Estado consolidado para la UI de cuenta de usuario.
+     * Combina la cuenta guardada con los cambios temporales realizados en la pantalla de edición.
+     */
+    val uiState: StateFlow<UserAccountState> = combine(
+        dataStoreManager.account,
+        _editingName,
+        _editingEmail,
+        _editingProfileImage
+    ) { account, editName, editEmail, editImage ->
+        val currentAccount = account ?: defaultAccount
+        
+        val name = editName ?: currentAccount.name
+        val email = editEmail ?: currentAccount.email
+        val profileImage = editImage ?: currentAccount.profileImage
 
-    // Mantener 'account' para compatibilidad o simplificar si se prefiere
+        UserAccountState(
+            account = currentAccount,
+            name = name,
+            email = email,
+            profileImage = profileImage,
+            isEmailValid = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        )
+    }
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = UserAccountState(isLoading = true)
+    )
+
+    // Solo para compatibilidad si se usa en otros sitios
     val account: StateFlow<Account?> = dataStoreManager.account
-        .map { savedAccount -> savedAccount ?: defaultAccount }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
         )
+
+    fun onNameChange(newName: String) {
+        _editingName.value = newName
+    }
+
+    fun onEmailChange(newEmail: String) {
+        _editingEmail.value = newEmail
+    }
+
+    fun onImageChange(newImage: Any?) {
+        _editingProfileImage.value = newImage
+    }
+
+    fun onIsEmailValidChange(valid: Boolean) {
+        uiState.value.isEmailValid = valid
+    }
 
     fun updateBsCounter(counter: Int) {
         viewModelScope.launch {
@@ -63,6 +105,9 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Guarda la cuenta actualizada y limpia los estados temporales de edición.
+     */
     fun saveAccount(account: Account) {
         viewModelScope.launch {
             val persistentImage = when (val image = account.profileImage) {
@@ -70,6 +115,11 @@ class DataStoreViewModel @Inject constructor(
                 else -> image?.toString()
             }
             dataStoreManager.saveAccount(account.copy(profileImage = persistentImage))
+            
+            // Limpiar estados de edición tras guardar con éxito
+            _editingName.value = null
+            _editingEmail.value = null
+            _editingProfileImage.value = null
         }
     }
 

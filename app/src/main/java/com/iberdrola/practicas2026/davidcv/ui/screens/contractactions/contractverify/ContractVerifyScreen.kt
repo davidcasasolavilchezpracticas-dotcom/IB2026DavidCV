@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
@@ -18,8 +21,15 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 @Composable
 fun ContractVerifyScreen(
     navController: NavController,
-    viewModel: ContractActionsViewModel
+    viewModel: ContractActionsViewModel,
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "ContractVerifyScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -27,8 +37,18 @@ fun ContractVerifyScreen(
             state = state,
             onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
             generateNewCode = viewModel::generateNewCode,
-            onClose = { navController.navigate(Routes.INITIAL) },
-            onBack = { navController.popBackStack() },
+            onClose = {
+                navController.navigate(Routes.INITIAL)
+                analytics.logEvent ( "ButtonClose" ) {
+                    param("eventType", "Click")
+                }
+            },
+            onBack = {
+                navController.popBackStack()
+                analytics.logEvent ( "ButtonBack" ) {
+                    param("eventType", "Click")
+                }
+            },
             onNext = {
                 when (state.action) {
                     MODIFYEMAIL -> {
@@ -43,6 +63,9 @@ fun ContractVerifyScreen(
                 }
 
                 navController.navigate(Routes.CONTRACT_SUCCESS)
+                analytics.logEvent ( "ButtonNext" ) {
+                    param("eventType", "Click")
+                }
             }
         )
 

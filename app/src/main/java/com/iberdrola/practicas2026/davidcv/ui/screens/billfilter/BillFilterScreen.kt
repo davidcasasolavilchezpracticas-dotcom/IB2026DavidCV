@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -52,8 +55,15 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 @Composable
 fun FilterScreen(
     navController: NavController,
-    viewModel: BillViewModel = hiltViewModel()
+    viewModel: BillViewModel = hiltViewModel(),
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "FilterScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
@@ -77,14 +87,24 @@ fun FilterScreen(
                     label = stringResource(R.string.fsSubtituloFecha1),
                     date = state.startDate,
                     modifier = Modifier.weight(1f),
-                    onConfirm = { date -> viewModel.onStartDateSelected(date, context) },
+                    onConfirm = {
+                        date -> viewModel.onStartDateSelected(date, context)
+                        analytics.logEvent ( "SetStartDate" ) {
+                            param("eventType", "RelevantMovements")
+                        }
+                    },
                     onValidDate = viewModel::onValidStartDate
                 )
                 DateSelector(
                 label = stringResource(R.string.fsSubtituloFecha2),
                     date = state.endDate,
                     modifier = Modifier.weight(1f),
-                    onConfirm = { date -> viewModel.onEndDateSelected(date, context) },
+                    onConfirm = {
+                        date -> viewModel.onEndDateSelected(date, context)
+                        analytics.logEvent ( "SetEndDate" ) {
+                            param("eventType", "RelevantMovements")
+                        }
+                    },
                     onValidDate = viewModel::onValidEndDate
                 )
             }
@@ -93,7 +113,12 @@ fun FilterScreen(
         PriceRangeSelector(
             selectedRange = state.priceRange ?: 0f..1000f,
             totalRange = 0f..1000f,
-            onSliderChange = { range -> viewModel.onPriceRangeChanged(range) }
+            onSliderChange = {
+                range -> viewModel.onPriceRangeChanged(range)
+                analytics.logEvent ( "SetPriceRange" ) {
+                    param("eventType", "RelevantMovements")
+                }
+            }
         )
 
         Column {
@@ -131,6 +156,9 @@ fun FilterScreen(
                 onClick = {
                     navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
                     navController.popBackStack()
+                    analytics.logEvent ( "ButtonApplyFilters" ) {
+                        param("eventType", "Click")
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -146,7 +174,12 @@ fun FilterScreen(
             }
 
             TextButton(
-                onClick = { viewModel.deleteFilters() }
+                onClick = {
+                    viewModel.deleteFilters()
+                    analytics.logEvent ( "ButtonDeleteFilters" ) {
+                        param("eventType", "Click")
+                    }
+                }
             ) {
                 Text(
                     text = stringResource(R.string.fsButtonDelete),
@@ -162,5 +195,5 @@ fun FilterScreen(
 @Preview
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navController = rememberNavController())
+    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current))
 }

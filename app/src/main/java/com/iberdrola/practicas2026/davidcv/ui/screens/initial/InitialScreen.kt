@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -53,9 +56,16 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 fun InitialScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    dataStoreViewModel: DataStoreViewModel = hiltViewModel()
+    dataStoreViewModel: DataStoreViewModel = hiltViewModel(),
+    analytics: FirebaseAnalytics
 ) {
     val account by dataStoreViewModel.account.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "InitialScreen" ) {
+            param("eventType", "View")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -70,9 +80,14 @@ fun InitialScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = {
-                        navController.navigate(Routes.ACCOUNT_INFO)
-                    }) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Routes.ACCOUNT_INFO)
+                            analytics.logEvent ( "ButtonAccountInfo" ) {
+                                param("eventType", "Click")
+                            }
+                        }
+                    ) {
                         if (account?.profileImage == null) {
                             Icon(
                                 imageVector = Icons.Default.Person,
@@ -101,7 +116,12 @@ fun InitialScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SummaryCard(
-                onClick = { navController.navigate(Routes.LIST_LIGHT) }
+                onClick = {
+                    navController.navigate(Routes.LIST_LIGHT)
+                    analytics.logEvent ( "ButtonBills" ) {
+                        param("eventType", "Click")
+                    }
+                }
             )
 
             Text(
@@ -121,13 +141,23 @@ fun InitialScreen(
                     icon = Icons.Default.Lightbulb,
                     label = stringResource(R.string.isServiceLight),
                     modifier = Modifier.weight(1f),
-                    onClick = { navController.navigate(Routes.LIST_LIGHT) },
+                    onClick = {
+                        navController.navigate(Routes.LIST_LIGHT)
+                        analytics.logEvent ( "ButtonLightBills" ) {
+                            param("eventType", "Click")
+                        }
+                    },
                 )
                 ServiceItem(
                     icon = Icons.Default.LocalGasStation,
                     label = stringResource(R.string.isServiceGas),
                     modifier = Modifier.weight(1f),
-                    onClick = { navController.navigate(Routes.LIST_GAS) }
+                    onClick = {
+                        navController.navigate(Routes.LIST_GAS)
+                        analytics.logEvent ( "ButtonGasBills" ) {
+                            param("eventType", "Click")
+                        }
+                    }
                 )
             }
 
@@ -142,7 +172,12 @@ fun InitialScreen(
                     icon = Icons.Default.Description,
                     label = stringResource(R.string.isServiceContract),
                     modifier = Modifier.weight(1f),
-                    onClick = { navController.navigate(Routes.CONTRACTS) }
+                    onClick = {
+                        navController.navigate(Routes.CONTRACTS)
+                        analytics.logEvent ( "ButtonContractsList" ) {
+                            param("eventType", "Click")
+                        }
+                    }
                 )
             }
 
@@ -151,6 +186,9 @@ fun InitialScreen(
                 checked = DataSourceConfig.useNetwork,
                 onCheckedChange = {
                     DataSourceConfig.useNetwork = it
+                    analytics.logEvent ( "SwitchDataOrigin" ) {
+                        param("eventType", "RelevantMovements")
+                    }
                 }
             )
         }
@@ -167,6 +205,7 @@ fun InitialScreenPreview() {
     val navController = rememberNavController()
     InitialScreen(
         navController = navController,
-        modifier = Modifier
+        modifier = Modifier,
+        analytics = FirebaseAnalytics.getInstance(navController.context)
     )
 }

@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -8,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,12 +19,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.capitalize
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
@@ -37,6 +45,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListS
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.EditProfileScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScreen
+import java.util.Locale
 
 /**
  * NavigationWrapper
@@ -50,11 +59,34 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScr
 fun NavigationWrapper(
     modifier: Modifier,
     navController: NavHostController,
-    remoteConfig: FirebaseRemoteConfig
-){
+    remoteConfig: FirebaseRemoteConfig,
+    analytics: FirebaseAnalytics
+) {
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
     var viewSelected by rememberSaveable { mutableStateOf(true) }
+
+
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { navegator, destination, arguments ->
+            val route = destination.route ?: "unknown"
+            val originRoute = navegator.previousBackStackEntry?.destination?.route ?: "Start"
+            val eventName = "From${ originRoute.capitalize(Locale.getDefault()) }To${ route.capitalize(Locale.getDefault()) }"
+
+            // Logueamos la vista de pantalla
+            analytics.logEvent(eventName) {
+                param("eventType", "Movement")
+            }
+            Log.d("ComprobacionesAnalytics", "From ${ originRoute.capitalize(Locale.getDefault()) } to  ${ route.capitalize(Locale.getDefault()) }")
+        }
+
+        navController.addOnDestinationChangedListener(listener)
+
+        // Limpieza al destruir el Composable
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
 
 
     NavHost(
@@ -85,54 +117,66 @@ fun NavigationWrapper(
                 animationSpec = tween(1500)
             ) + fadeOut()
         }
-    ){
+    ) {
 
         composable(
             Routes.ACCOUNT_INFO
         ) {
-            UserAccountScreen(navController = navController)
+            UserAccountScreen(
+                navController = navController,
+                analytics = analytics
+            )
         }
 
 
         composable(
             Routes.ACCOUNT_EDIT
-        ){
-            EditProfileScreen ( navController = navController )
+        ) {
+            EditProfileScreen(
+                navController = navController,
+                analytics = analytics
+            )
         }
 
         composable(
             Routes.LIST_LIGHT
-        ){
+        ) {
             BillListScreen(
                 modifier = Modifier,
                 navController = navController,
-                viewSelected = viewSelected
+                viewSelected = viewSelected,
+                analytics = analytics
             )
         }
 
         composable(
             Routes.LIST_GAS
-        ){
+        ) {
             BillListScreen(
                 modifier = Modifier,
                 navController = navController,
-                viewSelected = !viewSelected
+                viewSelected = !viewSelected,
+                analytics = analytics
             )
         }
 
         composable(
             Routes.INITIAL
-        ){
+        ) {
             InitialScreen(
                 navController = navController,
-                modifier = Modifier
+                modifier = Modifier,
+                analytics = analytics
             )
         }
 
         composable(
             Routes.FILTER
         ) {
-            FilterScreen(navController = navController)
+            FilterScreen(
+                navController = navController,
+                analytics = analytics
+            )
         }
 
         composable(
@@ -140,7 +184,8 @@ fun NavigationWrapper(
         ) {
             ContractListScreen(
                 navController = navController,
-                remoteConfig = remoteConfig
+                remoteConfig = remoteConfig,
+                analytics = analytics
             )
         }
 
@@ -156,7 +201,8 @@ fun NavigationWrapper(
                 ContractActionsScreen(
                     contractId = entry.arguments?.getString("contractId")!!.toInt(),
                     navController = navController,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    analytics = analytics
                 )
             }
 
@@ -165,7 +211,11 @@ fun NavigationWrapper(
                     navController.getBackStackEntry("contract_flow/{contractId}")
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
-                ContractEmailChangeScreen(navController, viewModel)
+                ContractEmailChangeScreen(
+                    navController,
+                    viewModel,
+                    analytics = analytics
+                )
             }
 
             composable(Routes.CONTRACT_VERIFY) { entry ->
@@ -173,7 +223,11 @@ fun NavigationWrapper(
                     navController.getBackStackEntry("contract_flow/{contractId}")
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
-                ContractVerifyScreen(navController, viewModel)
+                ContractVerifyScreen(
+                    navController,
+                    viewModel,
+                    analytics = analytics
+                )
             }
 
             composable(Routes.CONTRACT_SUCCESS) { entry ->
@@ -181,7 +235,11 @@ fun NavigationWrapper(
                     navController.getBackStackEntry("contract_flow/{contractId}")
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
-                ContractActionSuccessScreen(navController, viewModel)
+                ContractActionSuccessScreen(
+                    navController,
+                    viewModel,
+                    analytics = analytics
+                )
             }
         }
 
@@ -192,7 +250,7 @@ fun NavigationWrapper(
         ) {
             val context = LocalContext.current
 
-            if(navController.currentDestination != NavDestination(Routes.INITIAL)){
+            if (navController.currentDestination != NavDestination(Routes.INITIAL)) {
                 if (bsCounter > 0) {
                     LaunchedEffect(Unit) {
                         dataStoreViewModel.updateBsCounter(bsCounter - 1)
@@ -200,6 +258,9 @@ fun NavigationWrapper(
                         navController.popBackStack()
                     }
                 } else {
+                    analytics.logEvent ( "OpinionBottomSheet" ) {
+                        param("eventType", "View")
+                    }
                     OpinionBottomSheet(
                         onDismiss = {
                             navController.popBackStack()

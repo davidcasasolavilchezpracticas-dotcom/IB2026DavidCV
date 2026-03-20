@@ -22,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -54,8 +57,15 @@ fun BillListScreen(
     viewModel: BillListViewModel = hiltViewModel(),
     navController: NavController,
     modifier: Modifier,
-    viewSelected: Boolean = true
+    viewSelected: Boolean = true,
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "BillListScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val lightBillsState by viewModel.lightBillsState.collectAsStateWithLifecycle()
     val gasBillsState by viewModel.gasBillsState.collectAsStateWithLifecycle()
 
@@ -74,11 +84,17 @@ fun BillListScreen(
     LaunchedEffect(filterResult) {
         filterResult?.let { filters ->
             viewModel.applyFilters(filters)
+            analytics.logEvent ( "ApplyFilters" ) {
+                param("eventType", "RelevantMovements")
+            }
         }
     }
 
     BackHandler {
         navController.navigate(Routes.BACK)
+        analytics.logEvent ( "ButtonBack" ) {
+            param("eventType", "RelevantMovements")
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -120,6 +136,9 @@ fun BillListScreen(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(0)
                     }
+                    analytics.logEvent ( "SlideToGas" ) {
+                        param("eventType", "RelevantMovements")
+                    }
                 }
             )
 
@@ -131,6 +150,9 @@ fun BillListScreen(
                 onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(1)
+                    }
+                    analytics.logEvent ( "SlideToLight" ) {
+                        param("eventType", "RelevantMovements")
                     }
                 }
             )
@@ -154,13 +176,22 @@ fun BillListScreen(
                 onErrorClick = {
                     DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
                     navController.popBackStack()
+                    analytics.logEvent ( "ButtonError" ) {
+                        param("eventType", "Click")
+                    }
                 },
                 onEmptyClick = {
                     navController.popBackStack()
                     navController.navigateUp()
+                    analytics.logEvent ( "ButtonEmpty" ) {
+                        param("eventType", "Click")
+                    }
                 },
                 onFilterClick = {
                     navController.navigate(Routes.FILTER)
+                    analytics.logEvent ( "ButtonFilter" ) {
+                        param("eventType", "Click")
+                    }
                 }
             )
         }
@@ -174,5 +205,5 @@ fun BillListScreen(
 @Preview
 @Composable
 fun PreviewBLS(){
-    BillListScreen(modifier = Modifier, navController = rememberNavController())
+    BillListScreen(modifier = Modifier, navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current))
 }

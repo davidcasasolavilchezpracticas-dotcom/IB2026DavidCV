@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.account.AccountOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.AccountOptionRow
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
@@ -50,8 +53,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserAccountScreen(
     viewModel: DataStoreViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    analytics: FirebaseAnalytics
 ) {
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "UserAccountScreen" ) {
+            param("eventType", "View")
+        }
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val account = uiState.account
 
@@ -65,6 +75,9 @@ fun UserAccountScreen(
             Icons.Outlined.Email,
             {
                 navController.navigate(Routes.ACCOUNT_EDIT)
+                analytics.logEvent ( "ButtonModifyAccount" ) {
+                    param("eventType", "Click")
+                }
             }
         )
     )
@@ -82,6 +95,9 @@ fun UserAccountScreen(
                         isRefreshing = true
                         delay(2000)
                         isRefreshing = false
+                    }
+                    analytics.logEvent ( "Refresh" ) {
+                        param("eventType", "RelevantMovements")
                     }
                 },
                 modifier = Modifier
