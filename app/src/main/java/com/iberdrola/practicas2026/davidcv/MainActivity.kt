@@ -57,7 +57,8 @@ class MainActivity : ComponentActivity() {
                 remoteConfig.setConfigSettingsAsync(configSettings)
 
                 remoteConfig.setDefaultsAsync(mapOf(
-                    "ContractGasAviable" to true
+                    "ContractGasAviable" to true,
+                    "ContractLightAviable" to true
                 ))
 
                 remoteConfig.fetchAndActivate()

@@ -18,7 +18,8 @@ fun ContractListContent(
     contracts: List<Contract>,
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit,
-    gasContractActive: Boolean
+    gasContractActive: Boolean,
+    lightContractActive: Boolean
 ) {
     Column(
         modifier = modifier
@@ -30,7 +31,10 @@ fun ContractListContent(
                 ContractItem(
                     contract = contract,
                     onClick = { onClick(contract.id) },
-                    active = ( (contract.type == ContractType.GAS && gasContractActive) || contract.type == ContractType.LIGHT )
+                    active = (
+                        (contract.type == ContractType.GAS && gasContractActive) ||
+                        (contract.type == ContractType.LIGHT && lightContractActive)
+                    )
                 )
             }
         }

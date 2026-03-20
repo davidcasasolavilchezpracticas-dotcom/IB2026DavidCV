@@ -53,20 +53,26 @@ fun ContractListScreen(
         mutableStateOf(remoteConfig.getBoolean("ContractGasAviable")) 
     }
 
+    var lightContractActive by remember {
+        mutableStateOf(remoteConfig.getBoolean("ContractLightAviable"))
+    }
+
     // Listener para actualizaciones en tiempo real
     LaunchedEffect(Unit) {
         // Forzamos un fetch al entrar para asegurar datos frescos
-        remoteConfig.fetchAndActivate().addOnCompleteListener { 
+        remoteConfig.fetchAndActivate().addOnCompleteListener {
             gasContractActive = remoteConfig.getBoolean("ContractGasAviable")
+            lightContractActive = remoteConfig.getBoolean("ContractLightAviable")
         }
 
         // Suscribirse a cambios en tiempo real (si está configurado en Firebase)
         remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener {
             override fun onUpdate(configUpdate: ConfigUpdate) {
                 Log.d("ComprobacionesRemoteConfig", "Updated keys: " + configUpdate.updatedKeys)
-                if (configUpdate.updatedKeys.contains("ContractGasAviable")) {
+                if (configUpdate.updatedKeys.contains("ContractGasAviable") || configUpdate.updatedKeys.contains("ContractLightAviable")) {
                     remoteConfig.activate().addOnCompleteListener {
                         gasContractActive = remoteConfig.getBoolean("ContractGasAviable")
+                        lightContractActive = remoteConfig.getBoolean("ContractLightAviable")
                     }
                 }
             }
@@ -117,7 +123,8 @@ fun ContractListScreen(
                         onClick = { id ->
                             navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
                         },
-                        gasContractActive = gasContractActive
+                        gasContractActive = gasContractActive,
+                        lightContractActive = lightContractActive
                     )
                 }
             }
