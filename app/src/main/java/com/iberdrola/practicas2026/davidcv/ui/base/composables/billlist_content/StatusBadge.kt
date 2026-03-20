@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content
 
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -8,8 +9,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -51,10 +54,18 @@ fun StatusBadge(status: PaymentStatus) {
  * @param status Indica el estado del contrato.
  */
 @Composable
-fun StatusBadge(status: ContractStatus) {
-    val (bgColor, textColor) = when (status) {
-        ContractStatus.ACTIVE -> Color(0xFFD1F2E1) to Color(0xFF006633)
-        ContractStatus.INACTIVE -> Color(0xFFEEEEEE) to Color(0xFF757575)
+fun StatusBadge(
+    status: ContractStatus,
+    habilited: Boolean = true
+) {
+
+    val (bgColor, textColor) = if (habilited) {
+        when (status) {
+            ContractStatus.ACTIVE -> Color(0xFFD1F2E1) to Color(0xFF006633)
+            ContractStatus.INACTIVE -> Color(0xFFEEEEEE) to Color(0xFF757575)
+        }
+    } else {
+        Color(0xFFF1C7C7) to Color(0xFF8C1414)
     }
 
     Surface(
@@ -62,7 +73,7 @@ fun StatusBadge(status: ContractStatus) {
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
-            text = status.label,
+            text = if ( habilited ) status.label else stringResource(R.string.sbContractDisabled),
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = LocalSpacing.current.sm, vertical = LocalSpacing.current.xs),
             fontWeight = FontWeight.Bold,

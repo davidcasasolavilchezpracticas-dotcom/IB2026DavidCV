@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractType
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.ContractItem
 
@@ -16,7 +17,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.Cont
 fun ContractListContent(
     contracts: List<Contract>,
     modifier: Modifier = Modifier,
-    onClick: (Int) -> Unit
+    onClick: (Int) -> Unit,
+    gasContractActive: Boolean
 ) {
     Column(
         modifier = modifier
@@ -27,7 +29,8 @@ fun ContractListContent(
             items(contracts) { contract ->
                 ContractItem(
                     contract = contract,
-                    onClick = { onClick(contract.id) }
+                    onClick = { onClick(contract.id) },
+                    active = ( (contract.type == ContractType.GAS && gasContractActive) || contract.type == ContractType.LIGHT )
                 )
             }
         }

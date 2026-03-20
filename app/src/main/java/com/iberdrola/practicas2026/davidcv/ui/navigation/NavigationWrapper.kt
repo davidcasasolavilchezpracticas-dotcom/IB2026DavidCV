@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
@@ -49,6 +50,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScr
 fun NavigationWrapper(
     modifier: Modifier,
     navController: NavHostController,
+    remoteConfig: FirebaseRemoteConfig
 ){
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
@@ -136,7 +138,10 @@ fun NavigationWrapper(
         composable(
             Routes.CONTRACTS
         ) {
-            ContractListScreen(navController = navController)
+            ContractListScreen(
+                navController = navController,
+                remoteConfig = remoteConfig
+            )
         }
 
         navigation(

@@ -66,9 +66,9 @@ class ContractRepositoryDelegate @Inject constructor(
             val jsonString = _gson.toJson(currentEntities)
             val internalFile = File(_context.filesDir, MOCK_FILE_NAME)
             internalFile.writeText(jsonString)
-            Log.d("ContractRepository", "JSON Local actualizado con los cambios.")
+            Log.d("ComprobacionesContractRepository", "JSON Local actualizado con los cambios.")
         } catch (e: Exception) {
-            Log.e("ContractRepository", "Error al guardar en JSON: ${e.message}")
+            Log.e("ComprobacionesContractRepository", "Error al guardar en JSON: ${e.message}")
         }
     }
 
@@ -77,7 +77,7 @@ class ContractRepositoryDelegate @Inject constructor(
 
             if (DataSourceConfig.useNetwork || forceRefresh) {
                 if (DataSourceConfig.useNetwork) {
-                    Log.d("ContractRepository", "Sincronizando desde RED...")
+                    Log.d("ComprobacionesContractRepository", "Sincronizando desde RED...")
                     val response = _apiService.getContracts()
                     if (response.isSuccessful) {
                         response.body()?.let { contracts ->
@@ -91,7 +91,7 @@ class ContractRepositoryDelegate @Inject constructor(
                         throw ContractException.ConexionFailed
                     }
                 } else {
-                    Log.d("ContractRepository", "Sincronizando desde MOCK JSON...")
+                    Log.d("ComprobacionesContractRepository", "Sincronizando desde MOCK JSON...")
                     getMockJsonContent()?.let { jsonString ->
                         val type = object : TypeToken<List<ContractEntity>>() {}.type
                         val contracts: List<ContractEntity> = _gson.fromJson(jsonString, type)

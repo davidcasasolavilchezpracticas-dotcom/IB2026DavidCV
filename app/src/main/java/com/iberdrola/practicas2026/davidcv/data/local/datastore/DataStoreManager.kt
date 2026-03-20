@@ -42,7 +42,7 @@ class DataStoreManager @Inject constructor(
             try {
                 gson.fromJson(json, Account::class.java)
             } catch (e: Exception) {
-                Log.d("DataStoreManager", "Error al deserializar el JSON de la cuenta: ${e.message}")
+                Log.d("ComprobacionesDataStoreManager", "Error al deserializar el JSON de la cuenta: ${e.message}")
                 null
             }
         } else null
@@ -61,7 +61,7 @@ class DataStoreManager @Inject constructor(
     suspend fun saveAccount(account: Account) {
         context.dataStore.edit { preferences ->
             preferences[ACCOUNT_KEY] = gson.toJson(account)
-            Log.d("DataStoreManager", "JSON guardado en DataStore: ${preferences[ACCOUNT_KEY]}")
+            Log.d("ComprobacionesDataStoreManager", "JSON guardado en DataStore: ${preferences[ACCOUNT_KEY]}")
         }
     }
 

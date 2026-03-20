@@ -48,7 +48,7 @@ class ContractActionsViewModel @Inject constructor(
 
     fun generateNewCode() {
         _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString()) }
-        Log.d("ContractActionsViewModel", "Codigo = ${_state.value.verifyCode}")
+        Log.d("ComprobacionesContractActionsViewModel", "Codigo = ${_state.value.verifyCode}")
     }
 
     fun censurator(email: String) : String{
@@ -72,7 +72,7 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractEmail(email: String) {
         viewModelScope.launch {
             if ( _updateContractEmailUseCase(_state.value.contract?.id!!, email) is BaseResult.Success) {
-                Log.d("ContractActionsViewModel", "Email actualizado correctamente")
+                Log.d("ComprobacionesContractActionsViewModel", "Email actualizado correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -83,7 +83,7 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractStatus(status: ContractStatus) {
         viewModelScope.launch {
             if ( _updateContractStatusUseCase(_state.value.contract?.id!!, status) is BaseResult.Success) {
-                Log.d("ContractActionsViewModel", "Status actualizado correctamente")
+                Log.d("ComprobacionesContractActionsViewModel", "Status actualizado correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -94,7 +94,7 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractEmailAndStatus(email: String, status: ContractStatus) {
         viewModelScope.launch {
             if ( _updateContractEmailAndStatusUseCase(_state.value.contract?.id!!, email, status) is BaseResult.Success) {
-                Log.d("ContractActionsViewModel", "Email y status actualizados correctamente")
+                Log.d("ComprobacionesContractActionsViewModel", "Email y status actualizados correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }

@@ -46,17 +46,17 @@ class BillRepositoryDelegate @Inject constructor(
     private suspend fun syncBills() {
         try {
             val billsToInsert: List<BillEntity> = if (DataSourceConfig.useNetwork) {
-                Log.d("BillRepository", "Intentando sincronizar desde RED...")
+                Log.d("ComprobacionesBillRepository", "Intentando sincronizar desde RED...")
                 val response = _apiService.getBills()
                 if (response.isSuccessful && response.body() != null) {
-                    Log.d("BillRepository", "Sincronización de RED exitosa: ${response.body()?.size} elementos")
+                    Log.d("ComprobacionesBillRepository", "Sincronización de RED exitosa: ${response.body()?.size} elementos")
                     response.body()!!.map { it.toModel().toEntity() }
                 } else {
-                    Log.e("BillRepository", "Error en RED: ${response.code()} ${response.errorBody()?.string()}")
+                    Log.e("ComprobacionesBillRepository", "Error en RED: ${response.code()} ${response.errorBody()?.string()}")
                     throw BillException.ConexionFailed
                 }
             } else {
-                Log.d("BillRepository", "Sincronizando desde MOCK LOCAL...")
+                Log.d("ComprobacionesBillRepository", "Sincronizando desde MOCK LOCAL...")
                 val jsonString = _context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
                 val type = object : TypeToken<List<BillEntity>>() {}.type
                 _gson.fromJson(jsonString, type)
@@ -65,10 +65,10 @@ class BillRepositoryDelegate @Inject constructor(
             if (billsToInsert.isNotEmpty()) {
                 _dao.deleteAll()
                 _dao.insertAll(billsToInsert)
-                Log.d("BillRepository", "Base de datos actualizada con ${billsToInsert.size} facturas")
+                Log.d("ComprobacionesBillRepository", "Base de datos actualizada con ${billsToInsert.size} facturas")
             }
         } catch (e: Exception) {
-            Log.e("BillRepository", "Excepción durante la sincronización: ${e.message}")
+            Log.e("ComprobacionesBillRepository", "Excepción durante la sincronización: ${e.message}")
             throw BillException.ConexionFailed
         }
     }

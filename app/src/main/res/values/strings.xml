@@ -102,4 +102,6 @@
     <string name="epsName">Nombre</string>
     <string name="epsEmail">Email</string>
     <string name="epsSaveChanges">Guardar cambios</string>
+    <string name="clbContractInactive">Deshabilitado </string>
+    <string name="sbContractDisabled">Deshabilitado</string>
 </resources>

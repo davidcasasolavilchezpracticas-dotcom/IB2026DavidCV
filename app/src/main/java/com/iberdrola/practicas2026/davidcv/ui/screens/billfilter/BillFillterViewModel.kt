@@ -42,9 +42,9 @@ class BillViewModel @Inject constructor(
                 throw BillException.DateInvalid
             }
         } catch (e: Exception) {
-            Log.e("BillViewModel", "Error parsing start date: $date", e)
+            Log.e("ComprobacionesBillViewModel", "Error parsing start date: $date", e)
         }catch (e: BillException.DateInvalid) {
-            Log.e("BillViewModel", "${e.message}")
+            Log.e("ComprobacionesBillViewModel", "${e.message}")
             Toast.makeText(context, R.string.bfvmToastStartDate, Toast.LENGTH_SHORT).show()
         }
     }
@@ -62,9 +62,9 @@ class BillViewModel @Inject constructor(
                 throw BillException.DateInvalid
             }
         } catch (e: Exception) {
-            Log.e("BillViewModel", "Error parsing end date: $date", e)
+            Log.e("ComprobacionesBillViewModel", "Error parsing end date: $date", e)
         }catch (e: BillException.DateInvalid) {
-            Log.e("BillViewModel", "${e.message}")
+            Log.e("ComprobacionesBillViewModel", "${e.message}")
             Toast.makeText(context, R.string.bfvmToastEndDate, Toast.LENGTH_SHORT).show()
         }
     }

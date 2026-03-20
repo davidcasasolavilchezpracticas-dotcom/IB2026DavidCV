@@ -18,6 +18,9 @@ val TextPrimary = Color(0xFF212121)
 val TextSecondary = Color(0xFF757575)
 val BackgroundWhite = Color(0xFFFFFFFF)
 val DividerGray = Color(0xFFEEEEEE)
-
 val White = Color(0xFFFFFFFF)
+val Disabled = Color(0xFFFFC5C5)
+val DisabledIcon = Color(0xFF477760)
+val IconGreen = Color(0xFF2E4D3E)
+
 val Black = Color(0xFF000000)

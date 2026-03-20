@@ -50,7 +50,10 @@ cameraCamera2Pipe = "1.7.0-alpha01"
 #Coil
 coilCompose = "2.5.0"
 
-
+#Firebase
+firebaseBom = "34.10.0"
+firebaseCrashlytics = "3.0.6"
+googleServices = "4.4.4"
 
 
 [libraries]
@@ -118,6 +121,12 @@ androidx-camera-camera2-pipe = { group = "androidx.camera", name = "camera-camer
 #Librerías para Coil
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
+#Librerías para firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -136,3 +145,8 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
 
 #Plugins para trabajar con bases de datos y ROOM
 room = { id = "androidx.room", version.ref = "room" }
+
+#Plugins para firebase
+google-services = {id = "com.google.gms.google-services", version.ref = "googleServices"}
+firebase-crashlytics = {id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics"}
+

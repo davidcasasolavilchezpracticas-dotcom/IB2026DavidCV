@@ -39,7 +39,7 @@ class DataStoreViewModel @Inject constructor(
         )
 
     val uiState: StateFlow<UserAccountState> = dataStoreManager.account
-        .map { account -> 
+        .map { account ->
             UserAccountState(account = account ?: defaultAccount)
         }
         .stateIn(

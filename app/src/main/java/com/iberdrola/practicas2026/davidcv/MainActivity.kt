@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,18 +18,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.navigation.NavigationWrapper
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 import dagger.hilt.android.AndroidEntryPoint
+import com.iberdrola.practicas2026.davidcv.R
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -39,6 +46,30 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
+
+            val remoteConfig = Firebase.remoteConfig
+            
+            LaunchedEffect(Unit) {
+                val configSettings = remoteConfigSettings {
+                    // Durante desarrollo, pon esto a 0 para ver cambios inmediatos
+                    minimumFetchIntervalInSeconds = 0 
+                }
+                remoteConfig.setConfigSettingsAsync(configSettings)
+
+                remoteConfig.setDefaultsAsync(mapOf(
+                    "ContractGasAviable" to true
+                ))
+
+                remoteConfig.fetchAndActivate()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val updated = task.result
+                            Log.d("ComprobacionesRemoteConfig", "Config updated: $updated")
+                        } else {
+                            Log.d("ComprobacionesRemoteConfig", "Fetch failed")
+                        }
+                    }
+            }
 
             IB2026DavidCVTheme {
                 Scaffold(
@@ -75,7 +106,8 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavigationWrapper(
                         modifier = Modifier.padding(innerPadding),
-                        navController = navController
+                        navController = navController,
+                        remoteConfig = remoteConfig
                     )
                 }
             }
