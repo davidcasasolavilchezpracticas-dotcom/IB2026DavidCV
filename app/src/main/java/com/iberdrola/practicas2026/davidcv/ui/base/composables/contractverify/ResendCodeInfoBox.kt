@@ -42,7 +42,7 @@ fun ResendCodeInfoBox(
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
-                        .padding(top = 4.dp)
+                        .padding(top = LocalSpacing.current.xs)
                         .clickable { onResendClick() },
                     color = Color(0xFF003366)
                 )

@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,18 +47,22 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.Re
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.SuccessBanner
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
+import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractVerifyContent(
     state: ContractActionsState,
     onVerifyCodeChanged: (String) -> Unit,
-    generateNewCode: () -> Unit,
+    generateNewCode: (Context) -> Unit,
+    onLoadEnd: () -> Unit,
     onClose: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
     var resendVerificationCode by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -130,12 +136,13 @@ fun ContractVerifyContent(
             ResendCodeInfoBox(
                 onResendClick = {
                     resendVerificationCode = true
-                    generateNewCode()
+                    generateNewCode(context)
                 }
             )
             Spacer(modifier = Modifier.weight(1f))
 
             if (resendVerificationCode) {
+                onLoadEnd()
                 SuccessBanner(
                     onDismiss = { resendVerificationCode = false },
                 )

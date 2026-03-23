@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions.*
@@ -36,7 +37,13 @@ fun ContractVerifyScreen(
         ContractVerifyContent(
             state = state,
             onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
-            generateNewCode = viewModel::generateNewCode,
+            generateNewCode = { context ->
+                viewModel.generateNewCode(context)
+                analytics.logEvent ( "ButtonNewVerifyCodeGenerated" ) {
+                    param("eventType", "Click")
+                }
+            },
+            onLoadEnd = viewModel::onLoadEnd,
             onClose = {
                 navController.navigate(Routes.INITIAL)
                 analytics.logEvent ( "ButtonClose" ) {
@@ -72,13 +79,6 @@ fun ContractVerifyScreen(
             }
         )
 
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+        LoadingScreen(state.isLoading)
     }
 }

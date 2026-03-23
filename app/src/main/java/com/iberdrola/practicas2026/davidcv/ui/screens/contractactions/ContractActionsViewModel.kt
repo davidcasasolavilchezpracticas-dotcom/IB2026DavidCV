@@ -1,6 +1,8 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
@@ -11,6 +13,7 @@ import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractEmailUse
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractPhoneUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +35,11 @@ class ContractActionsViewModel @Inject constructor(
     private val _state = MutableStateFlow(ContractActionsState())
     val state: StateFlow<ContractActionsState> = _state.asStateFlow()
 
-    fun onLoad(loading: Boolean) {
-        _state.update { it.copy(isLoading = loading) }/*todo implementar la carga*/
+    fun onLoadEnd() {
+        viewModelScope.launch {
+            delay(Random.nextLong(1000, 3000))
+            _state.update { it.copy(isLoading = false) }
+        }
     }
 
     fun onEmailChanged(email: String) {
@@ -52,9 +58,10 @@ class ContractActionsViewModel @Inject constructor(
         _state.update { it.copy(verifyCodeTry = code) }
     }
 
-    fun generateNewCode() {
-        _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString()) }
-        Log.d("ComprobacionesContractActionsViewModel", "Codigo = ${_state.value.verifyCode}")
+    fun generateNewCode(context: Context) {
+        _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString(), isLoading = true) }
+        Log.d("ComprobacionesContractActionsViewModel", "Código = ${_state.value.verifyCode}")
+        Toast.makeText(context, "Nuevo código = ${_state.value.verifyCode}", Toast.LENGTH_LONG).show()
     }
 
     fun censurator(email: String) : String{
