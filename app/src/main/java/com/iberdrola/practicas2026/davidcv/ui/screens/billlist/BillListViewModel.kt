@@ -1,6 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
-import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
@@ -44,6 +44,7 @@ class BillListViewModel @Inject constructor(
     // Listas originales para poder filtrar siempre sobre el total
     private var allLightBills: List<Bill> = emptyList()
     private var allGasBills: List<Bill> = emptyList()
+
 
     /**
      * applyFilters

@@ -111,4 +111,5 @@
     <string name="cascTitleModifyPhone">¡Has modificado correctamente tu número telefónico!</string>
     <string name="cvcTitleModifyPhone">Verifica la modificación del número telefónico</string>
     <string name="isTitlePage">Inicio</string>
+    <string name="ebsDeleteFilters">Borrar filtros</string>
 </resources>

@@ -67,7 +67,7 @@ fun EmptyBillsScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.recargar),
+                    text = stringResource(R.string.ebsDeleteFilters),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )

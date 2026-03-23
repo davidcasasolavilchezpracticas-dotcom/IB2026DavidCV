@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +40,7 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import com.iberdrola.practicas2026.davidcv.ui.theme.DividerGray
@@ -181,8 +184,10 @@ fun BillListScreen(
                     }
                 },
                 onEmptyClick = {
-                    navController.popBackStack()
-                    navController.navigateUp()
+                    navController.navigate(if (pagerState.currentPage == 0) Routes.LIST_LIGHT else Routes.LIST_GAS) {
+                        // Al añadir esto, quitamos la pantalla actual de la pila antes de poner la nueva
+                        popUpTo(navController.currentDestination?.route!!) { inclusive = true }
+                    }
                     analytics.logEvent ( "ButtonEmpty" ) {
                         param("eventType", "Click")
                     }
