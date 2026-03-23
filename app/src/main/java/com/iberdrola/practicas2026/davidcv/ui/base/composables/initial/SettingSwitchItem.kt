@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
  * SettingSwitchItem
@@ -35,7 +36,7 @@ fun SettingSwitchItem(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+        color = Color(0xFF006633).copy(alpha = 0.2f),
     ) {
         Row(
             modifier =
@@ -48,7 +49,7 @@ fun SettingSwitchItem(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Medium
                 )
             }
 
@@ -57,8 +58,8 @@ fun SettingSwitchItem(
                 onCheckedChange = onCheckedChange,
                 colors =
                     SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF006633),
+                        checkedThumbColor = Color(0xFF006633),
+                        checkedTrackColor = White.copy(alpha = 0.5f),
                         uncheckedThumbColor = Color.Gray,
                         uncheckedTrackColor = Color.LightGray.copy(alpha = 0.5f),
                     ),
