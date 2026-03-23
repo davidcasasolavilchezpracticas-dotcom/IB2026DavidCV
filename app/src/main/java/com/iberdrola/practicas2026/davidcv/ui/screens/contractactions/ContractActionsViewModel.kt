@@ -8,6 +8,7 @@ import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetContractByIdUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractEmailAndStatusUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractEmailUseCase
+import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractPhoneUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.UpdateContractStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import kotlin.random.Random
 class ContractActionsViewModel @Inject constructor(
     private val _updateContractEmailAndStatusUseCase: UpdateContractEmailAndStatusUseCase,
     private val _updateContractEmailUseCase: UpdateContractEmailUseCase,
+    private val _updateContractPhoneUseCase: UpdateContractPhoneUseCase,
     private val _getContractByIdUseCase: GetContractByIdUseCase,
     private val _updateContractStatusUseCase: UpdateContractStatusUseCase
 ) : ViewModel() {
@@ -36,6 +38,10 @@ class ContractActionsViewModel @Inject constructor(
 
     fun onEmailChanged(email: String) {
         _state.update { it.copy(emailTry = email) }
+    }
+
+    fun onPhoneChanged(phone: String) {
+        _state.update { it.copy(phoneTry = phone) }
     }
 
     fun onAcceptedChanged(accepted: Boolean) {
@@ -76,6 +82,17 @@ class ContractActionsViewModel @Inject constructor(
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
+            }
+        }
+    }
+
+    fun updateContractPhone(phone: String) {
+        viewModelScope.launch {
+            if ( _updateContractPhoneUseCase(_state.value.contract?.id!!, phone) is BaseResult.Success) {
+                Log.d("ComprobacionesContractActionsViewModel", "Número de teléfono actualizado correctamente")
+                _state.update { it.copy(phoneChanged = true) }
+            } else {
+                _state.update { it.copy(errorMessage = "Error al actualizar el número de teléfono") }
             }
         }
     }

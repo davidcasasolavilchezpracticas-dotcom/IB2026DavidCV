@@ -126,6 +126,16 @@ class ContractRepositoryDelegate @Inject constructor(
         }
     }
 
+    override suspend fun updateContractPhone(id: Int, phone: String): BaseResult<Unit> = withContext(Dispatchers.IO) {
+        try {
+            _dao.updatePhone(id, phone)
+            saveCurrentDbToJson() // PERSISTENCIA EN EL JSON
+            BaseResult.Success(Unit)
+        } catch (e: Exception) {
+            BaseResult.Error(e)
+        }
+    }
+
     override suspend fun updateContractEmail(id: Int, email: String, status: ContractStatus): BaseResult<Unit> = withContext(Dispatchers.IO) {
         try {
             _dao.updateEmailAndStatus(id, email, status.name)

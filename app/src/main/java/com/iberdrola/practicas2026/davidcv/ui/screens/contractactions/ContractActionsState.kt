@@ -11,6 +11,7 @@ data class ContractActionsState(
     val verifyCode: String = "123456",
 
     val emailTry: String = "",
+    val phoneTry: String = "",
     val isAcceptedPolicy: Boolean = false,
 
     val contract: Contract? = null,
@@ -18,6 +19,7 @@ data class ContractActionsState(
 
     val isLoading: Boolean = false,
     val emailChanged: Boolean = false,
+    val phoneChanged: Boolean = false,
 
     var action: ContractActions = ContractActions.MODIFYEMAIL
 ) : Parcelable {
@@ -32,5 +34,11 @@ data class ContractActionsState(
 
     val isEmailValid: Boolean
         get() = emailTry.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailTry).matches()
+
+    val canSubmitPhone: Boolean
+        get() = isPhoneValid
+
+    val isPhoneValid: Boolean
+        get() = phoneTry.isNotEmpty() && Patterns.PHONE.matcher(phoneTry).matches()
 
 }

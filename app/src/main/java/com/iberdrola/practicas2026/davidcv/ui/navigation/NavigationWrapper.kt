@@ -40,6 +40,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess.ContractActionSuccessScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractemailchange.ContractEmailChangeScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange.ContractPhoneChangeScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
@@ -212,6 +213,18 @@ fun NavigationWrapper(
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractEmailChangeScreen(
+                    navController,
+                    viewModel,
+                    analytics = analytics
+                )
+            }
+
+            composable(Routes.CONTRACT_PHONE_CHANGE) { entry ->
+                val parentEntry = remember(entry) {
+                    navController.getBackStackEntry("contract_flow/{contractId}")
+                }
+                val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+                ContractPhoneChangeScreen(
                     navController,
                     viewModel,
                     analytics = analytics

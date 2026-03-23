@@ -20,8 +20,12 @@ interface ContractDao {
     @Query("UPDATE contracts SET email = :email WHERE id = :id")
     suspend fun updateEmail(id: Int, email: String)
 
+    @Query("UPDATE contracts SET phone = :phone WHERE id = :id")
+    suspend fun updatePhone(id: Int, phone: String)
+
     @Query("UPDATE contracts SET status = :status WHERE id = :id")
     suspend fun updateStatus(id: Int, status: String)
+
 
     @Query("UPDATE contracts SET email = :email, status = :status WHERE id = :id")
     suspend fun updateEmailAndStatus(id: Int, email: String, status: String)

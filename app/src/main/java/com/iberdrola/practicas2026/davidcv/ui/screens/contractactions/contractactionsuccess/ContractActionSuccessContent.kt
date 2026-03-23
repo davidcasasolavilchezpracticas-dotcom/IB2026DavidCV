@@ -73,6 +73,7 @@ fun ContractActionSuccessContent(
                         ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
                         ContractActions.MODIFYSTATUS -> R.string.cascTitleDesactivate
                         ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
+                        ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
                     }
                 ),
                 style = MaterialTheme.typography.headlineSmall,

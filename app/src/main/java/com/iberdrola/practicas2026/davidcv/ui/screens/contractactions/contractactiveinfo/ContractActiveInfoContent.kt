@@ -42,6 +42,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 fun ContractActiveInfoContent(
     contract: Contract,
     onModifyEmail: () -> Unit,
+    onModifyPhone: () -> Unit,
     onDesactivate: () -> Unit
 ) {
     Scaffold(
@@ -134,6 +135,31 @@ fun ContractActiveInfoContent(
                     Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
                     Text(
                         text = stringResource(R.string.caicButtonDesactivate),
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botón Modificar Phone
+            Button(
+                onClick = onModifyPhone,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
+                shape = RoundedCornerShape(28.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+                    Text(
+                        text = stringResource(R.string.caicButtonModifyPhone),
                         fontSize = 16.sp
                     )
                 }

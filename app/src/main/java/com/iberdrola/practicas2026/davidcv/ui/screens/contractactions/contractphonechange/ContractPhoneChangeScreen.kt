@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify
+package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,20 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions.*
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange.ContractPhoneChangeContent
 
 @Composable
-fun ContractVerifyScreen(
+fun ContractPhoneChangeScreen(
     navController: NavController,
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics
 ) {
     LaunchedEffect(Unit) {
-        analytics.logEvent ( "ContractVerifyScreen" ) {
+        analytics.logEvent ( "ContractPhoneChangeScreen" ) {
             param("eventType", "View")
         }
     }
@@ -33,40 +31,24 @@ fun ContractVerifyScreen(
     val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        ContractVerifyContent(
+        ContractPhoneChangeContent(
             state = state,
-            onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
-            generateNewCode = viewModel::generateNewCode,
+            onPhoneChanged = viewModel::onPhoneChanged,
             onClose = {
                 navController.navigate(Routes.INITIAL)
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
             },
-            onBack = {
-                navController.popBackStack()
-                analytics.logEvent ( "ButtonBack" ) {
+            onNext = {
+                navController.navigate(Routes.CONTRACT_VERIFY)
+                analytics.logEvent ( "ButtonNext" ) {
                     param("eventType", "Click")
                 }
             },
-            onNext = {
-                when (state.action) {
-                    MODIFYEMAIL -> {
-                        viewModel.updateContractEmail(state.emailTry)
-                    }
-                    MODIFYPHONE -> {
-                        viewModel.updateContractPhone(state.phoneTry)
-                    }
-                    MODIFYSTATUS -> {
-                        viewModel.updateContractStatus(ContractStatus.INACTIVE)
-                    }
-                    MODIFYSTATUSEMAIL -> {
-                        viewModel.updateContractEmailAndStatus(state.emailTry, ContractStatus.ACTIVE)
-                    }
-                }
-
-                navController.navigate(Routes.CONTRACT_SUCCESS)
-                analytics.logEvent ( "ButtonNext" ) {
+            onBack = {
+                navController.popBackStack()
+                analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }
             }

@@ -59,10 +59,18 @@ fun ContractActiveInfoScreen(
             state.contract != null -> {
                 ContractActiveInfoContent(
                     contract = state.contract!!,
+
                     onModifyEmail = {
                         navController.navigate(Routes.CONTRACT_EMAIL_CHANGE)
                         state.action = ContractActions.MODIFYEMAIL
                         analytics.logEvent ( "ButtonModifyEmail" ) {
+                            param("eventType", "Click")
+                        }
+                    },
+                    onModifyPhone = {
+                        navController.navigate(Routes.CONTRACT_PHONE_CHANGE)
+                        state.action = ContractActions.MODIFYPHONE
+                        analytics.logEvent ( "ButtonModifyPhone" ) {
                             param("eventType", "Click")
                         }
                     },
