@@ -66,7 +66,8 @@ class DataStoreViewModel @Inject constructor(
             name = name,
             email = email,
             profileImage = profileImage,
-            isEmailValid = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            isEmailValid = email.isEmpty() || Patterns.EMAIL_ADDRESS.matcher(email).matches(),
+            isNameValid = name.length >= 3
         )
     }
     .stateIn(
@@ -93,10 +94,6 @@ class DataStoreViewModel @Inject constructor(
 
     fun onImageChange(newImage: Any?) {
         _editingProfileImage.value = newImage
-    }
-
-    fun onIsEmailValidChange(valid: Boolean) {
-        uiState.value.isEmailValid = valid
     }
 
     fun updateBsCounter(counter: Int) {
@@ -138,12 +135,6 @@ class DataStoreViewModel @Inject constructor(
             Uri.fromFile(file)
         } catch (e: Exception) {
             null
-        }
-    }
-
-    fun logout() {
-        viewModelScope.launch {
-            dataStoreManager.clearAccount()
         }
     }
 }

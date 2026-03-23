@@ -35,7 +35,8 @@ class UserAccountScreenTest {
             val navController = rememberNavController()
             UserAccountScreen(
                 viewModel = mockViewModel,
-                navController = navController
+                navController = navController,
+                analytics = mockk()
             )
         }
 

@@ -17,5 +17,6 @@ data class UserAccountState(
     val email: String = "",
     val profileImage: Any? = null,
     var isEmailValid: Boolean = true,
+    var isNameValid: Boolean = true,
     val error: String? = null
 )

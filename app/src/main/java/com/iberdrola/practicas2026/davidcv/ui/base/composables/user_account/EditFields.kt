@@ -20,7 +20,8 @@ fun EditFields(
     onNameChange: (String) -> Unit,
     email: String,
     onEmailChange: (String) -> Unit,
-    isEmailValid: Boolean
+    isEmailValid: Boolean,
+    isNameValid: Boolean
 ) {
     Column {
         OutlinedTextField(
@@ -28,8 +29,17 @@ fun EditFields(
             onValueChange = onNameChange,
             label = { Text(stringResource(R.string.epsName)) },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = name.isNotEmpty() && !isNameValid
         )
+        if (name.isNotEmpty() && !isNameValid) {
+            Text(
+                text = "Introduce un nombre válido",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

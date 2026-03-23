@@ -98,13 +98,14 @@ fun EditProfileScreen(
                 onNameChange = viewModel::onNameChange,
                 email = state.email,
                 onEmailChange = viewModel::onEmailChange,
-                isEmailValid = state.isEmailValid
+                isEmailValid = state.isEmailValid,
+                isNameValid = state.isNameValid
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             SaveButton(
-                enabled = state.isEmailValid,
+                enabled = state.isEmailValid && state.isNameValid,
                 onClick = {
                     state.account?.let {
                         viewModel.saveAccount(
