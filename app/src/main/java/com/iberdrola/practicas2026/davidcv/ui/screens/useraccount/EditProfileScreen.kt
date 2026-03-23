@@ -67,62 +67,65 @@ fun EditProfileScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.epsTitle), fontWeight = FontWeight.Bold) },
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(LocalSpacing.current.xl),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ProfileImageHeader(
-                profileImage = state.profileImage,
-                onImageClick = {
-                    launcher.launch("image/*")
-                    analytics.logEvent("ButtonImageChange") {
-                        param("eventType", "Click")
-                    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(LocalSpacing.current.xl),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            text = stringResource(R.string.epsTitle),
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ProfileImageHeader(
+            profileImage = state.profileImage,
+            onImageClick = {
+                launcher.launch("image/*")
+                analytics.logEvent("ButtonImageChange") {
+                    param("eventType", "Click")
                 }
-            )
+            }
+        )
 
-            Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.weight(2f))
 
-            EditFields(
-                name = state.name,
-                onNameChange = viewModel::onNameChange,
-                email = state.email,
-                onEmailChange = viewModel::onEmailChange,
-                isEmailValid = state.isEmailValid,
-                isNameValid = state.isNameValid
-            )
 
-            Spacer(modifier = Modifier.weight(1f))
+        EditFields(
+            name = state.name,
+            onNameChange = viewModel::onNameChange,
+            email = state.email,
+            onEmailChange = viewModel::onEmailChange,
+            isEmailValid = state.isEmailValid,
+            isNameValid = state.isNameValid
+        )
 
-            SaveButton(
-                enabled = state.isEmailValid && state.isNameValid,
-                onClick = {
-                    state.account?.let {
-                        viewModel.saveAccount(
-                            Account(
-                                id = it.id,
-                                name = state.name,
-                                email = state.email,
-                                profileImage = state.profileImage
-                            )
+        Spacer(modifier = Modifier.weight(3f))
+
+        SaveButton(
+            enabled = state.isEmailValid && state.isNameValid,
+            onClick = {
+                state.account?.let {
+                    viewModel.saveAccount(
+                        Account(
+                            id = it.id,
+                            name = state.name,
+                            email = state.email,
+                            profileImage = state.profileImage
                         )
-                        navController.popBackStack()
-                    }
-                    analytics.logEvent("ButtonSaveChange") {
-                        param("eventType", "Click")
-                    }
+                    )
+                    navController.popBackStack()
                 }
-            )
-        }
+                analytics.logEvent("ButtonSaveChange") {
+                    param("eventType", "Click")
+                }
+            }
+        )
     }
 }

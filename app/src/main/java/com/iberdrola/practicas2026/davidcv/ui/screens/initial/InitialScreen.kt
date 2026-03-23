@@ -126,7 +126,6 @@ fun InitialScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
 
-            //Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text =  if (account == null)

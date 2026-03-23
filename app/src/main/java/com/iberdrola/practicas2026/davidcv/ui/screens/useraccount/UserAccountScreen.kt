@@ -43,6 +43,7 @@ import coil.compose.AsyncImage
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.account.AccountOption
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.AccountOptionRow
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -103,6 +104,7 @@ fun UserAccountScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .padding(LocalSpacing.current.xl)
             ) {
                 LazyColumn(
                     modifier = Modifier
@@ -139,20 +141,27 @@ fun UserAccountScreen(
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(32.dp))
 
                             Text(
                                 text = account?.name ?: "Usuario",
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
                             Text(
                                 text = account?.email ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
+
+                            Spacer(modifier = Modifier.height(32.dp))
                         }
                     }
+
+
 
                     item {
                         Text(

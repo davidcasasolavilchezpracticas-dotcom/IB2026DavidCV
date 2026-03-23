@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -41,7 +40,6 @@ import com.iberdrola.practicas2026.davidcv.R
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -108,9 +106,9 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                ) {
+                ) { innerPadding ->
                     NavigationWrapper(
-                        modifier = Modifier,
+                        modifier = Modifier.padding(innerPadding),
                         navController = navController,
                         remoteConfig = remoteConfig,
                         analytics = analytics
