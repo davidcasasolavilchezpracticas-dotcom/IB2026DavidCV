@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.useraccount
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.Edit
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.ProfileImageHeader
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.SaveButton
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +52,13 @@ fun EditProfileScreen(
     LaunchedEffect(Unit) {
         analytics.logEvent("EditProfileScreen") {
             param("eventType", "View")
+        }
+    }
+
+    BackHandler {
+        navController.navigate(Routes.BACK)
+        analytics.logEvent("ButtonBack") {
+            param("eventType", "RelevantMovements")
         }
     }
 

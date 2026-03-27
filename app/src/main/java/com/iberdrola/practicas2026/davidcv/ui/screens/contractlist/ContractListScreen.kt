@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractlist
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +50,13 @@ fun ContractListScreen(
     remoteConfig: FirebaseRemoteConfig,
     analytics: FirebaseAnalytics
 ) {
+    BackHandler {
+        navController.navigate(Routes.BACK)
+        analytics.logEvent("ButtonBack") {
+            param("eventType", "RelevantMovements")
+        }
+    }
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractListScreen" ) {
             param("eventType", "View")
@@ -135,6 +143,12 @@ fun ContractListScreen(
                         onClick = { id ->
                             navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
                             analytics.logEvent ( "ButtonContractsInfo" ) {
+                                param("eventType", "Click")
+                            }
+                        },
+                        onEmptyClick = {
+                            navController.navigate(Routes.INITIAL)
+                            analytics.logEvent ( "ButtonEmpty" ) {
                                 param("eventType", "Click")
                             }
                         },

@@ -36,9 +36,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.BillListHeader
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -61,20 +63,32 @@ fun BillListScreen(
     navController: NavController,
     modifier: Modifier,
     viewSelected: Boolean = true,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    remoteConfig: FirebaseRemoteConfig
 ) {
     LaunchedEffect(Unit) {
-        analytics.logEvent ( "BillListScreen" ) {
+        analytics.logEvent("BillListScreen") {
             param("eventType", "View")
         }
     }
+
+    // Simplificación de Remote Config: Leemos los valores una vez o usamos un estado
+    val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
+    val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
 
     val lightBillsState by viewModel.lightBillsState.collectAsStateWithLifecycle()
     val gasBillsState by viewModel.gasBillsState.collectAsStateWithLifecycle()
 
     val pagerState = rememberPagerState(
-        initialPage = if (viewSelected) 0 else 1,
-        pageCount = { 2 }
+        initialPage =
+            if (isLightActive && isGasActive && viewSelected) 0
+            else if (isLightActive && isGasActive) 1
+            else 0
+        ,
+        pageCount = {
+            if (isLightActive && isGasActive) 2
+            else 1
+        }
     )
     val coroutineScope = rememberCoroutineScope()
 
@@ -82,12 +96,13 @@ fun BillListScreen(
     val filterResult by navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<BillFilterState>("filters_result")
-        ?.observeAsState() ?: androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(null) }
+        ?.observeAsState()
+        ?: remember { mutableStateOf(null) }
 
     LaunchedEffect(filterResult) {
         filterResult?.let { filters ->
             viewModel.applyFilters(filters)
-            analytics.logEvent ( "ApplyFilters" ) {
+            analytics.logEvent("ApplyFilters") {
                 param("eventType", "RelevantMovements")
             }
         }
@@ -95,7 +110,7 @@ fun BillListScreen(
 
     BackHandler {
         navController.navigate(Routes.BACK)
-        analytics.logEvent ( "ButtonBack" ) {
+        analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
     }
@@ -112,19 +127,9 @@ fun BillListScreen(
             .background(Color.White)
             .padding(LocalSpacing.current.lg)
     ) {
-        Text(
-            text = stringResource(R.string.blsTitle),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+        BillListHeader(
+            modifier = modifier,
         )
-        Text(
-            text = stringResource(R.string.blsSubtitleAddress),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.Gray,
-            modifier = modifier.padding(vertical = LocalSpacing.current.sm)
-        )
-
-        Spacer(modifier = modifier.height(16.dp))
 
         Row(
             modifier = modifier
@@ -132,33 +137,37 @@ fun BillListScreen(
                 .padding(bottom = LocalSpacing.current.xxs)
                 .fillMaxWidth()
         ) {
-            TabItem(
-                text = stringResource(R.string.blsTabText1),
-                isSelected = pagerState.currentPage == 0,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(0)
+            if (isLightActive) {
+                TabItem(
+                    text = stringResource(R.string.blsTabText1),
+                    isSelected = pagerState.currentPage == 0,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                        analytics.logEvent("SlideToGas") {
+                            param("eventType", "RelevantMovements")
+                        }
                     }
-                    analytics.logEvent ( "SlideToGas" ) {
-                        param("eventType", "RelevantMovements")
-                    }
-                }
-            )
+                )
 
-            Spacer(modifier = modifier.width(24.dp))
+                Spacer(modifier = modifier.width(24.dp))
+            }
 
-            TabItem(
-                text = stringResource(R.string.blsTabText2),
-                isSelected = pagerState.currentPage == 1,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(1)
+            if (isGasActive) {
+                TabItem(
+                    text = stringResource(R.string.blsTabText2),
+                    isSelected = pagerState.currentPage == 1,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(1)
+                        }
+                        analytics.logEvent("SlideToLight") {
+                            param("eventType", "RelevantMovements")
+                        }
                     }
-                    analytics.logEvent ( "SlideToLight" ) {
-                        param("eventType", "RelevantMovements")
-                    }
-                }
-            )
+                )
+            }
         }
 
         Divider(
@@ -172,14 +181,20 @@ fun BillListScreen(
             state = pagerState,
             modifier = modifier.fillMaxSize()
         ) { page ->
-            val currentState = if (page == 0) lightBillsState else gasBillsState
+            val currentState = when {
+                isLightActive && isGasActive -> if (page == 0) lightBillsState else gasBillsState
+                isLightActive -> lightBillsState
+                isGasActive -> gasBillsState
+                else -> BillListState.Success(emptyList())
+            }
+
             BillListContent(
                 state = currentState,
                 modifier = modifier,
                 onErrorClick = {
                     DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
                     navController.popBackStack()
-                    analytics.logEvent ( "ButtonError" ) {
+                    analytics.logEvent("ButtonError") {
                         param("eventType", "Click")
                     }
                 },
@@ -188,13 +203,13 @@ fun BillListScreen(
                         // Al añadir esto, quitamos la pantalla actual de la pila antes de poner la nueva
                         popUpTo(navController.currentDestination?.route!!) { inclusive = true }
                     }
-                    analytics.logEvent ( "ButtonEmpty" ) {
+                    analytics.logEvent("ButtonEmpty") {
                         param("eventType", "Click")
                     }
                 },
                 onFilterClick = {
                     navController.navigate(Routes.FILTER)
-                    analytics.logEvent ( "ButtonFilter" ) {
+                    analytics.logEvent("ButtonFilter") {
                         param("eventType", "Click")
                     }
                 }
@@ -203,12 +218,3 @@ fun BillListScreen(
     }
 }
 
-/**
- * PreviewBLS
- * Vista previa de la pantalla de listado de facturas
- */
-@Preview
-@Composable
-fun PreviewBLS(){
-    BillListScreen(modifier = Modifier, navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current))
-}

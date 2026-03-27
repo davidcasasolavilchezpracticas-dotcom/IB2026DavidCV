@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.useraccount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -60,6 +61,13 @@ fun UserAccountScreen(
     LaunchedEffect(Unit) {
         analytics.logEvent ( "UserAccountScreen" ) {
             param("eventType", "View")
+        }
+    }
+
+    BackHandler {
+        navController.navigate(Routes.BACK)
+        analytics.logEvent("ButtonBack") {
+            param("eventType", "RelevantMovements")
         }
     }
 

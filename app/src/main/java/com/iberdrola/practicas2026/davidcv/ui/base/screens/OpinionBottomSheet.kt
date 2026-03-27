@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

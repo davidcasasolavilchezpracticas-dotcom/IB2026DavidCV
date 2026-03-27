@@ -62,9 +62,29 @@ fun NavigationWrapper(
     remoteConfig: FirebaseRemoteConfig,
     analytics: FirebaseAnalytics
 ) {
+    val context = LocalContext.current
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
     var viewSelected by rememberSaveable { mutableStateOf(true) }
+    var showOpinionBS by remember { mutableStateOf(false) }
+
+    // 2. MOSTRAR EL BOTTOM SHEET SI EL ESTADO ES TRUE
+    if (showOpinionBS) {
+        OpinionBottomSheet(
+            onDismiss = { showOpinionBS = false },
+            onLaterClick = {
+                dataStoreViewModel.updateBsCounter(3)
+                showOpinionBS = false
+                navController.popBackStack() // Ahora sí volvemos atrás
+            },
+            onRatingSelected = {
+                Toast.makeText(context, R.string.bsToast, Toast.LENGTH_SHORT).show()
+                dataStoreViewModel.updateBsCounter(10)
+                showOpinionBS = false
+                navController.popBackStack()
+            }
+        )
+    }
 
 
     DisposableEffect(navController) {
@@ -77,7 +97,6 @@ fun NavigationWrapper(
             analytics.logEvent(eventName) {
                 param("eventType", "Movement")
             }
-            Log.d("ComprobacionesAnalytics", "From ${ originRoute.capitalize(Locale.getDefault()) } to  ${ route.capitalize(Locale.getDefault()) }")
         }
 
         navController.addOnDestinationChangedListener(listener)
@@ -92,31 +111,7 @@ fun NavigationWrapper(
     NavHost(
         navController = navController,
         startDestination = Routes.INITIAL,
-        modifier = modifier,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = tween(1500)
-            ) + fadeIn()
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { -it },
-                animationSpec = tween(1500)
-            ) + fadeOut()
-        },
-        popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -it },
-                animationSpec = tween(1500)
-            ) + fadeIn()
-        },
-        popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(1500)
-            ) + fadeOut()
-        }
+        modifier = modifier
     ) {
 
         composable(
@@ -145,7 +140,8 @@ fun NavigationWrapper(
                 modifier = Modifier,
                 navController = navController,
                 viewSelected = viewSelected,
-                analytics = analytics
+                analytics = analytics,
+                remoteConfig = remoteConfig
             )
         }
 
@@ -156,7 +152,8 @@ fun NavigationWrapper(
                 modifier = Modifier,
                 navController = navController,
                 viewSelected = !viewSelected,
-                analytics = analytics
+                analytics = analytics,
+                remoteConfig = remoteConfig
             )
         }
 
@@ -261,33 +258,25 @@ fun NavigationWrapper(
         composable(
             Routes.BACK
         ) {
-            val context = LocalContext.current
-
-            if (navController.currentDestination != NavDestination(Routes.INITIAL)) {
+            if (
+                (navController.currentDestination?.route == Routes.LIST_GAS) ||
+                (navController.currentDestination?.route == Routes.LIST_LIGHT)
+            ) {
                 if (bsCounter > 0) {
                     LaunchedEffect(Unit) {
                         dataStoreViewModel.updateBsCounter(bsCounter - 1)
                         navController.popBackStack()
-                        navController.popBackStack()
+                        if (navController.currentDestination?.route != Routes.INITIAL)
+                            navController.popBackStack()
                     }
                 } else {
                     analytics.logEvent ( "OpinionBottomSheet" ) {
                         param("eventType", "View")
                     }
-                    OpinionBottomSheet(
-                        onDismiss = {
-                            navController.popBackStack()
-                        },
-                        onLaterClick = {
-                            dataStoreViewModel.updateBsCounter(3)
-                        },
-                        onRatingSelected = {
-                            Toast.makeText(context, R.string.bsToast, Toast.LENGTH_SHORT)
-                                .show()
-                            dataStoreViewModel.updateBsCounter(10)
-                        }
-                    )
+                    showOpinionBS = true
                 }
+            } else {
+                if (navController.currentDestination?.route != Routes.INITIAL) { navController.popBackStack() }
             }
         }
     }

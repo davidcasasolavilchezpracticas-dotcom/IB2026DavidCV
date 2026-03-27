@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.screens
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,8 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
 
 @Composable
@@ -66,7 +69,7 @@ fun EmptyContractsScreen(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                text = stringResource(R.string.recargar),
+                text = stringResource(R.string.ecs_GoBack),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White
             )
