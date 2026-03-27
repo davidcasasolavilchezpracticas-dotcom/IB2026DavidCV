@@ -37,14 +37,12 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 @Composable
 fun ContractItem(
     contract: Contract,
-    active: Boolean,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                enabled = active,
                 onClick = onClick
             )
     ) {
@@ -60,7 +58,7 @@ fun ContractItem(
             Icon(
                 imageVector = contract.type.icon,
                 contentDescription = null,
-                tint = if (active) IconGreen else DisabledIcon,
+                tint = IconGreen,
                 modifier = Modifier.size(32.dp)
             )
 
@@ -72,14 +70,13 @@ fun ContractItem(
                     text = contract.type.label,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = if (active) Black else Color.Gray
+                    color = Black
                 )
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // Badge de estado
                 StatusBadge(
-                    status = contract.status,
-                    habilited = active
+                    status = contract.status
                 )
             }
 

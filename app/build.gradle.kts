@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.camera.camera2.pipe)
     implementation(libs.firebase.config)
+    implementation(libs.androidx.benchmark.common)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

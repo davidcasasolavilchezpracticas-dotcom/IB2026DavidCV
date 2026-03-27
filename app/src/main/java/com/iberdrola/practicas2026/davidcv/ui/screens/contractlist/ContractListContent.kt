@@ -26,16 +26,19 @@ fun ContractListContent(
             .fillMaxSize()
             .padding(horizontal = LocalSpacing.current.lg)
     ) {
-        LazyColumn(modifier = modifier.weight(1f)) {
+        LazyColumn(
+            modifier = modifier.weight(1f)
+        ) {
             items(contracts) { contract ->
-                ContractItem(
-                    contract = contract,
-                    onClick = { onClick(contract.id) },
-                    active = (
-                        (contract.type == ContractType.GAS && gasContractActive) ||
-                        (contract.type == ContractType.LIGHT && lightContractActive)
+                if (
+                    (contract.type == ContractType.GAS && gasContractActive) ||
+                    (contract.type == ContractType.LIGHT && lightContractActive)
+                ) {
+                    ContractItem(
+                        contract = contract,
+                        onClick = { onClick(contract.id) },
                     )
-                )
+                }
             }
         }
     }

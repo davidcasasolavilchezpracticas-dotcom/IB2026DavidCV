@@ -112,4 +112,5 @@
     <string name="cvcTitleModifyPhone">Verifica la modificación del número telefónico</string>
     <string name="isTitlePage">Inicio</string>
     <string name="ebsDeleteFilters">Borrar filtros</string>
+    <string name="isServiceOr">No hay servicios operativos por el  momento.</string>
 </resources>

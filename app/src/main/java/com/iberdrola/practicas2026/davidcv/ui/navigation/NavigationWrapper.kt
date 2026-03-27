@@ -19,8 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.capitalize
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -69,7 +68,7 @@ fun NavigationWrapper(
 
 
     DisposableEffect(navController) {
-        val listener = NavController.OnDestinationChangedListener { navegator, destination, arguments ->
+        val listener = NavController.OnDestinationChangedListener { navegator, destination, _ ->
             val route = destination.route ?: "unknown"
             val originRoute = navegator.previousBackStackEntry?.destination?.route ?: "Start"
             val eventName = "From${ originRoute.capitalize(Locale.getDefault()) }To${ route.capitalize(Locale.getDefault()) }"
@@ -167,7 +166,8 @@ fun NavigationWrapper(
             InitialScreen(
                 navController = navController,
                 modifier = Modifier,
-                analytics = analytics
+                analytics = analytics,
+                remoteConfig = remoteConfig
             )
         }
 

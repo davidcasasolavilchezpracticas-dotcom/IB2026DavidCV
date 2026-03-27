@@ -55,25 +55,20 @@ fun StatusBadge(status: PaymentStatus) {
  */
 @Composable
 fun StatusBadge(
-    status: ContractStatus,
-    habilited: Boolean = true
+    status: ContractStatus
 ) {
 
-    val (bgColor, textColor) = if (habilited) {
-        when (status) {
+    val (bgColor, textColor) = when (status) {
             ContractStatus.ACTIVE -> Color(0xFFD1F2E1) to Color(0xFF006633)
             ContractStatus.INACTIVE -> Color(0xFFEEEEEE) to Color(0xFF757575)
         }
-    } else {
-        Color(0xFFF1C7C7) to Color(0xFF8C1414)
-    }
 
     Surface(
         color = bgColor,
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
-            text = if ( habilited ) status.label else stringResource(R.string.sbContractDisabled),
+            text = status.label,
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = LocalSpacing.current.sm, vertical = LocalSpacing.current.xs),
             fontWeight = FontWeight.Bold,

@@ -34,7 +34,7 @@ fun SettingSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(0.8f),
         shape = RoundedCornerShape(16.dp),
         color = Color(0xFF006633).copy(alpha = 0.2f),
     ) {
