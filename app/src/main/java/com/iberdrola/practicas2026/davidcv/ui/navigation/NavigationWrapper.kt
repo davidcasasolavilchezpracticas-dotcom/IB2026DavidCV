@@ -193,7 +193,11 @@ fun NavigationWrapper(
         ) {
             composable(Routes.CONTRACT_ACTIONS + "/{contractId}") { entry ->
                 val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("contract_flow/{contractId}")
+                    try {
+                        navController.getBackStackEntry("contract_flow/{contractId}")
+                    } catch (e: Exception) {
+                        entry
+                    }
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractActionsScreen(
@@ -206,7 +210,11 @@ fun NavigationWrapper(
 
             composable(Routes.CONTRACT_EMAIL_CHANGE) { entry ->
                 val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("contract_flow/{contractId}")
+                    try {
+                        navController.getBackStackEntry("contract_flow/{contractId}")
+                    } catch (e: Exception) {
+                        entry
+                    }
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractEmailChangeScreen(
@@ -218,7 +226,11 @@ fun NavigationWrapper(
 
             composable(Routes.CONTRACT_PHONE_CHANGE) { entry ->
                 val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("contract_flow/{contractId}")
+                    try {
+                        navController.getBackStackEntry("contract_flow/{contractId}")
+                    } catch (e: Exception) {
+                        entry
+                    }
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractPhoneChangeScreen(
@@ -230,7 +242,11 @@ fun NavigationWrapper(
 
             composable(Routes.CONTRACT_VERIFY) { entry ->
                 val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("contract_flow/{contractId}")
+                    try {
+                        navController.getBackStackEntry("contract_flow/{contractId}")
+                    } catch (e: Exception) {
+                        entry
+                    }
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractVerifyScreen(
@@ -242,7 +258,11 @@ fun NavigationWrapper(
 
             composable(Routes.CONTRACT_SUCCESS) { entry ->
                 val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("contract_flow/{contractId}")
+                    try {
+                        navController.getBackStackEntry("contract_flow/{contractId}")
+                    } catch (e: Exception) {
+                        entry
+                    }
                 }
                 val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                 ContractActionSuccessScreen(

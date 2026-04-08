@@ -7,6 +7,7 @@ object Routes {
     const val INITIAL : String = "initial"
     const val FILTER : String = "filter"
     const val CONTRACTS: String = "contracts"
+    const val CONTRACT_FLOW: String = "contract_flow"
     const val CONTRACT_ACTIONS: String = "contract_actions"
     const val CONTRACT_EMAIL_CHANGE: String = "contract_email_change"
     const val CONTRACT_PHONE_CHANGE: String = "contract_phone_change"

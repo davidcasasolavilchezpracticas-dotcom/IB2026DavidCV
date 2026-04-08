@@ -74,13 +74,6 @@ fun ContractActiveInfoScreen(
                             param("eventType", "Click")
                         }
                     },
-                    onDesactivate = {
-                        navController.navigate(Routes.CONTRACT_VERIFY)
-                        state.action = ContractActions.MODIFYSTATUS
-                        analytics.logEvent ( "ButtonDesactivate" ) {
-                            param("eventType", "Click")
-                        }
-                    }
                 )
             }
         }

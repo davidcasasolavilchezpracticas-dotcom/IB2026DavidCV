@@ -45,6 +45,14 @@ class DataStoreViewModel @Inject constructor(
             initialValue = 0
         )
 
+    val trys: StateFlow<Int> = dataStoreManager.trys
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 3
+        )
+
+
     /**
      * Estado consolidado para la UI de cuenta de usuario.
      * Combina la cuenta guardada con los cambios temporales realizados en la pantalla de edición.
@@ -99,6 +107,12 @@ class DataStoreViewModel @Inject constructor(
     fun updateBsCounter(counter: Int) {
         viewModelScope.launch {
             dataStoreManager.saveBsCounter(counter)
+        }
+    }
+
+    fun updateTrys(trys: Int) {
+        viewModelScope.launch {
+            dataStoreManager.saveTrys(trys)
         }
     }
 

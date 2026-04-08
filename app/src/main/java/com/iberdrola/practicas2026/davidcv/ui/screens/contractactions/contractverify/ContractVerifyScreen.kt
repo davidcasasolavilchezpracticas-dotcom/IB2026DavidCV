@@ -9,11 +9,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
+import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions.*
@@ -25,6 +27,7 @@ fun ContractVerifyScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics
 ) {
+    val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractVerifyScreen" ) {
             param("eventType", "View")
@@ -35,6 +38,7 @@ fun ContractVerifyScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         ContractVerifyContent(
+            dataStoreViewModel = dataStoreViewModel,
             state = state,
             onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
             generateNewCode = { context ->
@@ -65,10 +69,10 @@ fun ContractVerifyScreen(
                         viewModel.updateContractPhone(state.phoneTry)
                     }
                     MODIFYSTATUS -> {
-                        viewModel.updateContractStatus(ContractStatus.INACTIVE)
+                        //viewModel.updateContractStatus(ContractStatus.INACTIVE)
                     }
                     MODIFYSTATUSEMAIL -> {
-                        viewModel.updateContractEmailAndStatus(state.emailTry, ContractStatus.ACTIVE)
+                        viewModel.updateContractEmail(state.emailTry)
                     }
                 }
 

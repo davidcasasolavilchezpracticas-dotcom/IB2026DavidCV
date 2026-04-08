@@ -26,8 +26,24 @@ class DataStoreManager @Inject constructor(
 
     companion object {
         val BS_COUNTER_KEY = intPreferencesKey("bs_counter")
+        val TRYS_KEY = intPreferencesKey("verif_trys")
         val ACCOUNT_KEY = stringPreferencesKey("account_json")
     }
+
+    //region trys
+
+    val trys: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[TRYS_KEY] ?: 3
+    }
+
+    suspend fun saveTrys(trys: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[BS_COUNTER_KEY] = trys
+        }
+    }
+
+    //endregion trys
+
 
     val bsCounter: Flow<Int> = context.dataStore.data.map { preferences ->
         preferences[BS_COUNTER_KEY] ?: 0

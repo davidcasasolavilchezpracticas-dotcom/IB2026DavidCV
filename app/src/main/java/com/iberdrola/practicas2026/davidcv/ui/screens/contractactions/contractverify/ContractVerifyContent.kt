@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,7 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.ResendCodeInfoBox
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.SuccessBanner
+import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 import kotlinx.coroutines.delay
@@ -53,6 +55,7 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractVerifyContent(
+    dataStoreViewModel: DataStoreViewModel,
     state: ContractActionsState,
     onVerifyCodeChanged: (String) -> Unit,
     generateNewCode: (Context) -> Unit,
@@ -63,6 +66,8 @@ fun ContractVerifyContent(
 ) {
     var resendVerificationCode by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val trys = dataStoreViewModel.trys.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -85,7 +90,9 @@ fun ContractVerifyContent(
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,11 +141,14 @@ fun ContractVerifyContent(
             )
             Spacer(modifier = Modifier.height(24.dp))
             ResendCodeInfoBox(
+                trys = trys.value,
                 onResendClick = {
                     resendVerificationCode = true
                     generateNewCode(context)
+                    dataStoreViewModel.updateTrys(trys.value - 1)
                 }
             )
+
             Spacer(modifier = Modifier.weight(1f))
 
             if (resendVerificationCode) {

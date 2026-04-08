@@ -27,7 +27,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 @Composable
 fun ResendCodeInfoBox(
-    onResendClick: () -> Unit
+    onResendClick: () -> Unit,
+    trys: Int
 ) {
     Surface(color = Color(0xFFE1F5FE), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(LocalSpacing.current.lg)) {
@@ -36,6 +37,13 @@ fun ResendCodeInfoBox(
             Column {
                 Text(stringResource(R.string.rcibTitleResendCode), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                 Text(stringResource(R.string.rcibTextFindCode), style = MaterialTheme.typography.bodySmall)
+                if ( trys < 3 ){
+                    Text(
+                        "Recuerdas que hoy te quedan $trys intentos.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
                 Text(
                     stringResource(R.string.rcibTextResendCode),
                     style = MaterialTheme.typography.bodySmall,
@@ -43,7 +51,10 @@ fun ResendCodeInfoBox(
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
                         .padding(top = LocalSpacing.current.xs)
-                        .clickable { onResendClick() },
+                        .clickable(
+                            enabled = trys > 0,
+                            onClick = { onResendClick() }
+                        ),
                     color = Color(0xFF003366)
                 )
             }
