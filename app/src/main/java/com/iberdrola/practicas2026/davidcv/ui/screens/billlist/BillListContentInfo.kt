@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -41,7 +42,7 @@ fun BillListContentInfo(
     bills: List<Bill>,
     onFilterClick: () -> Unit
 ) {
-    var actualYear: Int = 0
+    var actualYear = 0
     val context = LocalContext.current
 
     Column(
@@ -93,7 +94,7 @@ fun BillListContentInfo(
                         modifier = Modifier.padding(vertical = LocalSpacing.current.lg)
                     )
                 } else {
-                    Divider(
+                    HorizontalDivider(
                         color = Color.LightGray,
                         thickness = 0.5.dp
                     )

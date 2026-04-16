@@ -2,7 +2,7 @@
     <string name="app_name">IB2026DavidCV</string>
     <string name="cancel">Cancelar</string>
     <string name="tituloPriceRangeSelector">Por un importe</string>
-    <string name="LastInvoiceCard">Última Factura</string>
+    <string name="LastInvoiceCard">Última factura</string>
     <string name="numCard">**** 1234</string>
     <string name="seeBills">Ver facturas</string>
     <string name="noBills">No hay facturas</string>

@@ -60,6 +60,7 @@ mockk = "1.13.13"
 turbine = "1.2.0"
 kotlinxCoroutinesTest = "1.9.0"
 benchmarkCommon = "1.4.1"
+uiText = "1.10.6"
 
 
 [libraries]
@@ -141,6 +142,7 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 androidx-benchmark-common = { group = "androidx.benchmark", name = "benchmark-common", version.ref = "benchmarkCommon" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 
 

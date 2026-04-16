@@ -24,10 +24,10 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
  * @param status Indica el estado de la factura.
  */
 @Composable
-fun StatusBadge(status: PaymentStatus) {
+fun StatusBadge(status: PaymentStatus, modifier: Modifier = Modifier) {
     val (bgColor, textColor) = when (status) {
-        PaymentStatus.PAID -> Color(0xFFD1F2E1) to Color(0xFF006633)
-        PaymentStatus.PENDING -> Color(0xFFF9D5D5) to Color(0xFFB03A2E)
+        PaymentStatus.PAID -> Color(0xFFB1DEC8) to Color(0xFF00572B)
+        PaymentStatus.PENDING -> Color(0xFFF1BFBF) to Color(0xFF963E37)
         PaymentStatus.TRAMITED -> Color(0xFFE3F2FD) to Color(0xFF1976D2)
         PaymentStatus.CANCELED -> Color(0xFFEEEEEE) to Color(0xFF757575)
         PaymentStatus.FIXED_PAYMENT -> Color(0xFFFFF3E0) to Color(0xFFE65100)
@@ -35,12 +35,13 @@ fun StatusBadge(status: PaymentStatus) {
 
     Surface(
         color = bgColor,
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
     ) {
         Text(
             text = status.label,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(horizontal = LocalSpacing.current.sm, vertical = LocalSpacing.current.xs),
+            modifier = Modifier.padding(horizontal = LocalSpacing.current.md, vertical = LocalSpacing.current.sm),
             fontWeight = FontWeight.Bold,
             color = textColor
         )
