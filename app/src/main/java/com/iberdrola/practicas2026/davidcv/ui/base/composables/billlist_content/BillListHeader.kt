@@ -29,16 +29,16 @@ fun BillListHeader (
 ) {
     Text(
         text = stringResource(R.string.blsTitle),
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Bold
+        style = MaterialTheme.typography.headlineMedium,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
     )
     Text(
         text = stringResource(R.string.blsSubtitleAddress),
         style = MaterialTheme.typography.bodyLarge,
-        color = Color.Gray,
+        color = Color.Black,
         modifier = modifier.padding(vertical = LocalSpacing.current.sm)
     )
 
     Spacer(modifier = modifier.height(16.dp))
-
 }

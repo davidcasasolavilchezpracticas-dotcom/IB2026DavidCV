@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
@@ -30,7 +31,7 @@ fun TabItem(
 
     Text(
         text = text,
-        color = if (isSelected) EnergyGreen else Color.Gray,
+        color = if (isSelected) Color.Black else Color.Gray,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         modifier = Modifier
             .clickable(
@@ -39,15 +40,27 @@ fun TabItem(
             ) { onClick() }
             .drawBehind {
                 if (isSelected) {
-                    val strokeWidth = 3.dp.toPx()
+                    val strokeWidth = 5.dp.toPx()
                     val y = size.height + 4.dp.toPx()
+
+                    // Define cuánto quieres que sobresalga la línea por cada lado
+                    val horizontalExpansion = 4.dp.toPx()
+
                     drawLine(
                         color = EnergyGreen,
-                        start = Offset(0f, y),
-                        end = Offset(size.width, y),
-                        strokeWidth = strokeWidth
+                        // Empezamos un poco a la izquierda (negativo)
+                        start = Offset(-horizontalExpansion, y),
+                        // Terminamos un poco a la derecha (ancho + expansión)
+                        end = Offset(size.width + horizontalExpansion, y),
+                        strokeWidth = strokeWidth,
                     )
                 }
             }
     )
+}
+
+@Composable
+@Preview
+fun TabItemPreview() {
+    TabItem(text = "Tab 1", isSelected = true) {}
 }

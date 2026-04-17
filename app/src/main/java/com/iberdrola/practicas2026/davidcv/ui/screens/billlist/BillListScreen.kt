@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -125,16 +126,15 @@ fun BillListScreen(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(LocalSpacing.current.lg)
     ) {
         BillListHeader(
-            modifier = modifier,
+            modifier = modifier.padding(start = LocalSpacing.current.lg),
         )
 
         Row(
             modifier = modifier
                 .zIndex(1f)
-                .padding(bottom = LocalSpacing.current.xxs)
+                .padding(bottom = LocalSpacing.current.xxs, start = LocalSpacing.current.lg)
                 .fillMaxWidth()
         ) {
             if (isLightActive) {
@@ -170,9 +170,10 @@ fun BillListScreen(
             }
         }
 
-        Divider(
+        HorizontalDivider(
             color = DividerGray,
             thickness = 2.dp,
+            modifier = modifier.fillMaxWidth()
         )
 
         Spacer(modifier = modifier.height(24.dp))
