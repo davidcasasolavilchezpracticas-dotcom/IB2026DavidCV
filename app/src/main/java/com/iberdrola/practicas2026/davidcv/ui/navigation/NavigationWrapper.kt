@@ -71,7 +71,10 @@ fun NavigationWrapper(
     // 2. MOSTRAR EL BOTTOM SHEET SI EL ESTADO ES TRUE
     if (showOpinionBS) {
         OpinionBottomSheet(
-            onDismiss = { showOpinionBS = false },
+            onDismiss = {
+                showOpinionBS = false
+                navController.popBackStack()
+            },
             onLaterClick = {
                 dataStoreViewModel.updateBsCounter(3)
                 showOpinionBS = false
