@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -38,21 +39,32 @@ fun ServiceItem(
     OutlinedCard(
         modifier =
             modifier
+                .clip(RoundedCornerShape(16.dp))
                 .clickable {
                     onClick()
                 },
         shape = RoundedCornerShape(16.dp),
     ) {
         Column(
-            modifier =
-                Modifier
-                    .padding(LocalSpacing.current.lg)
-                    .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(LocalSpacing.current.lg)
+                .fillMaxWidth(),
         ) {
-            Icon(icon, contentDescription = null, tint = Color(0xFF006633))
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(label, fontWeight = FontWeight.Medium)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color(0xFF006633)
+            )
+
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+
+            Text(
+                text = label,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

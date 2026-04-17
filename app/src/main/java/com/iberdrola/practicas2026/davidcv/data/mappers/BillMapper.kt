@@ -11,9 +11,10 @@ fun Bill.toEntity(): BillEntity {
         id = this.id,
         type = this.type,
         value = this.value,
-        startDate = this.startDate,
         endDate = this.endDate,
-        paymentStatus = this.paymentStatus
+        startDate = this.startDate,
+        emisionDate = this.emisionDate,
+        paymentStatus = this.paymentStatus,
     )
 }
 
@@ -25,8 +26,9 @@ fun BillEntity.toModel(): Bill {
         id = this.id,
         type = this.type,
         value = this.value,
-        startDate = this.startDate,
         endDate = this.endDate,
+        startDate = this.startDate,
+        emisionDate = this.emisionDate,
         paymentStatus = this.paymentStatus
     )
 }

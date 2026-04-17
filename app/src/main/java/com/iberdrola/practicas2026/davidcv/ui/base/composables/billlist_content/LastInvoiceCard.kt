@@ -167,6 +167,7 @@ fun LastInvoiceCardPreview() {
                 value = 20.00f,
                 startDate = LocalDateTime.of(2024, 2, 1, 0, 0),
                 endDate = LocalDateTime.of(2024, 3, 4, 0, 0),
+                emisionDate = LocalDateTime.of(2024, 3, 4, 0, 0),
                 paymentStatus = PaymentStatus.PENDING
             )
         )

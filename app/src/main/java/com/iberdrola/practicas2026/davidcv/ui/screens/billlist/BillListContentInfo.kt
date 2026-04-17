@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
@@ -112,34 +113,38 @@ fun BillListContentInfo(
             )
         }
 
+        // Agrupamos las facturas por el año de emisión
+        val groupedBills = bills.groupBy { it.emisionDate.year }
+
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            items(bills) { bill ->
-                if (actualYear != bill.endDate.year) {
-                    actualYear = bill.endDate.year
+            groupedBills.forEach { (year, billsInYear) ->
+                item {
                     Text(
-                        text = actualYear.toString(),
+                        text = year.toString(),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(LocalSpacing.current.lg)
                     )
-                } else {
-                    HorizontalDivider(
-                        color = Color.LightGray,
-                        thickness = 0.75.dp,
-                        modifier = Modifier.padding(LocalSpacing.current.lg)
-                    )
                 }
 
-                FacturaItem(
-                    bill = bill,
-                    onClick = {
-                        alertDialogActive = true
+                itemsIndexed(billsInYear) { index, bill ->
+                    FacturaItem(
+                        bill = bill,
+                        onClick = { alertDialogActive = true }
+                    )
+
+                    if (index < billsInYear.lastIndex) {
+                        HorizontalDivider(
+                            color = Color.LightGray,
+                            thickness = 0.75.dp,
+                            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+                        )
                     }
-                )
+                }
             }
         }
     }
@@ -150,10 +155,10 @@ fun BillListContentInfo(
 @Composable
 fun BillListContentInfoPreview() {
     val sampleBills = listOf(
-        Bill(1, BillType.LIGHT, 54.32f, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2024, 5, 10, 0, 0), PaymentStatus.PAID),
-        Bill(2, BillType.GAS, 25.10f, LocalDateTime.of(2024, 4, 5, 0, 0), LocalDateTime.of(2024, 4, 5, 0, 0), PaymentStatus.PENDING),
-        Bill(3, BillType.LIGHT, 60.00f, LocalDateTime.of(2023, 12, 15, 0, 0), LocalDateTime.of(2023, 12, 15, 0, 0), PaymentStatus.PAID),
-        Bill(4, BillType.LIGHT, 45.00f, LocalDateTime.of(2023, 11, 20, 0, 0), LocalDateTime.of(2023, 11, 20, 0, 0), PaymentStatus.PAID)
+        Bill(1, 54.32f, BillType.LIGHT, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2024, 5, 10, 0, 0), PaymentStatus.PAID),
+        Bill(2, 25.10f, BillType.GAS, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2024, 4, 5, 0, 0), LocalDateTime.of(2024, 4, 5, 0, 0), PaymentStatus.PENDING),
+        Bill(3, 60.00f, BillType.LIGHT, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2023, 12, 15, 0, 0), LocalDateTime.of(2023, 12, 15, 0, 0), PaymentStatus.PAID),
+        Bill(4, 45.00f, BillType.LIGHT, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2023, 11, 20, 0, 0), LocalDateTime.of(2023, 11, 20, 0, 0), PaymentStatus.PAID)
     )
     IB2026DavidCVTheme {
         BillListContentInfo(

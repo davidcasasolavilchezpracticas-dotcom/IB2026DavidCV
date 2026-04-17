@@ -53,7 +53,7 @@ fun FacturaItem(
     ) {
         Column {
             Text(
-                text = bill.endDate.format(dfNormalBill),
+                text = bill.emisionDate.format(dfNormalBill),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )

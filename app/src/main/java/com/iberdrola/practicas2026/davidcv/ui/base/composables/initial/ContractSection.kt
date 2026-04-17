@@ -20,8 +20,16 @@ fun ContractSection(
     onClick: () -> Unit
 ) {
     Column {
-        Text(stringResource(R.string.isSubtitleContracts), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.isSubtitleContracts),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
         ServiceItem(
             icon = Icons.Default.Description,
             label = stringResource(R.string.isServiceContract),

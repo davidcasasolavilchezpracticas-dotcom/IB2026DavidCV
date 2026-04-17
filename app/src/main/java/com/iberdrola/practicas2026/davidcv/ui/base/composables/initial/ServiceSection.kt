@@ -29,9 +29,17 @@ fun ServiceSection(
     analytics: FirebaseAnalytics
 ) {
     Column {
-        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             if (isLightActive) {
                 ServiceItem(
                     icon = Icons.Default.Lightbulb,

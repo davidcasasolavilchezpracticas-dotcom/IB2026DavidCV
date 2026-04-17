@@ -16,9 +16,10 @@ data class BillEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
 
-    val type: BillType,
     val value: Float,
-    val startDate: LocalDateTime,
+    val type: BillType,
     val endDate: LocalDateTime,
+    val startDate: LocalDateTime,
+    val emisionDate: LocalDateTime,
     val paymentStatus: PaymentStatus,
 )
