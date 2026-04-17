@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .drawBehind {
                                             val strokeWidth = 1.dp.toPx()
-                                            val y = size.height
+                                            val y = size.height + (-4).dp.toPx()
                                             drawLine(
                                                 color = EnergyGreen,
                                                 start = Offset(0f, y),

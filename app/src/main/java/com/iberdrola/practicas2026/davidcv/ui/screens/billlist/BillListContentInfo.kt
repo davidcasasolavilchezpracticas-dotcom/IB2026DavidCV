@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
@@ -22,18 +23,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.AlertDialogOK
+import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
+import java.time.LocalDateTime
 
 
 @Composable
@@ -43,21 +54,22 @@ fun BillListContentInfo(
     onFilterClick: () -> Unit
 ) {
     var actualYear = 0
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(LocalSpacing.current.lg)
+            //.padding(LocalSpacing.current.lg)
     ) {
         LastInvoiceCard(bill = bills[0])
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LocalSpacing.current.lg),
         ) {
             Text(
                 text = stringResource(R.string.blciTitle),
@@ -75,6 +87,9 @@ fun BillListContentInfo(
                     tint = Color(0xFF006633),
                     modifier = Modifier.size(18.dp)
                 )
+
+                Spacer(modifier = Modifier.size(4.dp))
+
                 Text(
                     text = stringResource(R.string.blciButtonFilter),
                     style = MaterialTheme.typography.labelMedium,
@@ -83,31 +98,46 @@ fun BillListContentInfo(
             }
         }
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(bills.subList(1, bills.size)) { bill ->
+        var alertDialogActive by remember { mutableStateOf(false) }
+
+        if(alertDialogActive) {
+            AlertDialogOK(
+                icon = Icons.Default.HourglassEmpty,
+                titulo = stringResource(R.string.blciTitle),
+                text = stringResource(R.string.blciText),
+                confirmText = stringResource(R.string.blciButtonOk),
+                onDismiss = {
+                    alertDialogActive = false
+                }
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            items(bills) { bill ->
                 if (actualYear != bill.endDate.year) {
                     actualYear = bill.endDate.year
                     Text(
                         text = actualYear.toString(),
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = LocalSpacing.current.lg)
+                        modifier = Modifier.padding(LocalSpacing.current.lg)
                     )
                 } else {
                     HorizontalDivider(
                         color = Color.LightGray,
-                        thickness = 0.5.dp
+                        thickness = 0.75.dp,
+                        modifier = Modifier.padding(LocalSpacing.current.lg)
                     )
                 }
 
                 FacturaItem(
                     bill = bill,
                     onClick = {
-                        Toast.makeText(
-                            context,
-                            R.string.blciToast,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        alertDialogActive = true
                     }
                 )
             }
@@ -116,3 +146,19 @@ fun BillListContentInfo(
 }
 
 
+@Preview(showBackground = true)
+@Composable
+fun BillListContentInfoPreview() {
+    val sampleBills = listOf(
+        Bill(1, BillType.LIGHT, 54.32f, LocalDateTime.of(2024, 5, 10, 0, 0), LocalDateTime.of(2024, 5, 10, 0, 0), PaymentStatus.PAID),
+        Bill(2, BillType.GAS, 25.10f, LocalDateTime.of(2024, 4, 5, 0, 0), LocalDateTime.of(2024, 4, 5, 0, 0), PaymentStatus.PENDING),
+        Bill(3, BillType.LIGHT, 60.00f, LocalDateTime.of(2023, 12, 15, 0, 0), LocalDateTime.of(2023, 12, 15, 0, 0), PaymentStatus.PAID),
+        Bill(4, BillType.LIGHT, 45.00f, LocalDateTime.of(2023, 11, 20, 0, 0), LocalDateTime.of(2023, 11, 20, 0, 0), PaymentStatus.PAID)
+    )
+    IB2026DavidCVTheme {
+        BillListContentInfo(
+            bills = sampleBills,
+            onFilterClick = {}
+        )
+    }
+}

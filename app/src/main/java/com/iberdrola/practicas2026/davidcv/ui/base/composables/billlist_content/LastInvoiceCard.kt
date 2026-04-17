@@ -56,7 +56,9 @@ fun LastInvoiceCard(bill: Bill) {
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(2.dp, Color(0xFF74978D)),
         colors = cardColors,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .padding(LocalSpacing.current.lg)
+            .fillMaxWidth()
     ) {
         ConstraintLayout(
             modifier = Modifier.fillMaxWidth(0.95f)

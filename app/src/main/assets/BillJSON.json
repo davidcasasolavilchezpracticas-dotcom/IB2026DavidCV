@@ -26,7 +26,7 @@
   {
     "id": 4,
     "type": "LIGHT",
-    "value": 456,
+    "value": 28.43,
     "startDate": "2026-02-11T10:00:00",
     "endDate": "2026-03-11T10:00:00",
     "paymentStatus": "PENDING"
@@ -42,7 +42,7 @@
   {
     "id": 6,
     "type": "LIGHT",
-    "value": 155,
+    "value": 100.5,
     "startDate": "2026-01-11T10:00:00",
     "endDate": "2026-02-11T10:00:00",
     "paymentStatus": "TRAMITED"
@@ -58,7 +58,7 @@
   {
     "id": 8,
     "type": "LIGHT",
-    "value": 250,
+    "value": 52.34,
     "startDate": "2024-02-11T10:00:00",
     "endDate": "2024-03-11T10:00:00",
     "paymentStatus": "FIXED_PAYMENT"
@@ -74,7 +74,7 @@
   {
     "id": 10,
     "type": "LIGHT",
-    "value": 210,
+    "value": 110,
     "startDate": "2025-10-11T10:00:00",
     "endDate": "2025-11-11T10:00:00",
     "paymentStatus": "PAID"
@@ -90,7 +90,7 @@
   {
     "id": 12,
     "type": "LIGHT",
-    "value": 180,
+    "value": 80,
     "startDate": "2025-08-11T10:00:00",
     "endDate": "2025-09-11T10:00:00",
     "paymentStatus": "PAID"
@@ -106,7 +106,7 @@
   {
     "id": 14,
     "type": "LIGHT",
-    "value": 320,
+    "value": 32,
     "startDate": "2025-06-11T10:00:00",
     "endDate": "2025-07-11T10:00:00",
     "paymentStatus": "PAID"
@@ -146,7 +146,7 @@
   {
     "id": 19,
     "type": "GAS",
-    "value": 200,
+    "value": 120,
     "startDate": "2024-11-11T10:00:00",
     "endDate": "2024-12-11T10:00:00",
     "paymentStatus": "PENDING"

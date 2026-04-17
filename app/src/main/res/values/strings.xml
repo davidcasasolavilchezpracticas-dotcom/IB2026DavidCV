@@ -114,4 +114,6 @@
     <string name="ebsDeleteFilters">Borrar filtros</string>
     <string name="isServiceOr">No hay servicios operativos por el  momento.</string>
     <string name="ecs_GoBack">Volver</string>
+    <string name="blciButtonOk">Ok</string>
+    <string name="blciText">Esta función aún no está disponible</string>
 </resources>

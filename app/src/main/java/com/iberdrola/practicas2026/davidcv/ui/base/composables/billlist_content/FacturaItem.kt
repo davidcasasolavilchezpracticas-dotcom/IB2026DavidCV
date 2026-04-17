@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Icon
@@ -37,14 +38,16 @@ fun FacturaItem(
     bill: Bill,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
                 onClick = { onClick() }
             )
-            .padding(vertical = LocalSpacing.current.md),
+            .padding(
+                vertical = LocalSpacing.current.md,
+                horizontal = LocalSpacing.current.lg
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -54,11 +57,12 @@ fun FacturaItem(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = bill.type.label,
                 style = MaterialTheme.typography.bodySmall
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             StatusBadge(status = bill.paymentStatus)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -66,12 +70,13 @@ fun FacturaItem(
                 text = "${"%.2f".format(bill.value)} €",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Color.DarkGray
+                color = Color.Gray.copy(alpha = 0.8f)
             )
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = Color.Gray
+                tint = Color.Gray,
+                modifier = Modifier.size(32.dp)
             )
         }
     }
