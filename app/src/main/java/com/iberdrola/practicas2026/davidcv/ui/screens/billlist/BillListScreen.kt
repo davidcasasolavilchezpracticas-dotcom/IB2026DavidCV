@@ -42,6 +42,7 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.BillListHeader
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.HorizontalPage
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -91,7 +92,6 @@ fun BillListScreen(
             else 1
         }
     )
-    val coroutineScope = rememberCoroutineScope()
 
     // Observar el resultado de los filtros desde el SavedStateHandle de la navegación
     val filterResult by navController.currentBackStackEntry
@@ -131,91 +131,18 @@ fun BillListScreen(
             modifier = modifier.padding(start = LocalSpacing.current.lg),
         )
 
-        Row(
-            modifier = modifier
-                .zIndex(1f)
-                .padding(bottom = LocalSpacing.current.xxs, start = LocalSpacing.current.lg)
-                .fillMaxWidth()
-        ) {
-            if (isLightActive) {
-                TabItem(
-                    text = stringResource(R.string.blsTabText1),
-                    isSelected = pagerState.currentPage == 0,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(0)
-                        }
-                        analytics.logEvent("SlideToGas") {
-                            param("eventType", "RelevantMovements")
-                        }
-                    }
-                )
+        Spacer(modifier = modifier.height(4.dp))
 
-                Spacer(modifier = modifier.width(24.dp))
-            }
-
-            if (isGasActive) {
-                TabItem(
-                    text = stringResource(R.string.blsTabText2),
-                    isSelected = pagerState.currentPage == 1,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(1)
-                        }
-                        analytics.logEvent("SlideToLight") {
-                            param("eventType", "RelevantMovements")
-                        }
-                    }
-                )
-            }
-        }
-
-        HorizontalDivider(
-            color = DividerGray,
-            thickness = 2.dp,
-            modifier = modifier.fillMaxWidth()
+        HorizontalPage(
+            lightBillsState = lightBillsState,
+            gasBillsState = gasBillsState,
+            navController = navController,
+            pagerState = pagerState,
+            modifier = modifier,
+            isLightActive = isLightActive,
+            isGasActive = isGasActive,
+            analytics = analytics
         )
-
-        Spacer(modifier = modifier.height(24.dp))
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = modifier.fillMaxSize()
-        ) { page ->
-            val currentState = when {
-                isLightActive && isGasActive -> if (page == 0) lightBillsState else gasBillsState
-                isLightActive -> lightBillsState
-                isGasActive -> gasBillsState
-                else -> BillListState.Success(emptyList())
-            }
-
-            BillListContent(
-                state = currentState,
-                modifier = modifier,
-                onErrorClick = {
-                    DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
-                    navController.popBackStack()
-                    analytics.logEvent("ButtonError") {
-                        param("eventType", "Click")
-                    }
-                },
-                onEmptyClick = {
-                    navController.navigate(if (pagerState.currentPage == 0) Routes.LIST_LIGHT else Routes.LIST_GAS) {
-                        // Al añadir esto, quitamos la pantalla actual de la pila antes de poner la nueva
-                        popUpTo(navController.currentDestination?.route!!) { inclusive = true }
-                    }
-                    analytics.logEvent("ButtonEmpty") {
-                        param("eventType", "Click")
-                    }
-                },
-                onFilterClick = {
-                    navController.navigate(Routes.FILTER)
-                    analytics.logEvent("ButtonFilter") {
-                        param("eventType", "Click")
-                    }
-                }
-            )
-        }
     }
 }
 

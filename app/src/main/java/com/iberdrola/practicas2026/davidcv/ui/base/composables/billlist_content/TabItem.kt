@@ -41,16 +41,14 @@ fun TabItem(
             .drawBehind {
                 if (isSelected) {
                     val strokeWidth = 5.dp.toPx()
-                    val y = size.height + 4.dp.toPx()
+                    val y = size.height + 6.dp.toPx()
 
                     // Define cuánto quieres que sobresalga la línea por cada lado
-                    val horizontalExpansion = 4.dp.toPx()
+                    val horizontalExpansion = 8.dp.toPx()
 
                     drawLine(
                         color = EnergyGreen,
-                        // Empezamos un poco a la izquierda (negativo)
                         start = Offset(-horizontalExpansion, y),
-                        // Terminamos un poco a la derecha (ancho + expansión)
                         end = Offset(size.width + horizontalExpansion, y),
                         strokeWidth = strokeWidth,
                     )
