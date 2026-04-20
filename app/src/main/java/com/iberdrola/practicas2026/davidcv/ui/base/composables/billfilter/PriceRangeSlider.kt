@@ -65,7 +65,7 @@ fun PriceRangeSelector(
             Text(
                 text = "${sliderPosition.start.toInt()} € - ${sliderPosition.endInclusive.toInt()} €",
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2E4D3E)
+                color = Color.Black
             )
         }
 

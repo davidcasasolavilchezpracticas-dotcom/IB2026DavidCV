@@ -61,6 +61,10 @@ fun FilterScreen(
     analytics: FirebaseAnalytics,
     onBack: () -> Unit
 ) {
+    val state by viewModel.state.collectAsState()
+    val maxPrice by viewModel.maxPrice.collectAsState()
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "FilterScreen" ) {
             param("eventType", "View")
@@ -68,14 +72,13 @@ fun FilterScreen(
     }
 
     BackHandler {
+        viewModel.deleteFilters()
+        navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
         onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
     }
-
-    val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
 
 
     Column(
@@ -121,8 +124,8 @@ fun FilterScreen(
         }
 
         PriceRangeSelector(
-            selectedRange = state.priceRange ?: 0f..1000f,
-            totalRange = 0f..1000f,
+            selectedRange = state.priceRange ?: 0f..maxPrice,
+            totalRange = 0f..maxPrice,
             onSliderChange = {
                 range -> viewModel.onPriceRangeChanged(range)
                 analytics.logEvent ( "SetPriceRange" ) {

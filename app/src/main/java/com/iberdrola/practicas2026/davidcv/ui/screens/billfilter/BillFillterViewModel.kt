@@ -3,15 +3,23 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billfilter
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
+import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
+import com.iberdrola.practicas2026.davidcv.domain.usecase.GetGasBillsUseCase
+import com.iberdrola.practicas2026.davidcv.domain.usecase.GetLightBillsUseCase
 import com.iberdrola.practicas2026.davidcv.ui.base.common.dfValidateDate
 import com.iberdrola.practicas2026.davidcv.ui.base.common.localeEs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -19,10 +27,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BillViewModel @Inject constructor(
-
+    private val getLightBillsUseCase: GetLightBillsUseCase,
+    private val getGasBillsUseCase: GetGasBillsUseCase
 ) : ViewModel() {
+
     private var _state = MutableStateFlow(BillFilterState())
     val state: StateFlow<BillFilterState> = _state
+
+    // Variable para almacenar el precio máximo detectado
+    private var _maxPrice = MutableStateFlow(0f)
+    val maxPrice: StateFlow<Float> = _maxPrice
+
+    init {
+        calculateMaxPrice()
+    }
+
+    private fun calculateMaxPrice() {
+        viewModelScope.launch {
+            // Combinamos o consultamos ambos tipos de facturas
+            // Nota: Aquí asumo que quieres el máximo absoluto entre Luz y Gas
+            combine(
+                getLightBillsUseCase(),
+                getGasBillsUseCase()
+            ) { lightResult, gasResult ->
+                val allBills = mutableListOf<Bill>()
+
+                if (lightResult is BaseResult.Success) allBills.addAll(lightResult.data)
+                if (gasResult is BaseResult.Success) allBills.addAll(gasResult.data)
+
+                allBills
+            }.collect { bills ->
+                if (bills.isNotEmpty()) {
+                    // Buscamos el valor máximo. Usamos .toFloat() porque el estado suele usar Float para Sliders
+                    val max = bills.maxOf { it.value.toFloat() }
+                    _maxPrice.value = max
+
+                    // Opcional: Si quieres que el rango por defecto empiece en el máximo
+                    if (_state.value.priceRange == null) {
+                        _state.value = _state.value.copy(priceRange = 0f..max)
+                    }
+                }
+            }
+        }
+    }
 
 
     fun deleteFilters() {
