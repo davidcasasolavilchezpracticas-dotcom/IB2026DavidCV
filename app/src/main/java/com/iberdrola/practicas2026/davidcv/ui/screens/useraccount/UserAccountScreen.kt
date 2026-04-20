@@ -56,7 +56,8 @@ import kotlinx.coroutines.launch
 fun UserAccountScreen(
     viewModel: DataStoreViewModel = hiltViewModel(),
     navController: NavHostController,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onBack: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "UserAccountScreen" ) {
@@ -65,7 +66,7 @@ fun UserAccountScreen(
     }
 
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }

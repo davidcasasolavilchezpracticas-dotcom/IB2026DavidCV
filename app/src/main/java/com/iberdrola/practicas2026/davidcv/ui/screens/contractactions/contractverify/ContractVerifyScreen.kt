@@ -25,7 +25,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 fun ContractVerifyScreen(
     navController: NavController,
     viewModel: ContractActionsViewModel,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
 ) {
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     LaunchedEffect(Unit) {

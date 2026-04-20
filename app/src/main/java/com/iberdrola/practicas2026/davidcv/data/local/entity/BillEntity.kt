@@ -4,22 +4,21 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
-import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
 /**
  * BillEntity
- * Modelo de datos para la base de datos
+ * Modelo de datos para la base de datos y respuesta de red
  */
 @Entity(tableName = "bills")
 data class BillEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int? = null,
 
-    val value: Float,
-    val type: BillType,
-    val endDate: LocalDateTime,
-    val startDate: LocalDateTime,
-    val emisionDate: LocalDateTime,
-    val paymentStatus: PaymentStatus,
+    val value: Float? = null,
+    val type: BillType? = null,
+    val endDate: LocalDateTime? = null,
+    val startDate: LocalDateTime? = null,
+    val emisionDate: LocalDateTime? = null,
+    val paymentStatus: PaymentStatus? = null,
 )

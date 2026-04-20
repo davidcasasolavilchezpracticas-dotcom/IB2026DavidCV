@@ -11,4 +11,6 @@ import androidx.compose.runtime.setValue
  */
 object DataSourceConfig {
     var useNetwork by mutableStateOf(true)
+    var connectionMode by mutableStateOf(ConnectionMode.ADB_REVERSE)
+    var pcIp by mutableStateOf("172.16.216.25")
 }

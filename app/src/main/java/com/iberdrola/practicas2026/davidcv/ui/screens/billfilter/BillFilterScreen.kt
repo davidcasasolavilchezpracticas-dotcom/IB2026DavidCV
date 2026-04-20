@@ -58,7 +58,8 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 fun FilterScreen(
     navController: NavController,
     viewModel: BillViewModel = hiltViewModel(),
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onBack: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "FilterScreen" ) {
@@ -67,7 +68,7 @@ fun FilterScreen(
     }
 
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
@@ -204,5 +205,5 @@ fun FilterScreen(
 @Preview
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current))
+    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current), onBack = {})
 }

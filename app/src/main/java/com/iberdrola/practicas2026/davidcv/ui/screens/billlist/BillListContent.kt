@@ -32,6 +32,7 @@ fun BillListContent(
         }
         is BillListState.Error -> {
             ErrorScreen(
+                exception = state.exception,
                 message = state.exception.message ?: R.string.blcUnknownError.toString(),
                 modifier = modifier,
                 img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,

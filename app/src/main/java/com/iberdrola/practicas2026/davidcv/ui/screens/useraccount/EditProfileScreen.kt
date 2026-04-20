@@ -43,7 +43,8 @@ import kotlinx.coroutines.launch
 fun EditProfileScreen(
     viewModel: DataStoreViewModel = hiltViewModel(),
     navController: NavHostController,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onBack: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -56,7 +57,7 @@ fun EditProfileScreen(
     }
 
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }

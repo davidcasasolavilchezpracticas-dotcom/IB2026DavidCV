@@ -30,7 +30,7 @@ import java.time.format.DateTimeFormatter
  * Modelo de datos para la base de datos
  */
 @Database(
-    version = 13,
+    version = 14,
     entities = [BillEntity::class, ContractEntity::class],
     exportSchema = false,
 )

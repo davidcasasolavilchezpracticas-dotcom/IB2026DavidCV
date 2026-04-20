@@ -116,4 +116,7 @@
     <string name="ecs_GoBack">Volver</string>
     <string name="blciButtonOk">Ok</string>
     <string name="blciText">Esta función aún no está disponible</string>
+    <string name="dataFail">Error en la obtención de los datos</string>
+    <string name="tryAgain">Reintentar</string>
+    <string name="goBack">Volver a inicio</string>
 </resources>

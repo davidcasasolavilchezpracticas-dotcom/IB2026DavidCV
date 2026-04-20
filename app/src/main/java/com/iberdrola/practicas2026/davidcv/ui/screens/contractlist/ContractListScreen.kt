@@ -48,10 +48,11 @@ fun ContractListScreen(
     viewModel: ContractListViewModel = hiltViewModel(),
     navController: NavHostController,
     remoteConfig: FirebaseRemoteConfig,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onBack: () -> Unit
 ) {
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
@@ -114,6 +115,7 @@ fun ContractListScreen(
     ) { padding ->
         when (state.value) {
             is ContractListState.Error -> {
+                Log.d("Comprobaciones", "Error")
                 ErrorScreen(
                     message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
                     modifier = Modifier,
@@ -127,6 +129,7 @@ fun ContractListScreen(
             is ContractListState.Success -> {
                 val contracts = (state.value as ContractListState.Success).contracts
                 if (contracts.isEmpty()) {
+                    Log.d("Comprobaciones", "Success.Empty")
                     EmptyContractsScreen(
                         modifier = Modifier,
                         onRefresh = {
@@ -137,6 +140,7 @@ fun ContractListScreen(
                         }
                     )
                 } else {
+                    Log.d("Comprobaciones", "Success.Contract")
                     ContractListContent(
                         contracts = contracts,
                         modifier = Modifier.padding(padding),

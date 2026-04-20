@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
@@ -34,7 +35,7 @@ fun SettingSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(0.8f),
+        modifier = Modifier.fillMaxWidth(0.65f),
         shape = RoundedCornerShape(16.dp),
         color = Color(0xFF006633).copy(alpha = 0.2f),
     ) {
@@ -48,7 +49,9 @@ fun SettingSwitchItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 12.sp
+                    ),
                     fontWeight = FontWeight.Medium
                 )
             }

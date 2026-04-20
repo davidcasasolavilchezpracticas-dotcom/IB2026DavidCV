@@ -17,7 +17,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 fun ContractActionSuccessScreen(
     navController: NavController,
     viewModel: ContractActionsViewModel,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActionSuccessScreen" ) {

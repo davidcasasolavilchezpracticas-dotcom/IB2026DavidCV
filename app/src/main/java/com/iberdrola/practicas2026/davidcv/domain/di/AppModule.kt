@@ -22,6 +22,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
@@ -67,12 +68,41 @@ object AppModule {
             .create()
     }
 
+
     @Provides
     @Singleton
-    fun provideRetrofit(gson: Gson): Retrofit {
-        val host = if (USAR_ADB_REVERSE) "127.0.0.1" else if (ES_EMULADOR) "10.0.2.2" else IP_PC_LOCAL
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                var request = chain.request()
+
+                // Determinamos el host dinámicamente
+                val newHost = when (DataSourceConfig.connectionMode) {
+                    ConnectionMode.EMULATOR -> "10.0.2.2"
+                    ConnectionMode.ADB_REVERSE -> "127.0.0.1"
+                    ConnectionMode.LOCAL_IP -> DataSourceConfig.pcIp
+                }
+
+                // Reconstruimos la URL con el nuevo host
+                val newUrl = request.url.newBuilder()
+                    .host(newHost)
+                    .build()
+
+                request = request.newBuilder()
+                    .url(newUrl)
+                    .build()
+
+                chain.proceed(request)
+            }
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://$host:3000/")
+            .baseUrl("http://placeholder:3000/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }

@@ -23,6 +23,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
+import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListContent
@@ -107,7 +108,7 @@ fun HorizontalPage(
             state = currentState,
             modifier = modifier,
             onErrorClick = {
-                DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
+                useLocal(currentState)
                 navController.popBackStack()
                 analytics.logEvent("ButtonError") {
                     param("eventType", "Click")
@@ -129,5 +130,11 @@ fun HorizontalPage(
                 }
             }
         )
+    }
+}
+
+fun useLocal(currentState: BillListState) {
+    if (currentState is BillListState.Error && currentState.exception == BillException.ConexionFailed){
+        DataSourceConfig.useNetwork = false
     }
 }

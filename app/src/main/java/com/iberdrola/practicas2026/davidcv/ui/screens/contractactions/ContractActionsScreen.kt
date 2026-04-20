@@ -19,7 +19,8 @@ fun ContractActionsScreen(
     contractId: Int,
     navController: NavController,
     viewModel: ContractActionsViewModel = hiltViewModel(),
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onBack: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActionsScreen" ) {
@@ -28,7 +29,7 @@ fun ContractActionsScreen(
     }
 
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }

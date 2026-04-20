@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractlist
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,7 +29,9 @@ fun ContractListContent(
             .fillMaxSize()
             .padding(horizontal = LocalSpacing.current.lg)
     ) {
+        Log.d("Comprobaciones", "Gas -> $gasContractActive | Luz -> $lightContractActive")
         if (gasContractActive || lightContractActive) {
+            Log.d("Comprobaciones", "LazyColumn")
             LazyColumn(
                 modifier = modifier.weight(1f)
             ) {
@@ -45,6 +48,7 @@ fun ContractListContent(
                 }
             }
         } else {
+            Log.d("Comprobaciones", "EmptyContract")
             EmptyContractsScreen (
                 modifier = modifier,
                 onRefresh = onEmptyClick

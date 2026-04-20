@@ -66,7 +66,8 @@ fun BillListScreen(
     modifier: Modifier,
     viewSelected: Boolean = true,
     analytics: FirebaseAnalytics,
-    remoteConfig: FirebaseRemoteConfig
+    remoteConfig: FirebaseRemoteConfig,
+    onBack: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent("BillListScreen") {
@@ -110,7 +111,7 @@ fun BillListScreen(
     }
 
     BackHandler {
-        navController.navigate(Routes.BACK)
+        onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }

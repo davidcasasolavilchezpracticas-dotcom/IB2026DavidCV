@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
@@ -33,6 +34,7 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
  */
 @Composable
 fun ErrorScreen(
+    exception: Exception? = null,
     message: String,
     modifier: Modifier = Modifier,
     img: ImageVector,
@@ -55,7 +57,7 @@ fun ErrorScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.serverFail),
+            text = if (exception is BillException.ConexionFailed) stringResource(R.string.serverFail) else stringResource(R.string.dataFail),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -79,7 +81,7 @@ fun ErrorScreen(
             modifier = Modifier.padding(top = LocalSpacing.current.lg)
         ) {
             Text(
-                text = stringResource(R.string.useLocal),
+                text = if (exception is BillException.ConexionFailed) stringResource(R.string.useLocal) else stringResource(R.string.goBack),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = White,

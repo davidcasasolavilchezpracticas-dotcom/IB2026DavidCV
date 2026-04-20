@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 /**
  * BillRepositoryNetwork
- * Implementacion del repositorio para el network
+ * Implementacion del repositorio para el network con validaciones de datos
  */
 class BillRepositoryNetwork @Inject constructor(
     private val _apiService: ApiService
@@ -27,16 +27,18 @@ class BillRepositoryNetwork @Inject constructor(
     override fun getBills(): Flow<BaseResult<List<Bill>>> = flow {
         try {
             val response = _apiService.getBills()
-            if (response.isSuccessful && response.body() != null) {
-                val bills = response.body()!!.map { it.toModel() }
+            if (response.isSuccessful) {
+                val body = response.body() ?: throw BillException.DataCorrupted
+                val bills = body.map { it.toModel() }
                 emit(BaseResult.Success(bills))
             } else {
-                emit(Error(Exception("Error GET: ${response.code()}")))
+                emit(Error(BillException.ResponseError("Error GET: ${response.code()}")))
             }
         } catch (e: IOException) {
             emit(Error(BillException.ConexionFailed))
-        }
-        catch (e: Exception) {
+        } catch (e: BillException) {
+            emit(Error(e))
+        } catch (e: Exception) {
             emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
@@ -44,8 +46,9 @@ class BillRepositoryNetwork @Inject constructor(
     override fun getBillsByType(type: BillType): Flow<BaseResult<List<Bill>>> = flow {
         try {
             val response = _apiService.getBills()
-            if (response.isSuccessful && response.body() != null) {
-                val bills = response.body()!!
+            if (response.isSuccessful) {
+                val body = response.body() ?: throw BillException.DataCorrupted
+                val bills = body
                     .filter { it.type == type }
                     .map { it.toModel() }
                 emit(BaseResult.Success(bills))
@@ -54,8 +57,9 @@ class BillRepositoryNetwork @Inject constructor(
             }
         } catch (e: IOException) {
             emit(Error(BillException.ConexionFailed))
-        }
-        catch (e: Exception) {
+        } catch (e: BillException) {
+            emit(Error(e))
+        } catch (e: Exception) {
             emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
@@ -63,15 +67,17 @@ class BillRepositoryNetwork @Inject constructor(
     override fun getBillById(id: Int): Flow<BaseResult<Bill>> = flow {
         try {
             val response = _apiService.getBillById(id)
-            if (response.isSuccessful && response.body() != null) {
-                emit(BaseResult.Success(response.body()!!.toModel()))
+            if (response.isSuccessful) {
+                val body = response.body() ?: throw BillException.DataCorrupted
+                emit(BaseResult.Success(body.toModel()))
             } else {
-                emit(Error(Exception("Error GET ID: ${response.code()}")))
+                emit(Error(BillException.ResponseError("Error GET ID: ${response.code()}")))
             }
         } catch (e: IOException) {
             emit(Error(BillException.ConexionFailed))
-        }
-        catch (e: Exception) {
+        } catch (e: BillException) {
+            emit(Error(e))
+        } catch (e: Exception) {
             emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
@@ -79,13 +85,16 @@ class BillRepositoryNetwork @Inject constructor(
     override fun updateBill(bill: Bill): Flow<BaseResult<Bill>> = flow {
         try {
             val response = _apiService.updateBill(bill.id, bill.toEntity())
-            if (response.isSuccessful && response.body() != null) {
-                emit(BaseResult.Success(response.body()!!.toModel()))
+            if (response.isSuccessful) {
+                val body = response.body() ?: throw BillException.DataCorrupted
+                emit(BaseResult.Success(body.toModel()))
             } else {
-                emit(Error(Exception("Error PUT: ${response.code()}")))
+                emit(Error(BillException.ResponseError("Error PUT: ${response.code()}")))
             }
-        } catch (e: Exception) {
+        } catch (e: BillException) {
             emit(Error(e))
+        } catch (e: Exception) {
+            emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -95,10 +104,10 @@ class BillRepositoryNetwork @Inject constructor(
             if (response.isSuccessful) {
                 emit(BaseResult.Success(true))
             } else {
-                emit(Error(Exception("Error DELETE: ${response.code()}")))
+                emit(Error(BillException.ResponseError("Error DELETE: ${response.code()}")))
             }
         } catch (e: Exception) {
-            emit(Error(e))
+            emit(Error(BillException.UnknownError(e.message)))
         }
     }.flowOn(Dispatchers.IO)
 }
