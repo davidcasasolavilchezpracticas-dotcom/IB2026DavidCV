@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -27,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreenLight
 
 
 /**
@@ -37,6 +43,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
  * @param totalRange Rango de precios total
  * @param onSliderChange Callback cuando se cambia el valor
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRangeSelector(
     selectedRange: ClosedFloatingPointRange<Float>,
@@ -69,10 +76,31 @@ fun PriceRangeSelector(
                 onSliderChange(pos)
             },
             valueRange = totalRange,
-            colors = SliderDefaults.colors(
-                thumbColor = Color(0xFF006633),
-                activeTrackColor = Color(0xFF006633)
-            )
+            startThumb = {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(EnergyGreen, CircleShape)
+                )
+            },
+            endThumb = {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(EnergyGreen, CircleShape)
+                )
+            },
+            track = { rangeSliderState ->
+                SliderDefaults.Track(
+                    rangeSliderState = rangeSliderState,
+                    modifier = Modifier.height(4.dp),
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = EnergyGreen,
+                        inactiveTrackColor = EnergyGreenLight
+                    ),
+                    thumbTrackGapSize = 0.dp
+                )
+            }
         )
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
