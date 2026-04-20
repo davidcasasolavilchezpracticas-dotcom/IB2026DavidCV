@@ -63,6 +63,8 @@ fun FilterScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val maxPrice by viewModel.maxPrice.collectAsState()
+    val minPrice by viewModel.minPrice.collectAsState()
+
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -124,8 +126,8 @@ fun FilterScreen(
         }
 
         PriceRangeSelector(
-            selectedRange = state.priceRange ?: 0f..maxPrice,
-            totalRange = 0f..maxPrice,
+            selectedRange = state.priceRange ?: minPrice..maxPrice,
+            totalRange = minPrice..maxPrice,
             onSliderChange = {
                 range -> viewModel.onPriceRangeChanged(range)
                 analytics.logEvent ( "SetPriceRange" ) {

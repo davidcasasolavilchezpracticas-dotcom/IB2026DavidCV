@@ -38,11 +38,15 @@ class BillViewModel @Inject constructor(
     private var _maxPrice = MutableStateFlow(0f)
     val maxPrice: StateFlow<Float> = _maxPrice
 
+    private var _minPrice = MutableStateFlow(0f)
+    val minPrice: StateFlow<Float> = _minPrice
+
+
     init {
-        calculateMaxPrice()
+        calculateMaxMinPrice()
     }
 
-    private fun calculateMaxPrice() {
+    private fun calculateMaxMinPrice() {
         viewModelScope.launch {
             // Combinamos o consultamos ambos tipos de facturas
             // Nota: Aquí asumo que quieres el máximo absoluto entre Luz y Gas
@@ -61,6 +65,9 @@ class BillViewModel @Inject constructor(
                     // Buscamos el valor máximo. Usamos .toFloat() porque el estado suele usar Float para Sliders
                     val max = bills.maxOf { it.value.toFloat() }
                     _maxPrice.value = max
+
+                    val min = bills.minOf { it.value.toFloat() }
+                    _minPrice.value = min
 
                     // Opcional: Si quieres que el rango por defecto empiece en el máximo
                     if (_state.value.priceRange == null) {
