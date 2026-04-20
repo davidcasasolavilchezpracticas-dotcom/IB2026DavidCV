@@ -6,7 +6,7 @@ package com.iberdrola.practicas2026.davidcv.domain.network
  */
 sealed class BaseResult <out T> {
 
-    data class Success<T> ( var data: T ): BaseResult<T>()
+    data class Success<T> ( val data: T ): BaseResult<T>()
 
-    data class Error (var exception: Exception): BaseResult<Nothing>()
+    data class Error (val exception: Exception): BaseResult<Nothing>()
 }

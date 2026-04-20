@@ -47,13 +47,13 @@ class BillRepositoryDelegate @Inject constructor(
      */
     private suspend fun syncBills() {
         try {
-            val billsToInsert: List<BillEntity> = if (DataSourceConfig.useNetwork) {
+            val billsToInsert: List<BillEntity>
+            if (DataSourceConfig.useNetwork) {
                 Log.d("ComprobacionesBillRepository", "Intentando sincronizar desde RED...")
                 val response = _apiService.getBills()
                 if (response.isSuccessful) {
                     val body = response.body() ?: throw BillException.DataCorrupted
-                    // Validamos los datos mapeándolos a modelo y de vuelta a entidad
-                    body.map { it.toModel().toEntity() }
+                    billsToInsert = body.map { it.toModel().toEntity() }
                 } else {
                     Log.e("ComprobacionesBillRepository", "Error en RED: ${response.code()}")
                     throw BillException.ResponseError("Error RED: ${response.code()}")
@@ -68,58 +68,60 @@ class BillRepositoryDelegate @Inject constructor(
 
                 val type = object : TypeToken<List<BillEntity>>() {}.type
                 val entities: List<BillEntity> = try {
-                    _gson.fromJson(jsonString, type) ?: throw BillException.DataCorrupted
+                    _gson.fromJson(jsonString, type)
                 } catch (e: JsonSyntaxException) {
                     throw BillException.DataCorrupted
                 }
 
-                // Validamos cada entidad del JSON local usando el mapper robusto
-                entities.map { it.toModel().toEntity() }
+                billsToInsert = entities.map { it.toModel().toEntity() }
             }
 
-            _dao.deleteAll()
-            _dao.insertAll(billsToInsert)
-            Log.d("ComprobacionesBillRepository", "Base de datos actualizada con ${billsToInsert.size} facturas")
+            if (billsToInsert.isNotEmpty()) {
+                _dao.deleteAll()
+                _dao.insertAll(billsToInsert)
+                Log.d("ComprobacionesBillRepository", "Base de datos actualizada con ${billsToInsert.size} facturas")
+            }
 
         } catch (e: BillException) {
             Log.e("ComprobacionesBillRepository", "Error controlado: ${e.message}")
             throw e
-        } catch (e: Exception) {
-            Log.e("ComprobacionesBillRepository", "Excepción no controlada: ${e.message}")
+        }catch (e: Exception) {
+            Log.e("ComprobacionesBillRepository", "Excepción no controlada: ${e}")
             throw BillException.UnknownError(e.message)
         }
     }
 
-    override fun getBills(): Flow<BaseResult<List<Bill>>> = flow {
-        syncBills()
+
+    override fun getBills(): Flow<BaseResult<List<Bill>>> = flow<BaseResult<List<Bill>>> {
+        syncBills()    // Usamos emitAll con map para mantener el flujo de Room vivo sin errores de cast
         emitAll(
             _dao.getAll().map { entities ->
-                BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Bill>>
+                val bills: List<Bill> = entities.map { it.toModel() }
+                BaseResult.Success(bills)
             }
         )
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e)))
+        emit(BaseResult.Error(if (e is Exception) e else Exception(e.toString())))
     }.flowOn(Dispatchers.IO)
 
-    override fun getBillsByType(type: BillType): Flow<BaseResult<List<Bill>>> = flow {
+    override fun getBillsByType(type: BillType): Flow<BaseResult<List<Bill>>> = flow<BaseResult<List<Bill>>> {
         syncBills()
         emitAll(
             _dao.getAllBillsByType(type).map { entities ->
-                BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Bill>>
+                val bills: List<Bill> = entities.map { it.toModel() }
+                BaseResult.Success(bills)
             }
         )
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e)))
+        emit(BaseResult.Error(if (e is Exception) e else Exception(e.toString())))
     }.flowOn(Dispatchers.IO)
-
-    override fun getBillById(id: Int): Flow<BaseResult<Bill>> = flow {
-        emitAll(
-            _dao.getById(id).map { entity ->
-                BaseResult.Success(entity.toModel()) as BaseResult<Bill>
-            }
-        )
+    override fun getBillById(id: Int): Flow<BaseResult<Bill>> = flow<BaseResult<Bill>> {
+        _dao.getById(id).collect { entity ->
+            emit(BaseResult.Success(entity.toModel()))
+        }
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e)))
+        val exception = if (e is Exception) e else Exception(e.toString())
+        emit(BaseResult.Error(exception))
     }.flowOn(Dispatchers.IO)
 
     override fun updateBill(bill: Bill): Flow<BaseResult<Bill>> = flow {
