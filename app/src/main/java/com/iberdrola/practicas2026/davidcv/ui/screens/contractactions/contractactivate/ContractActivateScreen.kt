@@ -1,5 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
 @Composable
@@ -23,14 +26,18 @@ fun ContractActivateScreen(
     viewModelDS: DataStoreViewModel = hiltViewModel(),
     analytics: FirebaseAnalytics
 ) {
+    val state by viewModel.state.collectAsState()
+    val account by viewModelDS.account.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActivateScreen" ) {
             param("eventType", "View")
         }
     }
-
-    val state by viewModel.state.collectAsState()
-    val account by viewModelDS.account.collectAsStateWithLifecycle()
+    BackHandler {
+        navController.popBackStack()
+        navController.popBackStack()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ContractActivateContent(

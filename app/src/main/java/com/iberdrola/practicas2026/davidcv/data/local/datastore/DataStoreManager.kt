@@ -38,7 +38,7 @@ class DataStoreManager @Inject constructor(
 
     suspend fun saveTrys(trys: Int) {
         context.dataStore.edit { preferences ->
-            preferences[BS_COUNTER_KEY] = trys
+            preferences[TRYS_KEY] = trys
         }
     }
 

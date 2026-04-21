@@ -144,21 +144,33 @@ fun FilterScreen(
                 value = state.paymentStatusPaid,
                 onCheckedChange = viewModel::onStateChangePaid
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             FilterOption(
                 label = PaymentStatus.PENDING.label,
                 value = state.paymentStatusPending,
                 onCheckedChange = viewModel::onStateChangePending
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             FilterOption(
                 label = PaymentStatus.TRAMITED.label,
                 value = state.paymentStatusTramited,
                 onCheckedChange = viewModel::onStateChangeTramited
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             FilterOption(
                 label = PaymentStatus.CANCELED.label,
                 value = state.paymentStatusCanceled,
                 onCheckedChange = viewModel::onStateChangeCanceled
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             FilterOption(
                 label = PaymentStatus.FIXED_PAYMENT.label,
                 value = state.paymentStatusFixed,

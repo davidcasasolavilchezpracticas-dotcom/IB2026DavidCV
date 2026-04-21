@@ -6,10 +6,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractType
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist.ContractItem
@@ -27,13 +36,23 @@ fun ContractListContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = LocalSpacing.current.lg)
     ) {
-        Log.d("Comprobaciones", "Gas -> $gasContractActive | Luz -> $lightContractActive")
+        Text(
+            text = stringResource(R.string.clsTitle),
+            modifier = Modifier
+                .padding(
+                    horizontal = LocalSpacing.current.xl,
+                    vertical = LocalSpacing.current.sm
+                ),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
         if (gasContractActive || lightContractActive) {
-            Log.d("Comprobaciones", "LazyColumn")
             LazyColumn(
-                modifier = modifier.weight(1f)
+                modifier = modifier
+                    .fillMaxSize()
+                    .weight(1f)
             ) {
                 items(contracts) { contract ->
                     if (
@@ -42,13 +61,17 @@ fun ContractListContent(
                     ) {
                         ContractItem(
                             contract = contract,
-                            onClick = { onClick(contract.id) },
+                            onClick = {
+                                Log.d("Comprobaciones", "Status -> ${contract.status}")
+                                onClick(contract.id)
+                            },
                         )
+
+                        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
                     }
                 }
             }
         } else {
-            Log.d("Comprobaciones", "EmptyContract")
             EmptyContractsScreen (
                 modifier = modifier,
                 onRefresh = onEmptyClick

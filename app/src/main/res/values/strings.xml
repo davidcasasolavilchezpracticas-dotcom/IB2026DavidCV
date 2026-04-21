@@ -57,7 +57,7 @@
     <string name="cscLegalTextDerechos">Derechos</string>
     <string name="cscLegalTextResponsableDescription">Iberdrola Clientes S.A.U.</string>
     <string name="cscLegalTextFinalidadDescription">Gestión de la factura electrónica.</string>
-    <string name="cscLegalTextDerechosDescription">Acceso, rectificación, supresión, limitación del tratamiento...</string>
+    <string name="cscLegalTextDerechosDescription">Acceso, rectificación, supresión, limitación del tratamiento, portabilidad de datos u oposición, incluida la oposición a decisiones individuales automatizadas.</string>
     <string name="moreInfo">Más info</string>
     <string name="cscPolicy">He leído y acepto la Política de privacidad, acepto las Condiciones Generales y Particulares...</string>
     <string name="cscBack">Anterior</string>
@@ -69,7 +69,7 @@
     <string name="caicInfoText">Actualmente recibes las facturas electrónicas de este contrato al:</string>
     <string name="caicEmailTitle">Recibes tus facturas en este email</string>
     <string name="caicEmailValue">pepe2@gmail.com</string>
-    <string name="caicAlertText">Recuerda que la factura electrónica es un requisito de este Plan, por lo que no es recomendable desactivarla.</string>
+    <string name="caicAlertText">Recuerda que la factura electrónica es un requisito de este Plan, por lo que no es posible desactivarla.</string>
     <string name="caicButtonModify">Modificar email</string>
 
     <!-- ContractEmailChangeContent Strings -->
@@ -119,4 +119,10 @@
     <string name="dataFail">Error en la obtención de los datos</string>
     <string name="tryAgain">Reintentar</string>
     <string name="goBack">Volver a inicio</string>
+    <string name="csc_Txt1Policy">"He leído y acepto la Politica de privacidad, acepto las "</string>
+    <string name="csc_spTxt1Policy">Condiciones Generales</string>
+    <string name="csc_Txt2Policy">" y Particulares de la oferta y la suscripción a Factura Electrónica."</string>
+    <string name="cvcTextVerifyIdentity">Para verificar tu identidad, hemos enviado un código al teléfono</string>
+    <string name="cvcTextVerifyIdentityEnd">. Por favor, introdúcelo a continuación.</string>
+    <string name="rcibTextNoMoreResendCode">Te has quedado sin opciones de reiniciar</string>
 </resources>

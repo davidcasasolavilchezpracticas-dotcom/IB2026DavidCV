@@ -101,71 +101,59 @@ fun ContractListScreen(
         })
     }
 
-    Scaffold(
-        topBar = {
-            Column {
-                Text(
-                    text = stringResource(R.string.clsTitle),
-                    modifier = Modifier.padding(horizontal = LocalSpacing.current.lg, vertical = LocalSpacing.current.sm),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+    when (state.value) {
+        is ContractListState.Error -> {
+            Log.d("Comprobaciones", "Error")
+            ErrorScreen(
+                message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
+                modifier = Modifier,
+                img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
+                onClick = {
+                    DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
+                    navController.popBackStack()
+                }
+            )
         }
-    ) { padding ->
-        when (state.value) {
-            is ContractListState.Error -> {
-                Log.d("Comprobaciones", "Error")
-                ErrorScreen(
-                    message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
+        is ContractListState.Success -> {
+            val contracts = (state.value as ContractListState.Success).contracts
+            if (contracts.isEmpty()) {
+                Log.d("Comprobaciones", "Success.Empty")
+                EmptyContractsScreen(
                     modifier = Modifier,
-                    img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
-                    onClick = {
-                        DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
-                        navController.popBackStack()
+                    onRefresh = {
+                        navController.navigateUp()
+                        analytics.logEvent ( "RefreshContracts" ) {
+                            param("eventType", "RelevantMovements")
+                        }
                     }
                 )
-            }
-            is ContractListState.Success -> {
-                val contracts = (state.value as ContractListState.Success).contracts
-                if (contracts.isEmpty()) {
-                    Log.d("Comprobaciones", "Success.Empty")
-                    EmptyContractsScreen(
-                        modifier = Modifier,
-                        onRefresh = {
-                            navController.navigateUp()
-                            analytics.logEvent ( "RefreshContracts" ) {
-                                param("eventType", "RelevantMovements")
-                            }
+            } else {
+                Log.d("Comprobaciones", "Success.Contract")
+                ContractListContent(
+                    contracts = contracts,
+                    modifier = Modifier,
+                    onClick = { id ->
+                        navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
+                        analytics.logEvent ( "ButtonContractsInfo" ) {
+                            param("eventType", "Click")
                         }
-                    )
-                } else {
-                    Log.d("Comprobaciones", "Success.Contract")
-                    ContractListContent(
-                        contracts = contracts,
-                        modifier = Modifier.padding(padding),
-                        onClick = { id ->
-                            navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
-                            analytics.logEvent ( "ButtonContractsInfo" ) {
-                                param("eventType", "Click")
-                            }
-                        },
-                        onEmptyClick = {
-                            navController.navigate(Routes.INITIAL)
-                            analytics.logEvent ( "ButtonEmpty" ) {
-                                param("eventType", "Click")
-                            }
-                        },
-                        gasContractActive = gasContractActive,
-                        lightContractActive = lightContractActive
-                    )
-                }
-            }
-            is ContractListState.Loading -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Color(0xFF006633))
-                }
+                    },
+                    onEmptyClick = {
+                        navController.navigate(Routes.INITIAL)
+                        analytics.logEvent ( "ButtonEmpty" ) {
+                            param("eventType", "Click")
+                        }
+                    },
+                    gasContractActive = gasContractActive,
+                    lightContractActive = lightContractActive
+                )
             }
         }
+        is ContractListState.Loading -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color(0xFF006633))
+            }
+        }
+
     }
 }

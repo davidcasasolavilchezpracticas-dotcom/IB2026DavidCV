@@ -1,14 +1,14 @@
 [
   {
     "id": 1,
-    "type": "GAS",
+    "type": "LIGHT",
     "status": "ACTIVE",
     "phone": "654327698",
     "email": "usuario.gas@example.com"
   },
   {
     "id": 2,
-    "type": "LIGHT",
+    "type": "GAS",
     "status": "INACTIVE",
     "phone": null,
     "email": null

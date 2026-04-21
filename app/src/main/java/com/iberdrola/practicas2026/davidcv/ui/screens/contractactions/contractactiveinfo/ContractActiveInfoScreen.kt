@@ -1,5 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactiveinfo
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -26,13 +28,20 @@ fun ContractActiveInfoScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics
 ) {
+    val state by viewModel.state.collectAsState()
+
+    Log.d("Comprobaciones", "Contract -> ${state.contract}")
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActiveInfoScreen" ) {
             param("eventType", "View")
         }
     }
 
-    val state by viewModel.state.collectAsState()
+    BackHandler{
+        navController.popBackStack()
+        navController.popBackStack()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
@@ -74,6 +83,18 @@ fun ContractActiveInfoScreen(
                             param("eventType", "Click")
                         }
                     },
+                )
+            }
+            else -> {
+                ErrorScreen(
+                    message = state.errorMessage ?: "Unknown error",
+                    img = Icons.Default.ErrorOutline,
+                    onClick = {
+                        navController.popBackStack()
+                        analytics.logEvent ( "ButtonBack" ) {
+                            param("eventType", "Click")
+                        }
+                    }
                 )
             }
         }

@@ -67,17 +67,9 @@ class ContractActionsViewModel @Inject constructor(
     fun censurator(email: String) : String{
         if(email.isNotEmpty()){
             if (email.length <= 7)
-                return String.format("*", 5) + email.substring(
-                    (email.lastIndexOf('@') - 1),
-                    email.length
-                )
+                return (email.substring(0, 1) + "*****" + email.substring((email.lastIndexOf('@') - 1),email.length))
             else
-                return StringBuilder(
-                    email.substring(0, 1) + String.format(
-                        "*",
-                        5
-                    ) + email.substring((email.lastIndexOf('@') - 1), email.length - 1)
-                ).toString()
+                return StringBuilder().append(email.substring(0, 1) + "*****" + email.substring((email.lastIndexOf('@') - 1), email.length - 1)).toString()
         }
         return "a*****z@gmail.com"
     }
@@ -128,13 +120,23 @@ class ContractActionsViewModel @Inject constructor(
 
     fun getContract(id: Int) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
             _getContractByIdUseCase(id).collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
-                        _state.update { it.copy(isLoading = false, contract = result.data, action = if(result.data.status == ContractStatus.ACTIVE) ContractActions.MODIFYEMAIL else ContractActions.MODIFYSTATUSEMAIL) }
+                        Log.d("Comprobaciones", "Contract -> ${result.data}")
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            contract = result.data,
+                            action = if(result.data.status == ContractStatus.ACTIVE)
+                                    ContractActions.MODIFYEMAIL
+                                else
+                                    ContractActions.MODIFYSTATUSEMAIL
+                        )
+                        Log.d("Comprobaciones", "Contract -> ${_state.value.contract}")
                     }
                     is BaseResult.Error -> {
+                        Log.d("Comprobaciones", "Contract -> ${result.exception}")
                         _state.update { it.copy(
                             isLoading = false,
                             errorMessage = result.exception.message ?: "Error desconocido"

@@ -74,36 +74,32 @@ class ContractRepositoryDelegate @Inject constructor(
 
     private suspend fun syncContracts(forceRefresh: Boolean) {
         try {
-
-            if (DataSourceConfig.useNetwork || forceRefresh) {
-                if (DataSourceConfig.useNetwork) {
-                    Log.d("ComprobacionesContractRepository", "Sincronizando desde RED...")
-                    val response = _apiService.getContracts()
-                    if (response.isSuccessful) {
-                        response.body()?.let { contracts ->
-                            if (forceRefresh) _dao.deleteAll()
-                            _dao.insertAll(contracts)
-                            // Opcional: Al recibir de red, también actualizamos nuestro mock local
-                            saveCurrentDbToJson()
-                        }
-                    }
-                    else {
-                        throw ContractException.ConexionFailed
-                    }
-                } else {
-                    Log.d("ComprobacionesContractRepository", "Sincronizando desde MOCK JSON...")
-                    getMockJsonContent()?.let { jsonString ->
-                        val type = object : TypeToken<List<ContractEntity>>() {}.type
-                        val contracts: List<ContractEntity> = _gson.fromJson(jsonString, type)
-                        if (contracts.isNotEmpty()) {
-                            if (forceRefresh) _dao.deleteAll()
-                            _dao.insertAll(contracts)
-                        }
+            if (DataSourceConfig.useNetwork) {
+                Log.d("ComprobacionesContractRepository", "Sincronizando desde RED...")
+                val response = _apiService.getContracts()
+                if (response.isSuccessful) {
+                    response.body()?.let { contracts ->
+                        if (forceRefresh) _dao.deleteAll()
+                        _dao.insertAll(contracts)
+                        saveCurrentDbToJson()
+                        return // ÉXITO: Salimos de la función
                     }
                 }
             }
         } catch (e: Exception) {
+            Log.e("ComprobacionesContractRepository", "Fallo de red, intentando local...")
             throw ContractException.ConexionFailed
+        }
+
+        // SI LLEGAMOS AQUÍ es porque useNetwork es false, falló la red, o la respuesta no fue exitosa
+        Log.d("ComprobacionesContractRepository", "Sincronizando desde MOCK JSON (Fallback)...")
+        getMockJsonContent()?.let { jsonString ->
+            val type = object : TypeToken<List<ContractEntity>>() {}.type
+            val contracts: List<ContractEntity> = _gson.fromJson(jsonString, type)
+            if (contracts.isNotEmpty()) {
+                if (forceRefresh) _dao.deleteAll()
+                _dao.insertAll(contracts)
+            }
         }
     }
 

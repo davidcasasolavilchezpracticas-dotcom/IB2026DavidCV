@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
@@ -44,9 +45,12 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess.ContractActionSuccessScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate.ContractActivateScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactiveinfo.ContractActiveInfoScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractemailchange.ContractEmailChangeScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange.ContractPhoneChangeScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
@@ -136,7 +140,16 @@ fun NavigationWrapper(
     Scaffold(
         modifier = modifier,
         topBar = {
-            if (currentRoute != Routes.INITIAL && currentRoute != null) {
+            if (
+                (
+                    currentRoute != Routes.INITIAL &&
+                    currentRoute != Routes.CONTRACT_ACTIVATE &&
+                    currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
+                    currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
+                    currentRoute != Routes.CONTRACT_VERIFY &&
+                    currentRoute != Routes.CONTRACT_SUCCESS
+                ) && currentRoute != null
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
@@ -255,6 +268,34 @@ fun NavigationWrapper(
                         viewModel = viewModel,
                         analytics = analytics,
                         onBack = handleBackNavigation
+                    )
+                }
+
+                composable(Routes.CONTRACT_INFO) { entry ->
+                    val parentEntry = remember(entry) {
+                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
+                        catch (e: Exception) { entry }
+                    }
+                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+
+                    ContractActiveInfoScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        analytics = analytics
+                    )
+                }
+
+                composable(Routes.CONTRACT_ACTIVATE) { entry ->
+                    val parentEntry = remember(entry) {
+                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
+                        catch (e: Exception) { entry }
+                    }
+                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
+
+                    ContractActivateScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        analytics =  analytics
                     )
                 }
 

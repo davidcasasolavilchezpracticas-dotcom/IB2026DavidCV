@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 @Composable
 fun ResendCodeInfoBox(
     onResendClick: () -> Unit,
+    resendCode: Boolean,
     trys: Int
 ) {
     Surface(color = Color(0xFFE1F5FE), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
@@ -35,11 +37,26 @@ fun ResendCodeInfoBox(
             Icon(Icons.Outlined.Info, null, tint = Color.DarkGray, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(stringResource(R.string.rcibTitleResendCode), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                Text(stringResource(R.string.rcibTextFindCode), style = MaterialTheme.typography.bodySmall)
-                if ( trys < 3 ){
+                Text(
+                    text = stringResource(R.string.rcibTitleResendCode),
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = stringResource(R.string.rcibTextFindCode),
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                if ( resendCode && trys > 0 ){
                     Text(
                         "Recuerdas que hoy te quedan $trys intentos.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                } else if ( resendCode && trys == 0 ) {
+                    Text(
+                        stringResource(R.string.rcibTextNoMoreResendCode),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

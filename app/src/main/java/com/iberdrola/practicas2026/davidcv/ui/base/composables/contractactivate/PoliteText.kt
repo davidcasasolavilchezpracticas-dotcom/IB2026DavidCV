@@ -10,16 +10,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import com.iberdrola.practicas2026.davidcv.R
+import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 @Preview(showBackground = true)
 @Composable
-fun LegalTextItem(title: Int = 0, description: Int = 0) {
+fun PoliteText(
+    txt1: Int = 0,
+    spTxt1: Int = 0,
+    txt2: Int = 0,
+) {
     Column(
         modifier = Modifier
             .padding(
@@ -28,14 +31,21 @@ fun LegalTextItem(title: Int = 0, description: Int = 0) {
     ) {
         Text(
             text = buildAnnotatedString {
-                append("${stringResource(title)}: ")
-                append(stringResource(description))
-                append(" ")
-                withStyle(style = SpanStyle(color = Color(0xFF006633), textDecoration = TextDecoration.Underline)) {
-                    append(stringResource(R.string.moreInfo))
+                append(stringResource(txt1))
+                withStyle(
+                    style = SpanStyle(
+                        color = Color(0xFF006633),
+                        textDecoration = TextDecoration.Underline
+                    )
+                ) {
+                    append(stringResource(spTxt1))
                 }
+                append(stringResource(txt2))
             },
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = Color.Black,
+                fontSize = 14.sp
+            )
         )
     }
 }

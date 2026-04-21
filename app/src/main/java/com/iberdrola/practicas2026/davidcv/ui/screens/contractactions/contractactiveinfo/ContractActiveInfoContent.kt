@@ -32,11 +32,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
+import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractType
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,15 +49,14 @@ fun ContractActiveInfoContent(
     onModifyEmail: () -> Unit,
     onModifyPhone: () -> Unit
 ) {
-    Scaffold(
-    ) { padding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
                 .padding(LocalSpacing.current.lg)
         ) {
-            // Título y Dirección
             Text(
                 text = stringResource(R.string.caicTitleLight),
                 style = MaterialTheme.typography.headlineMedium,
@@ -70,7 +73,7 @@ fun ContractActiveInfoContent(
 
             Text(
                 text = stringResource(R.string.caicInfoText),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = Color.DarkGray
             )
 
@@ -82,6 +85,9 @@ fun ContractActiveInfoContent(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.md))
+
             Text(
                 text = contract.email!!,
                 style = MaterialTheme.typography.bodyLarge,
@@ -97,7 +103,7 @@ fun ContractActiveInfoContent(
 
             // Aviso Informativo
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.9f),
                 verticalAlignment = Alignment.Top
             ) {
                 Icon(
@@ -109,15 +115,23 @@ fun ContractActiveInfoContent(
                 Spacer(modifier = Modifier.width(LocalSpacing.current.md))
                 Text(
                     text = stringResource(R.string.caicAlertText),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
                     color = Color.Gray,
                     lineHeight = 18.sp
                 )
             }
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            // Botón Modificar Phone
+        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Column(
+            modifier = Modifier
+                .padding(LocalSpacing.current.lg)
+        ) {
             Button(
                 onClick = onModifyPhone,
                 modifier = Modifier
@@ -165,5 +179,23 @@ fun ContractActiveInfoContent(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ContractActiveInfoContentPreview() {
+    IB2026DavidCVTheme {
+        ContractActiveInfoContent(
+            contract = Contract(
+                id = 1,
+                type = ContractType.LIGHT,
+                status = ContractStatus.ACTIVE,
+                email = "ejemplo@correo.com",
+                phone = "600000000"
+            ),
+            onModifyEmail = {},
+            onModifyPhone = {}
+        )
     }
 }

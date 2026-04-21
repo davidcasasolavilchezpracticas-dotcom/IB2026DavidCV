@@ -44,6 +44,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.ResendCodeInfoBox
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.SuccessBanner
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
@@ -66,52 +68,21 @@ fun ContractVerifyContent(
 ) {
     var resendVerificationCode by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val trys = dataStoreViewModel.trys.collectAsState()
+    var trys = dataStoreViewModel.trys.collectAsState()
 
 
     Scaffold(
         topBar = {
-            Column {
-                IconButton(onClick = onClose, modifier = Modifier.align(Alignment.End)) {
-                    Icon(
-                        Icons.Default.Close,
-                        stringResource(R.string.cvcClose),
-                        tint = Color(0xFF006633)
-                    )
-                }
-                Text(
-                    text = stringResource(when (state.action) {
-                        ContractActions.MODIFYEMAIL -> R.string.cvcTitleModifyEmail
-                        ContractActions.MODIFYSTATUS -> R.string.cvcTitleDesactivate
-                        ContractActions.MODIFYSTATUSEMAIL -> R.string.cvcTitleActivate
-                        ContractActions.MODIFYPHONE -> R.string.cvcTitleModifyPhone
-                    }) ,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(3f)
-                            .fillMaxHeight()
-                            .background(Color(0xFF006633))
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .background(Color(0xFFE0E8E3))
-                    )
-                }
-            }
+            ContractTopAppBar(
+                title = when (state.action) {
+                    ContractActions.MODIFYEMAIL -> R.string.cvcTitleModifyEmail
+                    ContractActions.MODIFYSTATUS -> R.string.cvcTitleDesactivate
+                    ContractActions.MODIFYSTATUSEMAIL -> R.string.cvcTitleActivate
+                    ContractActions.MODIFYPHONE -> R.string.cvcTitleModifyPhone
+                },
+                progress = 0.75f,
+                onClose = onClose
+            )
         }
     ) { padding ->
         Column(
@@ -125,11 +96,27 @@ fun ContractVerifyContent(
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleLarge
             )
+
             Spacer(modifier = Modifier.height(32.dp))
+
+            val phone = if (state.contract?.phone != null) state.contract?.phone?.substring(state.contract.phone.length - 4) else "123"
+
+            Text(
+                text = stringResource(R.string.cvcTextVerifyIdentity) +" ******"+ phone + stringResource(R.string.cvcTextVerifyIdentityEnd),
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
             TextField(
                 value = state.verifyCodeTry,
                 onValueChange = { if (it.length <= 6) onVerifyCodeChanged(it) },
-                label = { Text(stringResource(R.string.cvcTextFieldVerifyCode)) },
+                label = {
+                    Text(
+                        text = stringResource(R.string.cvcTextFieldVerifyCode),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = TextFieldDefaults.colors(
@@ -139,11 +126,15 @@ fun ContractVerifyContent(
                     unfocusedIndicatorColor = Color.LightGray
                 )
             )
+
             Spacer(modifier = Modifier.height(24.dp))
+
             ResendCodeInfoBox(
                 trys = trys.value,
+                resendCode = resendVerificationCode,
                 onResendClick = {
                     resendVerificationCode = true
+
                     generateNewCode(context)
                     dataStoreViewModel.updateTrys(trys.value - 1)
                 }
@@ -158,37 +149,11 @@ fun ContractVerifyContent(
                 )
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = LocalSpacing.current.lg),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp),
-                    border = BorderStroke(1.5.dp, Color(0xFF2E4D3E)),
-                    shape = RoundedCornerShape(27.dp)
-                ) {
-                    Text(stringResource(R.string.Back), color = Color(0xFF2E4D3E))
-                }
-                Button(
-                    onClick = onNext,
-                    enabled = state.canSubmitVerify,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(54.dp),
-                    shape = RoundedCornerShape(27.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE9F0EC),
-                        contentColor = Color(0xFF2E4D3E)
-                    )
-                ) {
-                    Text(stringResource(R.string.Next))
-                }
-            }
+            ContractNavigateButtons(
+                enable = state.canSubmitVerify,
+                onBack = onBack,
+                onNext = onNext,
+            )
         }
     }
 }

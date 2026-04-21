@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -16,12 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -32,15 +31,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.CheckBoxPolite
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.LegalTextItem
-import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.PoliteText
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ProgressBar
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,26 +63,11 @@ fun ContractActivateContent(
 ) {
     Scaffold(
         topBar = {
-            Column {
-                IconButton(onClick = onClose, modifier = Modifier.align(Alignment.End)) {
-                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
-                }
-                Text(
-                    text = stringResource(R.string.cacActivateElectronicBill),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = { 0.5f },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp),
-                    color = Color(0xFF006633),
-                    trackColor = Color(0xFFE0E8E3)
-                )
-            }
+            ContractTopAppBar(
+                title = R.string.cacActivateElectronicBill,
+                progress = 0.5f,
+                onClose = onClose
+            )
         }
     ) { padding ->
         Column(
@@ -85,19 +77,26 @@ fun ContractActivateContent(
                 .padding(LocalSpacing.current.lg)
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
+
             Text(
                 text = stringResource(R.string.cacTitleAccountEmail),
                 style = MaterialTheme.typography.bodySmall
             )
-            Text(text = onCensurator(account?.email ?: "correoejemplo@gmail.com"), fontWeight = FontWeight.Bold)
+            Text(
+                text = onCensurator(account?.email ?: "correoejemplo@gmail.com"),
+                style = MaterialTheme.typography.titleSmall
+            )
 
-            Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
 
             Text(
                 text = stringResource(R.string.cacTitleEmailLinked),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
 
             TextField(
                 value = state.emailTry,
@@ -122,70 +121,73 @@ fun ContractActivateContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
 
             Text(
                 text = stringResource(R.string.cscBasicInfo),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
-            LegalTextItem(
-                R.string.cscLegalTextResponsable,
-                R.string.cscLegalTextResponsableDescription
-            )
-            LegalTextItem(R.string.cscLegalTextFinalidad, R.string.cscLegalTextFinalidadDescription)
-            LegalTextItem(R.string.cscLegalTextDerechos, R.string.cscLegalTextDerechosDescription)
+            LegalTextItem(R.string.cscLegalTextResponsable,R.string.cscLegalTextResponsableDescription)
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
 
+            LegalTextItem(R.string.cscLegalTextFinalidad, R.string.cscLegalTextFinalidadDescription)
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+            LegalTextItem(R.string.cscLegalTextDerechos, R.string.cscLegalTextDerechosDescription)
             Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
 
-            Row(verticalAlignment = Alignment.Top) {
-                Checkbox(
-                    checked = state.isAcceptedPolicy,
+            Row(
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier
+                    .padding(LocalSpacing.current.sm)
+            ) {
+                CheckBoxPolite(
+                    value = state.isAcceptedPolicy,
                     onCheckedChange = onAcceptedChanged,
-                    colors = CheckboxDefaults.colors(checkedColor = Color(0xFF006633))
                 )
-                Text(
-                    text = stringResource(R.string.cscPolicy),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = LocalSpacing.current.la)
+
+                Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+
+                PoliteText(
+                    txt1 = R.string.csc_Txt1Policy,
+                    spTxt1 = R.string.csc_spTxt1Policy,
+                    txt2 = R.string.csc_Txt2Policy
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = LocalSpacing.current.lg),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    border = BorderStroke(1.dp, Color(0xFF006633)),
-                    shape = RoundedCornerShape(24.dp)
-                ) {
-                    Text(stringResource(R.string.cscBack), color = Color(0xFF006633))
-                }
-
-                Button(
-                    onClick = onNext,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    enabled = state.canSubmitEmailAndPolicy,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE0E8E3),
-                        contentColor = Color(0xFF006633)
-                    ),
-                    shape = RoundedCornerShape(24.dp)
-                ) {
-                    Text(stringResource(R.string.cscNext))
-                }
-            }
+            ContractNavigateButtons(
+                enable = state.canSubmitEmailAndPolicy,
+                onBack = onBack,
+                onNext = onNext,
+            )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ContractActivateContentPreview() {
+    IB2026DavidCVTheme {
+        ContractActivateContent(
+            state = ContractActionsState(
+                emailTry = "ejemplo@correo.com",
+                isAcceptedPolicy = true
+            ),
+            account = Account(
+                id = 1,
+                name = "David",
+                email = "david@example.com"
+            ),
+            onCensurator = { it },
+            onEmailChanged = {},
+            onAcceptedChanged = {},
+            onBack = {},
+            onClose = {},
+            onNext = {}
+        )
     }
 }

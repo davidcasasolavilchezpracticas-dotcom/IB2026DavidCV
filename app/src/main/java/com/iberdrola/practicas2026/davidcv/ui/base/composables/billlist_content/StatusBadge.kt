@@ -60,9 +60,9 @@ fun StatusBadge(
 ) {
 
     val (bgColor, textColor) = when (status) {
-            ContractStatus.ACTIVE -> Color(0xFFD1F2E1) to Color(0xFF006633)
-            ContractStatus.INACTIVE -> Color(0xFFEEEEEE) to Color(0xFF757575)
-        }
+        ContractStatus.ACTIVE -> Color(0xFFD1F2E1) to Color(0xFF006633)
+        ContractStatus.INACTIVE -> Color(0xFFEEEEEE) to Color(0xFF757575)
+    }
 
     Surface(
         color = bgColor,
@@ -71,7 +71,10 @@ fun StatusBadge(
         Text(
             text = status.label,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.padding(horizontal = LocalSpacing.current.sm, vertical = LocalSpacing.current.xs),
+            modifier = Modifier
+                .padding(
+                    LocalSpacing.current.sm
+                ),
             fontWeight = FontWeight.Bold,
             color = textColor
         )
