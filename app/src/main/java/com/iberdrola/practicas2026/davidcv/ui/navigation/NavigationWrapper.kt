@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -42,6 +43,7 @@ import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.GeneralTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
@@ -82,25 +84,6 @@ fun NavigationWrapper(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Lógica centralizada para manejar la navegación hacia atrás
-    val handleBackNavigation: () -> Unit = {
-        if (currentRoute == Routes.LIST_GAS || currentRoute == Routes.LIST_LIGHT) {
-            if (bsCounter > 0) {
-                dataStoreViewModel.updateBsCounter(bsCounter - 1)
-                navController.popBackStack()
-            } else {
-                analytics.logEvent("OpinionBottomSheet") {
-                    param("eventType", "View")
-                }
-                showOpinionBS = true
-            }
-        } else {
-            if (currentRoute != Routes.INITIAL && currentRoute != null) {
-                navController.popBackStack()
-            }
-        }
-    }
-
     if (showOpinionBS) {
         OpinionBottomSheet(
             onDismiss = {
@@ -140,52 +123,22 @@ fun NavigationWrapper(
     Scaffold(
         modifier = modifier,
         topBar = {
-            if (
-                (
-                    currentRoute != Routes.INITIAL &&
-                    currentRoute != Routes.CONTRACT_ACTIVATE &&
-                    currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
-                    currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
-                    currentRoute != Routes.CONTRACT_VERIFY &&
-                    currentRoute != Routes.CONTRACT_SUCCESS
-                ) && currentRoute != null
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable {
-                            if(currentRoute == Routes.CONTRACT_INFO){
-                                navController.popBackStack()
-                            }
-                            handleBackNavigation()
+            GeneralTopAppBar(
+                currentRoute = currentRoute,
+                navController = navController,
+                handleBackNavigation = {
+                    handleBackNavigation(
+                        currentRoute = currentRoute,
+                        navController = navController,
+                        bsCounter = bsCounter,
+                        dataStoreViewModel = dataStoreViewModel,
+                        analytics = analytics,
+                        onShowOpinionBS = {
+                            showOpinionBS = true
                         }
-                        .padding(LocalSpacing.current.md)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ChevronLeft,
-                        contentDescription = null,
-                        tint = EnergyGreen
-                    )
-                    Text(
-                        text = stringResource(R.string.matbTitle),
-                        color = EnergyGreen,
-                        modifier = Modifier
-                            .drawBehind {
-                                val strokeWidth = 1.dp.toPx()
-                                val y = size.height + (-4).dp.toPx()
-                                drawLine(
-                                    color = EnergyGreen,
-                                    start = Offset(0f, y),
-                                    end = Offset(size.width, y),
-                                    strokeWidth = strokeWidth,
-                                )
-                            }
                     )
                 }
-            }
+            )
         }
     ) { innerPadding ->
         NavHost(
@@ -197,7 +150,18 @@ fun NavigationWrapper(
                 UserAccountScreen(
                     navController = navController,
                     analytics = analytics,
-                    onBack = handleBackNavigation
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    }
                 )
             }
 
@@ -205,7 +169,18 @@ fun NavigationWrapper(
                 EditProfileScreen(
                     navController = navController,
                     analytics = analytics,
-                    onBack = handleBackNavigation
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    }
                 )
             }
 
@@ -215,7 +190,18 @@ fun NavigationWrapper(
                     viewSelected = viewSelected,
                     analytics = analytics,
                     remoteConfig = remoteConfig,
-                    onBack = handleBackNavigation,
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    },
                     modifier = Modifier
                 )
             }
@@ -226,7 +212,18 @@ fun NavigationWrapper(
                     viewSelected = !viewSelected,
                     analytics = analytics,
                     remoteConfig = remoteConfig,
-                    onBack = handleBackNavigation,
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    },
                     modifier = Modifier
                 )
             }
@@ -244,7 +241,18 @@ fun NavigationWrapper(
                 FilterScreen(
                     navController = navController,
                     analytics = analytics,
-                    onBack = handleBackNavigation
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    }
                 )
             }
 
@@ -253,7 +261,18 @@ fun NavigationWrapper(
                     navController = navController,
                     remoteConfig = remoteConfig,
                     analytics = analytics,
-                    onBack = handleBackNavigation
+                    onBack = {
+                        handleBackNavigation(
+                            currentRoute = currentRoute,
+                            navController = navController,
+                            bsCounter = bsCounter,
+                            dataStoreViewModel = dataStoreViewModel,
+                            analytics = analytics,
+                            onShowOpinionBS = {
+                                showOpinionBS = true
+                            }
+                        )
+                    }
                 )
             }
 
@@ -262,96 +281,70 @@ fun NavigationWrapper(
                 startDestination = Routes.CONTRACT_ACTIONS + "/{contractId}"
             ) {
                 composable(Routes.CONTRACT_ACTIONS + "/{contractId}") { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                     ContractActionsScreen(
                         contractId = entry.arguments?.getString("contractId")!!.toInt(),
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
-                        onBack = handleBackNavigation
+                        onBack = {
+                            handleBackNavigation(
+                                currentRoute = currentRoute,
+                                navController = navController,
+                                bsCounter = bsCounter,
+                                dataStoreViewModel = dataStoreViewModel,
+                                analytics = analytics,
+                                onShowOpinionBS = {
+                                    showOpinionBS = true
+                                }
+                            )
+                        }
                     )
                 }
 
                 composable(Routes.CONTRACT_INFO) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
-
                     ContractActiveInfoScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics
                     )
                 }
 
                 composable(Routes.CONTRACT_ACTIVATE) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
-
                     ContractActivateScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics =  analytics
                     )
                 }
 
                 composable(Routes.CONTRACT_EMAIL_CHANGE) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                     ContractEmailChangeScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
                     )
                 }
 
                 composable(Routes.CONTRACT_PHONE_CHANGE) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                     ContractPhoneChangeScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
                     )
                 }
 
                 composable(Routes.CONTRACT_VERIFY) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                     ContractVerifyScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
                     )
                 }
 
                 composable(Routes.CONTRACT_SUCCESS) { entry ->
-                    val parentEntry = remember(entry) {
-                        try { navController.getBackStackEntry("contract_flow/{contractId}") }
-                        catch (e: Exception) { entry }
-                    }
-                    val viewModel: ContractActionsViewModel = hiltViewModel(parentEntry)
                     ContractActionSuccessScreen(
                         navController = navController,
-                        viewModel = viewModel,
+                        viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
                     )
                 }
