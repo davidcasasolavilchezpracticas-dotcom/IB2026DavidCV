@@ -156,7 +156,12 @@ fun NavigationWrapper(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .clickable { handleBackNavigation() }
+                        .clickable {
+                            if(currentRoute == Routes.CONTRACT_INFO){
+                                navController.popBackStack()
+                            }
+                            handleBackNavigation()
+                        }
                         .padding(LocalSpacing.current.md)
                 ) {
                     Icon(
