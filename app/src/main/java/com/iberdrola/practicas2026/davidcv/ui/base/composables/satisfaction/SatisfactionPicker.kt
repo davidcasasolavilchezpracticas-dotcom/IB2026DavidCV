@@ -3,6 +3,7 @@ package com.iberdrola.practicas2026.davidcv.ui.base.composables.satisfaction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SentimentDissatisfied
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 
 /**
@@ -39,7 +41,7 @@ fun SatisfactionPicker(
     )
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(horizontal = LocalSpacing.current.lg),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         icons.forEachIndexed { index, (icon, color) ->
@@ -48,7 +50,7 @@ fun SatisfactionPicker(
                     imageVector = icon,
                     contentDescription = null,
                     tint = color,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }

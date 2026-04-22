@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 @Composable
 fun AlertDialogOK(
@@ -65,8 +66,8 @@ fun AlertDialogOK(
             dismissOnBackPress = false,
             dismissOnClickOutside = false
         ),
-        containerColor = Color.White,
-        tonalElevation = 8.dp,
+        containerColor = White,
+        tonalElevation = 0.dp,
         confirmButton = {
             Button(
                 onClick = onDismiss,

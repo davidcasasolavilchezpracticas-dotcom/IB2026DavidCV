@@ -1,6 +1,8 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.screens
 
+import android.app.Activity
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,17 +17,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.satisfaction.SatisfactionPicker
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 
 /**
@@ -42,20 +52,28 @@ fun OpinionBottomSheet(
     onDismiss: () -> Unit,
     onLaterClick: () -> Unit,
     onRatingSelected: () -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState()
+) {val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                modifier = Modifier.scale(1.5f),
+                color = Color.LightGray
+            )
+        },
         containerColor = Color.White
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = LocalSpacing.current.xl, vertical = LocalSpacing.current.lg),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(
+                    horizontal = LocalSpacing.current.xl,
+                    vertical = LocalSpacing.current.sm
+                )
+                .padding(bottom = LocalSpacing.current.xl),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(R.string.opinion),
@@ -68,15 +86,15 @@ fun OpinionBottomSheet(
 
             Text(
                 text = stringResource(R.string.bsText),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = LocalSpacing.current.sm)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             SatisfactionPicker(
                 onRatingSelected = {
@@ -84,7 +102,7 @@ fun OpinionBottomSheet(
                 }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = onLaterClick) {
                 Text(
@@ -96,7 +114,7 @@ fun OpinionBottomSheet(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
