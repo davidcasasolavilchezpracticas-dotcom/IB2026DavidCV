@@ -21,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.R
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -87,7 +89,13 @@ fun DateSelector(
     TextField(
         value = selectedDateText,
         onValueChange = {},
-        label = { Text("* $label") },
+        label = {
+            Text(
+                text = "* $label",
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp
+            )
+        },
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.DateRange,

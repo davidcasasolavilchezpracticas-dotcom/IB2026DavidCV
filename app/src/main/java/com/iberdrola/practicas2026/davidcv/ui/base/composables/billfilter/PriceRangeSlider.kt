@@ -53,8 +53,12 @@ fun PriceRangeSelector(
     var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = stringResource(R.string.tituloPriceRangeSelector), fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.tituloPriceRangeSelector),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(4.dp))
 
         Box(
             modifier = Modifier
@@ -64,7 +68,8 @@ fun PriceRangeSelector(
         ) {
             Text(
                 text = "${sliderPosition.start.toInt()} € - ${sliderPosition.endInclusive.toInt()} €",
-                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W600,
                 color = Color.Black
             )
         }

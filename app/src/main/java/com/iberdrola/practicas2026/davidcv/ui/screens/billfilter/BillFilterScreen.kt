@@ -86,13 +86,14 @@ fun FilterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(LocalSpacing.current.la)
-            .background(White)
-            .verticalScroll(rememberScrollState()),
+            .padding(horizontal = LocalSpacing.current.la)
+            .background(White),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Column {
-            Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -111,7 +112,7 @@ fun FilterScreen(
                     onValidDate = viewModel::onValidStartDate
                 )
                 DateSelector(
-                label = stringResource(R.string.fsSubtituloFecha2),
+                    label = stringResource(R.string.fsSubtituloFecha2),
                     date = state.endDate,
                     modifier = Modifier.weight(1f),
                     onConfirm = {
@@ -137,7 +138,9 @@ fun FilterScreen(
         )
 
         Column {
-            Text(text = stringResource(R.string.fsTituloEstado), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.fsTituloEstado), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             FilterOption(
                 label = PaymentStatus.PAID.label,
@@ -189,16 +192,18 @@ fun FilterScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(52.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
                 shape = RoundedCornerShape(28.dp)
             ) {
                 Text(
                     text = stringResource(R.string.fsButtonApply),
                     color = Color.White,
-                    fontSize = 16.sp
+                    fontSize = 14.sp
                 )
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             TextButton(
                 onClick = {
@@ -212,7 +217,8 @@ fun FilterScreen(
                     text = stringResource(R.string.fsButtonDelete),
                     color = Color(0xFF2E5D4B),
                     textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
                 )
             }
         }
