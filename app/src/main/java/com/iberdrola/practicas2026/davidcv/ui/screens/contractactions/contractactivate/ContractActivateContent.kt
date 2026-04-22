@@ -68,6 +68,17 @@ fun ContractActivateContent(
                 progress = 0.5f,
                 onClose = onClose
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitVerify,
+                    onBack = onBack,
+                    onNext = onNext,
+                )
+            }
         }
     ) { padding ->
         Column(
@@ -77,7 +88,7 @@ fun ContractActivateContent(
                 .padding(LocalSpacing.current.lg)
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
+            Spacer(modifier = Modifier.height(LocalSpacing.current.md))
 
             Text(
                 text = stringResource(R.string.cacTitleAccountEmail),
@@ -96,7 +107,7 @@ fun ContractActivateContent(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
 
             TextField(
                 value = state.emailTry,
@@ -157,13 +168,7 @@ fun ContractActivateContent(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            ContractNavigateButtons(
-                enable = state.canSubmitEmailAndPolicy,
-                onBack = onBack,
-                onNext = onNext,
-            )
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

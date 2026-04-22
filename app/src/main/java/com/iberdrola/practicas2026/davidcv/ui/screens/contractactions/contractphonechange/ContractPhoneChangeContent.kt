@@ -58,6 +58,17 @@ fun ContractPhoneChangeContent(
                 progress = 0.5f,
                 onClose = onClose
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitVerify,
+                    onBack = onBack,
+                    onNext = onNext,
+                )
+            }
         }
     ) { padding ->
         Column(
@@ -104,13 +115,6 @@ fun ContractPhoneChangeContent(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            ContractNavigateButtons(
-                enable = state.canSubmitPhone,
-                onBack = onBack,
-                onNext = onNext,
-            )
-        }
+            Spacer(modifier = Modifier.weight(1f))}
     }
 }

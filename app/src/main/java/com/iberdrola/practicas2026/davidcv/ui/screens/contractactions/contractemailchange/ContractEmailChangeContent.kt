@@ -56,6 +56,17 @@ fun ContractEmailChangeContent(
                 progress = 0.5f,
                 onClose = onClose
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitVerify,
+                    onBack = onBack,
+                    onNext = onNext,
+                )
+            }
         }
     ) { padding ->
         Column(
@@ -100,12 +111,6 @@ fun ContractEmailChangeContent(
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            ContractNavigateButtons(
-                enable = state.canSubmitEmail,
-                onBack = onBack,
-                onNext = onNext,
-            )
         }
     }
 }

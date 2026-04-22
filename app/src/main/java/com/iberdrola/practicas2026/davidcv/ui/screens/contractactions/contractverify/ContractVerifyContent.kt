@@ -83,7 +83,19 @@ fun ContractVerifyContent(
                 progress = 0.75f,
                 onClose = onClose
             )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitVerify,
+                    onBack = onBack,
+                    onNext = onNext,
+                )
+            }
         }
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -148,12 +160,6 @@ fun ContractVerifyContent(
                     onDismiss = { resendVerificationCode = false },
                 )
             }
-
-            ContractNavigateButtons(
-                enable = state.canSubmitVerify,
-                onBack = onBack,
-                onNext = onNext,
-            )
         }
     }
 }
