@@ -62,7 +62,7 @@ fun ContractEmailChangeContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ContractNavigateButtons(
-                    enable = state.canSubmitVerify,
+                    enable = state.canSubmitEmail,
                     onBack = onBack,
                     onNext = onNext,
                 )

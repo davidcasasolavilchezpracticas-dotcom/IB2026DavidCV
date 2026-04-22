@@ -74,7 +74,7 @@ fun ContractActivateContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ContractNavigateButtons(
-                    enable = state.canSubmitVerify,
+                    enable = state.canSubmitEmailAndPolicy,
                     onBack = onBack,
                     onNext = onNext,
                 )

@@ -64,7 +64,7 @@ fun ContractPhoneChangeContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ContractNavigateButtons(
-                    enable = state.canSubmitVerify,
+                    enable = state.canSubmitPhone,
                     onBack = onBack,
                     onNext = onNext,
                 )

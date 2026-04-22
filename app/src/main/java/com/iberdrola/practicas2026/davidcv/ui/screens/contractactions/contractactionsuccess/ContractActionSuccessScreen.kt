@@ -35,7 +35,6 @@ fun ContractActionSuccessScreen(
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
 
         onDispose {
-            window.statusBarColor = White.toArgb()
             window.navigationBarColor = White.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
