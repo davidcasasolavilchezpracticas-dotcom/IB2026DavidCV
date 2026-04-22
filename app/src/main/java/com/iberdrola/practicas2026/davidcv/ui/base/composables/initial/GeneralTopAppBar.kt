@@ -45,7 +45,6 @@ fun GeneralTopAppBar(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .clickable {
                     if(currentRoute == Routes.CONTRACT_INFO){

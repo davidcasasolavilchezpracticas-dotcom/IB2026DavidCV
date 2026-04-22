@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,13 +11,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -28,6 +33,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.InitialTo
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.WelcomeHeader
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
@@ -45,11 +51,23 @@ fun InitialScreen(
     analytics: FirebaseAnalytics,
     remoteConfig: FirebaseRemoteConfig
 ) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
     val account by dataStoreViewModel.account.collectAsStateWithLifecycle()
 
     // Simplificación de Remote Config: Leemos los valores una vez o usamos un estado
     val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
     val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
+
+    DisposableEffect(Unit) {
+        window.statusBarColor = EnergyGreen.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+
+        onDispose {
+            window.statusBarColor = White.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
 
     LaunchedEffect(Unit) {
         analytics.logEvent("InitialScreen")

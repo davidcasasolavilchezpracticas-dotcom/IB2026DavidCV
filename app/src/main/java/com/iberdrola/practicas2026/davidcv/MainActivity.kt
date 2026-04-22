@@ -3,6 +3,7 @@ package com.iberdrola.practicas2026.davidcv
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
@@ -11,13 +12,17 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.iberdrola.practicas2026.davidcv.ui.navigation.NavigationWrapper
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -25,7 +30,16 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                White.toArgb(),
+                White.toArgb()
+            ),
+            navigationBarStyle = SystemBarStyle.light(
+                White.toArgb(),
+                White.toArgb()
+            )
+        )
         setContent {
             val navController = rememberNavController()
             val remoteConfig = Firebase.remoteConfig

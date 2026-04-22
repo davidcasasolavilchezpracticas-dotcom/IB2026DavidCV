@@ -48,7 +48,7 @@ fun ContractNavigateButtons(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = LocalSpacing.current.lg),
+            .padding(LocalSpacing.current.lg),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedButton(

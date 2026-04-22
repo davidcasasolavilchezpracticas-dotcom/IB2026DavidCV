@@ -1,17 +1,24 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 @Composable
 fun ContractActionSuccessScreen(
@@ -19,6 +26,21 @@ fun ContractActionSuccessScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
 ) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+
+    DisposableEffect(Unit) {
+        window.statusBarColor = EnergyGreen.toArgb()
+        window.navigationBarColor = EnergyGreen.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+
+        onDispose {
+            window.statusBarColor = White.toArgb()
+            window.navigationBarColor = White.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActionSuccessScreen" ) {
             param("eventType", "View")

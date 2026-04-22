@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -95,7 +96,9 @@ fun InitialContent(
     }
 
     Column(
-        modifier = Modifier.padding(LocalSpacing.current.xl)
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(LocalSpacing.current.xl)
     ) {
         Text(
             text = stringResource(R.string.isSubtitle),
