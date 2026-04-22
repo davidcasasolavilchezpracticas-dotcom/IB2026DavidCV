@@ -35,7 +35,9 @@ fun SettingSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Surface(
-        modifier = Modifier.fillMaxWidth(0.65f),
+        modifier = Modifier.fillMaxWidth(
+            if (checked) 0.65f else 0.8f
+        ),
         shape = RoundedCornerShape(16.dp),
         color = Color(0xFF006633).copy(alpha = 0.2f),
     ) {
@@ -50,7 +52,7 @@ fun SettingSwitchItem(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = 12.sp
+                        fontSize = if (checked) 12.sp else 14.sp
                     ),
                     fontWeight = FontWeight.Medium
                 )

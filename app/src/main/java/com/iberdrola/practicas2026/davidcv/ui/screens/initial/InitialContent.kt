@@ -102,7 +102,7 @@ fun InitialContent(
     ) {
         Text(
             text = stringResource(R.string.isSubtitle),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
 
