@@ -23,6 +23,7 @@ class DataStoreManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gson: Gson
 ) {
+    private val _maxTrys = 3
 
     companion object {
         val BS_COUNTER_KEY = intPreferencesKey("bs_counter")
@@ -39,6 +40,12 @@ class DataStoreManager @Inject constructor(
     suspend fun saveTrys(trys: Int) {
         context.dataStore.edit { preferences ->
             preferences[TRYS_KEY] = trys
+        }
+    }
+
+    suspend fun restartTrys() {
+        context.dataStore.edit { preferences ->
+            preferences[TRYS_KEY] = _maxTrys
         }
     }
 

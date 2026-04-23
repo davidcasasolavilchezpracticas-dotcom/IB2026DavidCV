@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class ContractActionsState(
     val verifyCodeTry: String = "",
     val verifyCode: String = "123456",
+    val timeLeftToResend: String = "",
 
     val emailTry: String = "",
     val phoneTry: String = "",

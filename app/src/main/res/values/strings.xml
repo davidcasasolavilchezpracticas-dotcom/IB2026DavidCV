@@ -122,7 +122,11 @@
     <string name="csc_Txt1Policy">"He leído y acepto la Politica de privacidad, acepto las "</string>
     <string name="csc_spTxt1Policy">Condiciones Generales</string>
     <string name="csc_Txt2Policy">" y Particulares de la oferta y la suscripción a Factura Electrónica."</string>
-    <string name="cvcTextVerifyIdentity">Para verificar tu identidad, hemos enviado un código al teléfono</string>
+    <string name="cvcTextVerifyIdentity">Para verificar tu identidad, hemos enviado un código al teléfono </string>
     <string name="cvcTextVerifyIdentityEnd">. Por favor, introdúcelo a continuación.</string>
     <string name="rcibTextNoMoreResendCode">Te has quedado sin opciones de reiniciar</string>
+    <string name="cvcTitleTimeLeft">"Tiempo restante para reiniciar los intentos"</string>
+    <string name="cvcTextTimeLeftStart">"Quedan "</string>
+    <string name="cvcTextTimeLeftEnd">" para que se reinicien los reenvios."</string>
+    <string name="Ok">Ok</string>
 </resources>

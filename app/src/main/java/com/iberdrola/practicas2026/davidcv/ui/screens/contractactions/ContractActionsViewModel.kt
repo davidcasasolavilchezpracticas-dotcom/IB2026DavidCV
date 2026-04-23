@@ -3,8 +3,13 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetContractByIdUseCase
@@ -19,8 +24,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 
 @HiltViewModel
@@ -42,6 +51,7 @@ class ContractActionsViewModel @Inject constructor(
         }
     }
 
+    // region OnChange
     fun onEmailChanged(email: String) {
         _state.update { it.copy(emailTry = email) }
     }
@@ -55,14 +65,23 @@ class ContractActionsViewModel @Inject constructor(
     }
 
     fun onVerifyCodeChanged(code: String) {
-        _state.update { it.copy(verifyCodeTry = code) }
+        if (code.length <= 6)
+            _state.update { it.copy(verifyCodeTry = code) }
     }
 
+    // endregion
+
+
+    //region Code
     fun generateNewCode(context: Context) {
         _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString(), isLoading = true) }
         Log.d("ComprobacionesContractActionsViewModel", "Código = ${_state.value.verifyCode}")
         Toast.makeText(context, "Nuevo código = ${_state.value.verifyCode}", Toast.LENGTH_LONG).show()
     }
+
+    //endregion
+
+    //region Censurator
 
     fun censurator(email: String) : String{
         if(email.isNotEmpty()){
@@ -73,6 +92,14 @@ class ContractActionsViewModel @Inject constructor(
         }
         return "a*****z@gmail.com"
     }
+
+    fun phoneCensurator(phone: String) : String {
+        return "******" + if (state.value.contract?.phone != null) state.value.contract?.phone?.substring((state.value.contract?.phone?.length ?: 9) - 4) else "123"
+    }
+
+    //endregion
+
+    //region Updates
 
     fun updateContractEmail(email: String) {
         viewModelScope.launch {
@@ -118,6 +145,10 @@ class ContractActionsViewModel @Inject constructor(
         }
     }
 
+    //endregion
+
+    //region Get Contracts
+
     fun getContract(id: Int) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, errorMessage = null)
@@ -146,4 +177,52 @@ class ContractActionsViewModel @Inject constructor(
             }
         }
     }
+
+    //endregion
+
+    //region Time Left
+
+    fun getTimeLeft(context: Context) : Boolean {
+        val sharedPref = context.getSharedPreferences("shared_preferences", Context.MODE_PRIVATE)
+
+        val lastEjecution = sharedPref.getLong("start_time", 0L)
+        val nextEjecution = lastEjecution + TimeUnit.HOURS.toMillis(12)
+        val timeLeft = abs(System.currentTimeMillis() - nextEjecution)
+
+        Log.d("Comprobaciones", "Last Ejecution -> $lastEjecution")
+        Log.d("Comprobaciones", "Next Ejecution -> $nextEjecution")
+        Log.d("Comprobaciones", "Time Left -> $timeLeft")
+
+        _state.update { it.copy(
+            timeLeftToResend = if (timeLeft > 0) {
+                    String.format(
+                        Locale.getDefault(), "%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(timeLeft),
+                        TimeUnit.MILLISECONDS.toMinutes(timeLeft) % 60,
+                        TimeUnit.MILLISECONDS.toSeconds(timeLeft) % 60 % 60
+                    )
+                } else {
+                    "Se están reiniciando los intentos"
+                }
+            )
+        }
+        return timeLeft > 0
+    }
+
+    fun createText(
+        value: Boolean,
+        txt1: String,
+        txt2: String
+    ) {
+        _state.update {
+            it.copy(
+                timeLeftToResend = if (value)
+                    txt1 + state.value.timeLeftToResend + txt2
+                else
+                    state.value.timeLeftToResend
+            )
+        }
+    }
+
+    //endregion
 }

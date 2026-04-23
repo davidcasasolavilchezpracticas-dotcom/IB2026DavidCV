@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessAlarm
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,6 +49,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.ResendCodeInfoBox
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.SuccessBanner
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.AlertDialogOK
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
@@ -59,14 +61,12 @@ import kotlin.random.Random
 fun ContractVerifyContent(
     dataStoreViewModel: DataStoreViewModel,
     state: ContractActionsState,
-    onVerifyCodeChanged: (String) -> Unit,
-    generateNewCode: (Context) -> Unit,
-    onLoadEnd: () -> Unit,
-    onClose: () -> Unit,
-    onBack: () -> Unit,
-    onNext: () -> Unit
+    events: ContractVerifyEvents,
 ) {
     var resendVerificationCode by remember { mutableStateOf(false) }
+    var successBanner by remember { mutableStateOf(false) }
+    var showTimeLeftAlertDialog by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     var trys = dataStoreViewModel.trys.collectAsState()
 
@@ -81,7 +81,7 @@ fun ContractVerifyContent(
                     ContractActions.MODIFYPHONE -> R.string.cvcTitleModifyPhone
                 },
                 progress = 0.75f,
-                onClose = onClose
+                onClose = events.onClose
             )
         },
         bottomBar = {
@@ -90,8 +90,8 @@ fun ContractVerifyContent(
             ) {
                 ContractNavigateButtons(
                     enable = state.canSubmitVerify,
-                    onBack = onBack,
-                    onNext = onNext,
+                    onBack = events.onBack,
+                    onNext = events.onNext,
                 )
             }
         }
@@ -111,10 +111,8 @@ fun ContractVerifyContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            val phone = if (state.contract?.phone != null) state.contract?.phone?.substring(state.contract.phone.length - 4) else "123"
-
             Text(
-                text = stringResource(R.string.cvcTextVerifyIdentity) +" ******"+ phone + stringResource(R.string.cvcTextVerifyIdentityEnd),
+                text = stringResource(R.string.cvcTextVerifyIdentity) + events.phoneCensurator(state.contract?.phone ?: "123456789") + stringResource(R.string.cvcTextVerifyIdentityEnd),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -122,7 +120,7 @@ fun ContractVerifyContent(
 
             TextField(
                 value = state.verifyCodeTry,
-                onValueChange = { if (it.length <= 6) onVerifyCodeChanged(it) },
+                onValueChange = { events.onVerifyCodeChanged(it) },
                 label = {
                     Text(
                         text = stringResource(R.string.cvcTextFieldVerifyCode),
@@ -145,19 +143,36 @@ fun ContractVerifyContent(
                 trys = trys.value,
                 resendCode = resendVerificationCode,
                 onResendClick = {
-                    resendVerificationCode = true
+                    if (trys.value > 0){
+                        resendVerificationCode = true
+                        successBanner = true
 
-                    generateNewCode(context)
-                    dataStoreViewModel.updateTrys(trys.value - 1)
+                        events.generateNewCode(context)
+                        dataStoreViewModel.updateTrys(trys.value - 1)
+                    } else {
+                        resendVerificationCode = true
+                        showTimeLeftAlertDialog = trys.value <= 0
+                    }
                 }
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (resendVerificationCode) {
-                onLoadEnd()
+            if (successBanner) {
+                events.onLoadEnd()
                 SuccessBanner(
-                    onDismiss = { resendVerificationCode = false },
+                    onDismiss = { successBanner = false },
+                )
+            }
+
+            if (showTimeLeftAlertDialog) {
+                events.createText(events.getTimeLeft(context), stringResource(R.string.cvcTextTimeLeftStart), stringResource(R.string.cvcTextTimeLeftEnd))
+                AlertDialogOK(
+                    icon = Icons.Default.AccessAlarm,
+                    titulo = stringResource(R.string.cvcTitleTimeLeft),
+                    text = state.timeLeftToResend,
+                    confirmText = stringResource(R.string.Ok),
+                    onDismiss = { showTimeLeftAlertDialog = false }
                 )
             }
         }

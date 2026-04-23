@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,20 +15,35 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.iberdrola.practicas2026.davidcv.ui.navigation.NavigationWrapper
+import com.iberdrola.practicas2026.davidcv.data.workers.RefillResends
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    val refillResends = PeriodicWorkRequestBuilder<RefillResends>(
+        12, TimeUnit.HOURS
+    ).setConstraints(
+        Constraints.Builder().build()
+    ).build()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
@@ -40,11 +56,20 @@ class MainActivity : ComponentActivity() {
                 White.toArgb()
             )
         )
+
+
         setContent {
             val navController = rememberNavController()
             val remoteConfig = Firebase.remoteConfig
             val analytics = Firebase.analytics
-            
+            val context = LocalContext.current
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "ReseteoDeIntentos",
+                ExistingPeriodicWorkPolicy.KEEP, // Mantiene la tarea si ya existe, no la duplica
+                refillResends
+            )
+
             LaunchedEffect(Unit) {
                 val configSettings = remoteConfigSettings {
                     minimumFetchIntervalInSeconds = 0 

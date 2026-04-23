@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -54,7 +56,7 @@ fun ResendCodeInfoBox(
                         "Recuerdas que hoy te quedan $trys intentos.",
                         style = MaterialTheme.typography.bodySmall
                     )
-                } else if ( resendCode && trys == 0 ) {
+                } else if ( trys == 0 ) {
                     Text(
                         stringResource(R.string.rcibTextNoMoreResendCode),
                         style = MaterialTheme.typography.bodySmall
@@ -69,8 +71,9 @@ fun ResendCodeInfoBox(
                     modifier = Modifier
                         .padding(top = LocalSpacing.current.xs)
                         .clickable(
-                            enabled = trys > 0,
-                            onClick = { onResendClick() }
+                            onClick = {
+                                onResendClick()
+                            }
                         ),
                     color = Color(0xFF003366)
                 )

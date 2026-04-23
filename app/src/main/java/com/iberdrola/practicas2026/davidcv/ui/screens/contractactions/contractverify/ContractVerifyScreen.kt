@@ -36,51 +36,58 @@ fun ContractVerifyScreen(
 
     val state by viewModel.state.collectAsState()
 
+    val events = ContractVerifyEvents(
+        onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
+        generateNewCode = { context ->
+            viewModel.generateNewCode(context)
+            analytics.logEvent ( "ButtonNewVerifyCodeGenerated" ) {
+                param("eventType", "Click")
+            }
+        },
+        onLoadEnd = viewModel::onLoadEnd,
+        onClose = {
+            navController.navigate(Routes.INITIAL)
+            analytics.logEvent ( "ButtonClose" ) {
+                param("eventType", "Click")
+            }
+        },
+        onBack = {
+            navController.popBackStack()
+            analytics.logEvent ( "ButtonBack" ) {
+                param("eventType", "Click")
+            }
+        },
+        onNext = {
+            when (state.action) {
+                MODIFYEMAIL -> {
+                    viewModel.updateContractEmail(state.emailTry)
+                }
+                MODIFYPHONE -> {
+                    viewModel.updateContractPhone(state.phoneTry)
+                }
+                MODIFYSTATUS -> {
+                    //viewModel.updateContractStatus(ContractStatus.INACTIVE)
+                }
+                MODIFYSTATUSEMAIL -> {
+                    viewModel.updateContractEmail(state.emailTry)
+                }
+            }
+
+            navController.navigate(Routes.CONTRACT_SUCCESS)
+            analytics.logEvent ( "ButtonNext" ) {
+                param("eventType", "Click")
+            }
+        },
+        getTimeLeft = viewModel::getTimeLeft,
+        phoneCensurator = viewModel::phoneCensurator,
+        createText = viewModel::createText
+    )
+
     Box(modifier = Modifier.fillMaxSize()) {
         ContractVerifyContent(
             dataStoreViewModel = dataStoreViewModel,
             state = state,
-            onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
-            generateNewCode = { context ->
-                viewModel.generateNewCode(context)
-                analytics.logEvent ( "ButtonNewVerifyCodeGenerated" ) {
-                    param("eventType", "Click")
-                }
-            },
-            onLoadEnd = viewModel::onLoadEnd,
-            onClose = {
-                navController.navigate(Routes.INITIAL)
-                analytics.logEvent ( "ButtonClose" ) {
-                    param("eventType", "Click")
-                }
-            },
-            onBack = {
-                navController.popBackStack()
-                analytics.logEvent ( "ButtonBack" ) {
-                    param("eventType", "Click")
-                }
-            },
-            onNext = {
-                when (state.action) {
-                    MODIFYEMAIL -> {
-                        viewModel.updateContractEmail(state.emailTry)
-                    }
-                    MODIFYPHONE -> {
-                        viewModel.updateContractPhone(state.phoneTry)
-                    }
-                    MODIFYSTATUS -> {
-                        //viewModel.updateContractStatus(ContractStatus.INACTIVE)
-                    }
-                    MODIFYSTATUSEMAIL -> {
-                        viewModel.updateContractEmail(state.emailTry)
-                    }
-                }
-
-                navController.navigate(Routes.CONTRACT_SUCCESS)
-                analytics.logEvent ( "ButtonNext" ) {
-                    param("eventType", "Click")
-                }
-            }
+            events = events
         )
 
         LoadingScreen(state.isLoading)
