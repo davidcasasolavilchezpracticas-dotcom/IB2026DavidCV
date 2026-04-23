@@ -27,6 +27,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -72,36 +73,49 @@ object AppModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                var request = chain.request()
+        // 1. Crear un TrustManager que no valide la cadena de certificados
+        val trustAllCerts = object : javax.net.ssl.X509TrustManager {
+            override fun checkClientTrusted(chain: Array<out java.security.cert.X509Certificate>?, authType: String?) {}
+            override fun checkServerTrusted(chain: Array<out java.security.cert.X509Certificate>?, authType: String?) {}
+            override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = arrayOf()
+        }
 
-                // Determinamos el host dinámicamente
+        // 2. Instalar el TrustManager en un SSLContext
+        val sslContext = javax.net.ssl.SSLContext.getInstance("SSL")
+        sslContext.init(null, arrayOf(trustAllCerts), java.security.SecureRandom())
+        val sslSocketFactory = sslContext.socketFactory
+
+        return OkHttpClient.Builder()
+            .sslSocketFactory(sslSocketFactory, trustAllCerts) // IMPORTANTE para certificados autofirmados
+            .hostnameVerifier { _, _ -> true } // Ya lo tenías, valida que el host coincida
+            .addInterceptor { chain ->
+                val request = chain.request()
                 val newHost = when (DataSourceConfig.connectionMode) {
                     ConnectionMode.EMULATOR -> "10.0.2.2"
                     ConnectionMode.ADB_REVERSE -> "127.0.0.1"
                     ConnectionMode.LOCAL_IP -> DataSourceConfig.pcIp
                 }
 
-                // Reconstruimos la URL con el nuevo host
                 val newUrl = request.url.newBuilder()
+                    .scheme("https") // Forzamos HTTPS por si Mockoon usa TLS
                     .host(newHost)
                     .build()
 
-                request = request.newBuilder()
-                    .url(newUrl)
-                    .build()
-
-                chain.proceed(request)
+                chain.proceed(request.newBuilder().url(newUrl).build())
             }
+            .callTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+            //.hostnameVerifier { _ , _ -> true }
 
     @Provides
     @Singleton
     fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://placeholder:3000/")
+            .baseUrl("https://placeholder:3000/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

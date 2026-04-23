@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.androidx.benchmark.common)
     implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.work.runtime.ktx)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
