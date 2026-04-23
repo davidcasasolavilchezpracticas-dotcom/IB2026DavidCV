@@ -101,7 +101,11 @@ fun ContractVerifyContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(LocalSpacing.current.la)
+                .padding(
+                    top = LocalSpacing.current.la,
+                    start = LocalSpacing.current.la,
+                    end = LocalSpacing.current.la
+                )
         ) {
             Text(
                 stringResource(R.string.cvcSubtitleInsertCode),
