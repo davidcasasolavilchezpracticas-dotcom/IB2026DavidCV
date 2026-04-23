@@ -60,6 +60,7 @@ fun ContractActivateScreen(
             },
             onBack = {
                 navController.popBackStack()
+                navController.popBackStack()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }
