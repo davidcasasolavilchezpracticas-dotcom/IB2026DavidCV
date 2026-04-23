@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,6 +74,8 @@ fun InitialScreen(
         analytics.logEvent("InitialScreen")
             { param("eventType", "View") }
     }
+
+    Log.d("InitialScreen", "Account: $account")
 
     Scaffold(
         topBar = {

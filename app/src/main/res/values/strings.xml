@@ -26,7 +26,7 @@
     <string name="blsTabText1">Luz</string>
     <string name="blsTabText2">Gas</string>
     <string name="blsSubtitleAddress">C/ PALMA - ARTA KM 49, 5 , 4°A - PINTO - MADRID</string>
-    <string name="isTitle">Hola, Juan</string>
+    <string name="isTitle">Bienvenido</string>
     <string name="isSubtitle">Mis Servicios</string>
     <string name="isSwitchDataOrigin">Uso de datos en red</string>
     <string name="isServiceLight">Luz</string>

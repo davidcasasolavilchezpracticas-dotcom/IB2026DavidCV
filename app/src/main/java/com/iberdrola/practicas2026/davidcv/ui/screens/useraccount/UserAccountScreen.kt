@@ -188,7 +188,7 @@ fun UserAccountScreen(
                     item {
                         Spacer(modifier = Modifier.height(32.dp))
                         Text(
-                            text = "ID de usuario: ${account?.id ?: 0} | Versión 2.4.1",
+                            text = "ID de usuario: ${account?.id ?: 0}",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.LightGray,
                             modifier = Modifier.fillMaxWidth(),

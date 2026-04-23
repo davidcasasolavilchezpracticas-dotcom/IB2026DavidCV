@@ -30,7 +30,7 @@ class DataStoreViewModel @Inject constructor(
         id = 0,
         name = "Julian",
         email = "julian@gmail.com",
-        profileImage = R.drawable.profile_picture.toString()
+        profileImage = R.drawable.profile_picture
     )
 
     // Estados temporales para la edición
@@ -55,7 +55,6 @@ class DataStoreViewModel @Inject constructor(
 
     /**
      * Estado consolidado para la UI de cuenta de usuario.
-     * Combina la cuenta guardada con los cambios temporales realizados en la pantalla de edición.
      */
     val uiState: StateFlow<UserAccountState> = combine(
         dataStoreManager.account,
@@ -67,7 +66,9 @@ class DataStoreViewModel @Inject constructor(
         
         val name = editName ?: currentAccount.name
         val email = editEmail ?: currentAccount.email
-        val profileImage = editImage ?: currentAccount.profileImage
+        
+        // Lógica para recuperar la imagen correctamente
+        val profileImage = editImage ?: transformProfileImage(currentAccount.profileImage)
 
         UserAccountState(
             account = currentAccount,
@@ -84,12 +85,31 @@ class DataStoreViewModel @Inject constructor(
         initialValue = UserAccountState(isLoading = true)
     )
 
-    // Solo para compatibilidad si se usa en otros sitios
+    /**
+     * GSON puede deserializar los IDs de recursos (Int) como Double o String.
+     * Esta función asegura que Coil reciba un tipo que pueda manejar.
+     */
+    private fun transformProfileImage(image: Any?): Any? {
+        return when (image) {
+            is String -> {
+                // Si parece una URI de archivo o contenido, la devolvemos como tal
+                if (image.startsWith("content://") || image.startsWith("file://") || image.startsWith("/")) {
+                    Uri.parse(image)
+                } else {
+                    // Si es un String numérico (ID de recurso guardado por error), intentamos pasarlo a Int
+                    image.toIntOrNull() ?: image
+                }
+            }
+            is Double -> image.toInt() // GSON a veces convierte Int a Double en Any
+            else -> image ?: R.drawable.profile_picture
+        }
+    }
+
     val account: StateFlow<Account?> = dataStoreManager.account
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
+            initialValue = defaultAccount
         )
 
     fun onNameChange(newName: String) {
@@ -123,11 +143,11 @@ class DataStoreViewModel @Inject constructor(
         viewModelScope.launch {
             val persistentImage = when (val image = account.profileImage) {
                 is Uri -> image.toString()
-                else -> image?.toString()
+                is Int -> image // Mantener el Int para recursos
+                else -> image
             }
             dataStoreManager.saveAccount(account.copy(profileImage = persistentImage))
             
-            // Limpiar estados de edición tras guardar con éxito
             _editingName.value = null
             _editingEmail.value = null
             _editingProfileImage.value = null
