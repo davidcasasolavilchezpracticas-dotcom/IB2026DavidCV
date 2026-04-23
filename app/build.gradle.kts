@@ -50,7 +50,24 @@ android {
     room {
         schemaDirectory("$projectDir/schema")
     }
+
+    //? Se usa <Exec> para definir de que toda la tarea es de tipo ejecución
+    tasks.register<Exec>("adbReverseMockoon") {
+        val adbPath = android.sdkDirectory.resolve("platform-tools/adb.exe").absolutePath
+        commandLine(adbPath, "reverse", "tcp:3000", "tcp:3000")
+        commandLine(adbPath, "reverse", "tcp:3000", "tcp:3000")
+        isIgnoreExitValue = true //? Para que no de error si no hay móvil conectado
+
+        doLast {
+            println("ADB Reverse: Puerto 3000 vinculado a Mockoon.")
+        }
+    }
+
+    tasks.named("preBuild") {
+        dependsOn("adbReverseMockoon")
+    }
 }
+
 
 
 dependencies {
