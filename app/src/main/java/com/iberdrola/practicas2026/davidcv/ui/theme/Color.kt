@@ -11,7 +11,7 @@ val PaidGreenBg = Color(0xFFD1F2E1)
 val PaidGreenText = Color(0xFF2E7D32)
 val PendingRedBg = Color(0xFFF9D5D5)
 val PendingRedText = Color(0xFFB03A2E)
-val SkeletonGreen = Color(0xFFE5ECE8)
+val SkeletonGreen = Color(0xFFd4e0db)
 
 // Neutros
 val TextPrimary = Color(0xFF212121)
@@ -22,5 +22,4 @@ val White = Color(0xFFFFFFFF)
 val Disabled = Color(0xFFFFC5C5)
 val DisabledIcon = Color(0xFF477760)
 val IconGreen = Color(0xFF2E4D3E)
-
 val Black = Color(0xFF000000)

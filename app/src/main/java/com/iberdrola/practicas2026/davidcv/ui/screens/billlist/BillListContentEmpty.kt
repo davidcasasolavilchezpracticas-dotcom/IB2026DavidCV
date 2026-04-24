@@ -23,7 +23,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.La
  */
 @Composable
 fun BillListContentEmpty(
-    size: Int = 3,
+    size: Int = 4,
     modifier: Modifier
 ) {
     Column(
@@ -36,7 +36,7 @@ fun BillListContentEmpty(
 
         Spacer(modifier = modifier.height(20.dp))
 
-        repeat(size - 1) {
+        repeat(size) {
             FacturaItemSkeleton(modifier)
         }
     }
@@ -46,8 +46,8 @@ fun BillListContentEmpty(
  * PreviewBLCE
  * Vista previa del estado de carga del listado
  */
-@Preview
 @Composable
+@Preview(showBackground = true)
 fun PreviewBLCE(){
     BillListContentEmpty(modifier = Modifier)
 }

@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,9 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
+import com.iberdrola.practicas2026.davidcv.ui.theme.SkeletonGreen
 
 /**
  * FacturaItemSkeleton
@@ -27,7 +30,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensio
  * @param modifier
  */
 @Composable
-fun FacturaItemSkeleton(modifier: Modifier) {
+@Preview(showBackground = true)
+fun FacturaItemSkeleton(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = modifier
@@ -35,28 +39,44 @@ fun FacturaItemSkeleton(modifier: Modifier) {
                 .padding(vertical = LocalSpacing.current.lg),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = modifier
-                .size(24.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .shimmerEffect())
-            Spacer(modifier = modifier.width(12.dp))
+            Row(
+                modifier = modifier
+                    .fillMaxWidth(0.9f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(color = SkeletonGreen)
+                        .shimmerEffect()
+                )
+
+                Spacer(modifier = modifier.width(4.dp))
+
+                Box(
+                    modifier =
+                        modifier
+                            .width(200.dp)
+                            .height(36.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(color = SkeletonGreen)
+                            .shimmerEffect()
+                )
+            }
+
+            //Spacer(modifier = Modifier.width(125.dp))
 
             Box(
-                modifier =
-                    modifier
-                        .weight(1f)
-                        .height(24.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .shimmerEffect(),
+                modifier = modifier
+                    .size(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .align(Alignment.CenterVertically)
+                    .background( color = SkeletonGreen )
+                    .shimmerEffect()
             )
-
-            Spacer(modifier = Modifier.width(24.dp))
-
-            Box(modifier = modifier
-                .size(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .shimmerEffect())
         }
-        HorizontalDivider(thickness = 0.5.dp, color = Color(0xFFEEEEEE))
+
+        HorizontalDivider(thickness = 0.75.dp, color = SkeletonGreen)
     }
 }
