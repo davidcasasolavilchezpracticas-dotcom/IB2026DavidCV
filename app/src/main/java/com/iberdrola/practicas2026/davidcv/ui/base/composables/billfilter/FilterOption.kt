@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
@@ -38,24 +39,28 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
  * @param onCheckedChange Callback cuando se cambia el valor del checkbox
  */
 @Composable
-fun FilterOption(label: String, value: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun FilterOption(
+        label: String,
+        value: Boolean,
+        onCheckedChange: (Boolean) -> Unit
+) {
     val backgroundColor by animateColorAsState(
         if (value) EnergyGreen else Color.Transparent,
         label = "color"
     )
 
-
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .clipToBounds()
+            .clip(RoundedCornerShape(6.dp))
             .clickable { onCheckedChange(!value) }
-            .padding(vertical = LocalSpacing.current.sm),
+            .padding(LocalSpacing.current.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(24.dp) // Tamaño estándar
-                .clip(RoundedCornerShape(6.dp)) // El redondeado suave de tu imagen
+                .size(24.dp)
+                .clip(RoundedCornerShape(6.dp))
                 .background(backgroundColor)
                 .border(
                     width = 2.dp,
@@ -77,6 +82,10 @@ fun FilterOption(label: String, value: Boolean, onCheckedChange: (Boolean) -> Un
         }
 
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }

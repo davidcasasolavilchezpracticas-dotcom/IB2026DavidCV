@@ -46,7 +46,7 @@ fun GeneralTopAppBar(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(LocalSpacing.current.md)
+                .padding(LocalSpacing.current.xs)
                 .padding(start = LocalSpacing.current.sm)
                 .clip(
                     RoundedCornerShape(12.dp)
