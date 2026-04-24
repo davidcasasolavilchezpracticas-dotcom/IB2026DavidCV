@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -84,6 +85,19 @@ class BillListViewModel @Inject constructor(
             }
 
             matchDate && matchPrice && matchStatus
+        }
+    }
+
+    fun refreshBills(currentState: PagerState){
+        when (currentState.currentPage){
+            0 -> {
+                getLightBills()
+                getGasBills()
+            }
+            1 -> {
+                getGasBills()
+                getLightBills()
+            }
         }
     }
 

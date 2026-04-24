@@ -2,10 +2,12 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,96 +56,96 @@ fun BillListContentInfo(
     bills: List<Bill>,
     onFilterClick: () -> Unit
 ) {
-    var actualYear = 0
+    var alertDialogActive by remember { mutableStateOf(false) }
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            //.padding(LocalSpacing.current.lg)
     ) {
-        LastInvoiceCard(bill = bills[0])
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = LocalSpacing.current.lg),
-        ) {
-            Text(
-                text = stringResource(R.string.blciTitle),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            OutlinedButton(
-                onClick = { onFilterClick() },
-                shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(1.dp, Color(0xFF006633))
+        stickyHeader {
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Tune,
-                    contentDescription = null,
-                    tint = Color(0xFF006633),
-                    modifier = Modifier.size(18.dp)
-                )
+                LastInvoiceCard(bill = bills[0])
 
-                Spacer(modifier = Modifier.size(4.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                Text(
-                    text = stringResource(R.string.blciButtonFilter),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = Color(0xFF006633)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = LocalSpacing.current.lg),
+                ) {
+                    Text(
+                        text = stringResource(R.string.blciTitle),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    OutlinedButton(
+                        onClick = { onFilterClick() },
+                        shape = RoundedCornerShape(20.dp),
+                        border = BorderStroke(1.dp, Color(0xFF006633))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = null,
+                            tint = Color(0xFF006633),
+                            modifier = Modifier.size(18.dp)
+                        )
+
+                        Spacer(modifier = Modifier.size(4.dp))
+
+                        Text(
+                            text = stringResource(R.string.blciButtonFilter),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color(0xFF006633)
+                        )
+                    }
+                }
+
+
+                if (alertDialogActive) {
+                    AlertDialogOK(
+                        icon = Icons.Default.HourglassEmpty,
+                        titulo = stringResource(R.string.blciTitle),
+                        text = stringResource(R.string.blciText),
+                        confirmText = stringResource(R.string.blciButtonOk),
+                        onDismiss = {
+                            alertDialogActive = false
+                        }
+                    )
+                }
             }
         }
 
-        var alertDialogActive by remember { mutableStateOf(false) }
 
-        if(alertDialogActive) {
-            AlertDialogOK(
-                icon = Icons.Default.HourglassEmpty,
-                titulo = stringResource(R.string.blciTitle),
-                text = stringResource(R.string.blciText),
-                confirmText = stringResource(R.string.blciButtonOk),
-                onDismiss = {
-                    alertDialogActive = false
-                }
-            )
-        }
 
-        // Agrupamos las facturas por el año de emisión
         val groupedBills = bills.groupBy { it.emisionDate.year }
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            groupedBills.forEach { (year, billsInYear) ->
-                item {
-                    Text(
-                        text = year.toString(),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(LocalSpacing.current.lg)
-                    )
-                }
+        groupedBills.forEach { (year, billsInYear) ->
+            item {
+                Text(
+                    text = year.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(LocalSpacing.current.lg)
+                )
+            }
 
-                itemsIndexed(billsInYear) { index, bill ->
-                    FacturaItem(
-                        bill = bill,
-                        onClick = { alertDialogActive = true }
-                    )
+            itemsIndexed(billsInYear) { index, bill ->
+                FacturaItem(
+                    bill = bill,
+                    onClick = { alertDialogActive = true }
+                )
 
-                    if (index < billsInYear.lastIndex) {
-                        HorizontalDivider(
-                            color = Color.LightGray,
-                            thickness = 0.75.dp,
-                            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
-                        )
-                    }
+                if (index < billsInYear.lastIndex) {
+                    HorizontalDivider(
+                        color = Color.LightGray,
+                        thickness = 0.75.dp,
+                        modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+                    )
                 }
             }
         }
