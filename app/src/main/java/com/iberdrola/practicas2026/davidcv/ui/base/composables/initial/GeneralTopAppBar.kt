@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -33,39 +34,45 @@ fun GeneralTopAppBar(
 ) {
     if (
         (
-                currentRoute != Routes.INITIAL &&
-                        currentRoute != Routes.CONTRACT_ACTIVATE &&
-                        currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
-                        currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
-                        currentRoute != Routes.CONTRACT_VERIFY &&
-                        currentRoute != Routes.CONTRACT_SUCCESS
-                ) && currentRoute != null
+            currentRoute != Routes.INITIAL &&
+            currentRoute != Routes.CONTRACT_ACTIVATE &&
+            currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
+            currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
+            currentRoute != Routes.CONTRACT_VERIFY &&
+            currentRoute != Routes.CONTRACT_SUCCESS
+        ) && currentRoute != null
     ) {
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .padding(LocalSpacing.current.md)
+                .padding(start = LocalSpacing.current.sm)
+                .clip(
+                    RoundedCornerShape(12.dp)
+                )
                 .clickable {
                     if(currentRoute == Routes.CONTRACT_INFO){
                         navController.popBackStack()
                     }
                     handleBackNavigation()
                 }
-                .padding(LocalSpacing.current.md)
         ) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
                 contentDescription = null,
-                tint = EnergyGreen
+                tint = EnergyGreen,
+                modifier = Modifier
+                    .size(36.dp)
             )
             Text(
                 text = stringResource(R.string.matbTitle),
                 color = EnergyGreen,
                 modifier = Modifier
+                    .padding(end = LocalSpacing.current.sm)
                     .drawBehind {
                         val strokeWidth = 1.dp.toPx()
-                        val y = size.height + (-4).dp.toPx()
+                        val y = size.height + (-6).dp.toPx()
                         drawLine(
                             color = EnergyGreen,
                             start = Offset(0f, y),
