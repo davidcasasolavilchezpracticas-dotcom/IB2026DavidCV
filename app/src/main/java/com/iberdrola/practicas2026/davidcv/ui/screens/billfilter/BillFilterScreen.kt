@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billfilter
 
+import DateSelector
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +41,6 @@ import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.DateSelector
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -75,7 +75,7 @@ fun FilterScreen(
 
     BackHandler {
         viewModel.deleteFilters()
-        navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
+        navController.previousBackStackEntry?.savedStateHandle?.set(" ", state)
         onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")

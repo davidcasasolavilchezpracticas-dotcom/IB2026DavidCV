@@ -129,4 +129,5 @@
     <string name="cvcTextTimeLeftStart">"Quedan "</string>
     <string name="cvcTextTimeLeftEnd">" para que se reinicien los reenvios."</string>
     <string name="Ok">Ok</string>
+    <string name="dateSelector">Seleccionar fecha</string>
 </resources>

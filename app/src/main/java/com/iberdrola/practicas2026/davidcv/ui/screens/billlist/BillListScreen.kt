@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,7 +18,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -30,6 +35,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.useLocal
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
  * BillListScreen
@@ -50,6 +56,20 @@ fun BillListScreen(
     remoteConfig: FirebaseRemoteConfig,
     onBack: () -> Unit
 ) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+
+    // Gestión del color de la statusBar al entrar y salir de la pantalla
+    DisposableEffect(Unit) {
+        window.statusBarColor = White.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+
+        onDispose {
+            // Aquí puedes decidir si volver al verde o dejarlo como estaba
+            // Por defecto, la mayoría de pantallas son blancas
+        }
+    }
+
     LaunchedEffect(Unit) {
         analytics.logEvent("BillListScreen") {
             param("eventType", "View")
@@ -162,4 +182,3 @@ fun BillListScreen(
         )
     }
 }
-
