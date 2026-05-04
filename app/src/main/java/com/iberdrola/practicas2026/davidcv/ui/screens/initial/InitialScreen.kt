@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -61,13 +62,15 @@ fun InitialScreen(
     val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
 
     DisposableEffect(Unit) {
-        window.statusBarColor = EnergyGreen.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-
         onDispose {
             window.statusBarColor = White.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
+    }
+
+    SideEffect {
+        window.statusBarColor = EnergyGreen.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
     }
 
     LaunchedEffect(Unit) {

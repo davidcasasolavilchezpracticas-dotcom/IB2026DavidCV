@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,14 +31,17 @@ fun ContractActionSuccessScreen(
     val window = (view.context as Activity).window
 
     DisposableEffect(Unit) {
-        window.statusBarColor = EnergyGreen.toArgb()
-        window.navigationBarColor = EnergyGreen.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-
         onDispose {
+            window.statusBarColor = White.toArgb()
             window.navigationBarColor = White.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
+    }
+
+    SideEffect {
+        window.statusBarColor = EnergyGreen.toArgb()
+        window.navigationBarColor = EnergyGreen.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
     }
 
     LaunchedEffect(Unit) {
@@ -55,13 +59,21 @@ fun ContractActionSuccessScreen(
             state = state,
             censurator = viewModel::censurator,
             onClose = {
-                navController.navigate(Routes.INITIAL)
+                navController.navigate(Routes.CONTRACTS) {
+                    popUpTo(Routes.CONTRACTS) {
+                        inclusive = true
+                    }
+                }
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
             },
             onAccept = {
-                navController.navigate(Routes.INITIAL)
+                navController.navigate(Routes.INITIAL) {
+                    popUpTo(Routes.INITIAL) {
+                        inclusive = true
+                    }
+                }
                 analytics.logEvent ( "ButtonAccept" ) {
                     param("eventType", "Click")
                 }

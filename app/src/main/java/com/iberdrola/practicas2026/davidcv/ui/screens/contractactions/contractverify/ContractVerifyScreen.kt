@@ -17,6 +17,7 @@ import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions.*
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
@@ -36,6 +37,12 @@ fun ContractVerifyScreen(
 
     val state by viewModel.state.collectAsState()
 
+    val safeClick = rememberDefaultClickHandler(
+        onClick = {
+            navController.popBackStack()
+        }
+    )
+
     val events = ContractVerifyEvents(
         onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
         generateNewCode = { context ->
@@ -46,13 +53,17 @@ fun ContractVerifyScreen(
         },
         onLoadEnd = viewModel::onLoadEnd,
         onClose = {
-            navController.navigate(Routes.INITIAL)
+            navController.navigate(Routes.CONTRACTS) {
+                popUpTo(Routes.CONTRACTS) {
+                    inclusive = true
+                }
+            }
             analytics.logEvent ( "ButtonClose" ) {
                 param("eventType", "Click")
             }
         },
         onBack = {
-            navController.popBackStack()
+            safeClick()
             analytics.logEvent ( "ButtonBack" ) {
                 param("eventType", "Click")
             }

@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
 @Composable
@@ -27,6 +28,12 @@ fun ContractEmailChangeScreen(
         }
     }
 
+    val safeClick = rememberDefaultClickHandler(
+        onClick = {
+            navController.popBackStack()
+        }
+    )
+
     val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -34,7 +41,11 @@ fun ContractEmailChangeScreen(
             state = state,
             onEmailChanged = viewModel::onEmailChanged,
             onClose = {
-                navController.navigate(Routes.INITIAL)
+                navController.navigate(Routes.CONTRACTS) {
+                    popUpTo(Routes.CONTRACTS) {
+                        inclusive = true
+                    }
+                }
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
@@ -46,7 +57,7 @@ fun ContractEmailChangeScreen(
                 }
             },
             onBack = {
-                navController.popBackStack()
+                safeClick()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }

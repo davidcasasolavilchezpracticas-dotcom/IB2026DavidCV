@@ -16,6 +16,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
@@ -34,10 +35,18 @@ fun ContractActivateScreen(
             param("eventType", "View")
         }
     }
+
     BackHandler {
         navController.popBackStack()
         navController.popBackStack()
     }
+
+    val safeClick = rememberDefaultClickHandler(
+        onClick = {
+            navController.popBackStack()
+            navController.popBackStack()
+        }
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         ContractActivateContent(
@@ -47,7 +56,11 @@ fun ContractActivateScreen(
             onEmailChanged = viewModel::onEmailChanged,
             onAcceptedChanged = viewModel::onAcceptedChanged,
             onClose = {
-                navController.navigate(Routes.INITIAL)
+                navController.navigate(Routes.CONTRACTS) {
+                    popUpTo(Routes.CONTRACTS) {
+                        inclusive = true
+                    }
+                }
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
@@ -59,8 +72,7 @@ fun ContractActivateScreen(
                 }
             },
             onBack = {
-                navController.popBackStack()
-                navController.popBackStack()
+                safeClick()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }
