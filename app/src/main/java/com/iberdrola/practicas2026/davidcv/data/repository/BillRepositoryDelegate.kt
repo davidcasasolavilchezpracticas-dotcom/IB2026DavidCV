@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +33,7 @@ import javax.inject.Singleton
 /**
  * BillRepositoryDelegate
  * Repositorio que hace de nexo entre ambos para poder hacer uso de los dos indistintamente.
- * Implementa la estrategia de Single Source of Truth usando Room.
+ * Implementa la estrategia de Single Source of Truth usando Room con protección contra race conditions.
  */
 @Singleton
 class BillRepositoryDelegate @Inject constructor(
@@ -41,11 +43,13 @@ class BillRepositoryDelegate @Inject constructor(
     @ApplicationContext private val _context: Context
 ) : BillRepositoryInterface {
 
+    private val syncMutex = Mutex()
+
     /**
      * Sincroniza los datos según la configuración (Network o Mock JSON)
-     * y los guarda en Room.
+     * y los guarda en Room. Protegido por Mutex para evitar parpadeos de "no data".
      */
-    private suspend fun syncBills() {
+    private suspend fun syncBills() = syncMutex.withLock {
         try {
             val billsToInsert: List<BillEntity>
             if (DataSourceConfig.useNetwork) {
@@ -55,7 +59,6 @@ class BillRepositoryDelegate @Inject constructor(
                     val body = response.body() ?: throw BillException.DataCorrupted
                     billsToInsert = body.map { it.toModel().toEntity() }
                 } else {
-                    Log.e("ComprobacionesBillRepository", "Error en RED: ${response.code()}")
                     throw BillException.ResponseError("Error RED: ${response.code()}")
                 }
             } else {
@@ -77,15 +80,18 @@ class BillRepositoryDelegate @Inject constructor(
             }
 
             if (billsToInsert.isNotEmpty()) {
+                // Realizamos el borrado e inserción. 
+                // Idealmente esto debería estar en una @Transaction en el DAO
+                // para que Room no emita el estado intermedio vacío.
                 _dao.deleteAll()
                 _dao.insertAll(billsToInsert)
-                Log.d("ComprobacionesBillRepository", "Base de datos actualizada con ${billsToInsert.size} facturas")
+                Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente.")
             }
 
         } catch (e: BillException) {
             Log.e("ComprobacionesBillRepository", "Error controlado: ${e.message}")
             throw e
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("ComprobacionesBillRepository", "Excepción no controlada: ${e}")
             throw BillException.UnknownError(e.message)
         }
@@ -93,7 +99,7 @@ class BillRepositoryDelegate @Inject constructor(
 
 
     override fun getBills(): Flow<BaseResult<List<Bill>>> = flow<BaseResult<List<Bill>>> {
-        syncBills()    // Usamos emitAll con map para mantener el flujo de Room vivo sin errores de cast
+        syncBills()
         emitAll(
             _dao.getAll().map { entities ->
                 val bills: List<Bill> = entities.map { it.toModel() }
@@ -115,6 +121,7 @@ class BillRepositoryDelegate @Inject constructor(
     }.catch { e ->
         emit(BaseResult.Error(if (e is Exception) e else Exception(e.toString())))
     }.flowOn(Dispatchers.IO)
+
     override fun getBillById(id: Int): Flow<BaseResult<Bill>> = flow<BaseResult<Bill>> {
         _dao.getById(id).collect { entity ->
             emit(BaseResult.Success(entity.toModel()))

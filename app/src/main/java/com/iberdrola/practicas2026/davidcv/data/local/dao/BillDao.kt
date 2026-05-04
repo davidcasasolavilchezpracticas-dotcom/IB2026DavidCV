@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
@@ -39,4 +40,10 @@ interface BillDao {
 
     @Query("DELETE FROM bills")
     suspend fun deleteAll()
+
+    @Transaction
+    suspend fun clearAndInsert(bills: List<BillEntity>) {
+        deleteAll()
+        insertAll(bills)
+    }
 }
