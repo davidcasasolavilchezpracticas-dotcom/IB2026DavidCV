@@ -140,7 +140,7 @@ class BillListViewModel @Inject constructor(
                         _lightBillsState.value = BillListState.Success(filterList(result.data, currentFilters))
                     }
                     is BaseResult.Error -> {
-                        _lightBillsState.value = BillListState.Error(result.exception as BillException)
+                        _lightBillsState.value = BillListState.Error(BillException.ConexionFailed)
                     }
                 }
             }
