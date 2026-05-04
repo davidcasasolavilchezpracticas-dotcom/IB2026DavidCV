@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate
 
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,11 +10,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
@@ -29,6 +32,7 @@ fun ContractActivateScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val account by viewModelDS.account.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActivateScreen" ) {
@@ -61,6 +65,7 @@ fun ContractActivateScreen(
                         inclusive = true
                     }
                 }
+                Toast.makeText(context, R.string.cascTitleActivateCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }

@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractemailchange
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -9,9 +10,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
@@ -22,6 +25,9 @@ fun ContractEmailChangeScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics
 ) {
+    val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractEmailChangeScreen" ) {
             param("eventType", "View")
@@ -34,7 +40,6 @@ fun ContractEmailChangeScreen(
         }
     )
 
-    val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         ContractEmailChangeContent(
@@ -46,6 +51,7 @@ fun ContractEmailChangeScreen(
                         inclusive = true
                     }
                 }
+                Toast.makeText(context, R.string.cascTitleModifyCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }

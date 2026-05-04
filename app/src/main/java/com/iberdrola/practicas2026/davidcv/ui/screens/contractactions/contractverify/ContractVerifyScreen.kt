@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -9,10 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
@@ -29,19 +32,20 @@ fun ContractVerifyScreen(
     analytics: FirebaseAnalytics,
 ) {
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
-    LaunchedEffect(Unit) {
-        analytics.logEvent ( "ContractVerifyScreen" ) {
-            param("eventType", "View")
-        }
-    }
-
     val state by viewModel.state.collectAsState()
-
+    val context = LocalContext.current
     val safeClick = rememberDefaultClickHandler(
         onClick = {
             navController.popBackStack()
         }
     )
+
+
+    LaunchedEffect(Unit) {
+        analytics.logEvent ( "ContractVerifyScreen" ) {
+            param("eventType", "View")
+        }
+    }
 
     val events = ContractVerifyEvents(
         onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
@@ -58,6 +62,16 @@ fun ContractVerifyScreen(
                     inclusive = true
                 }
             }
+            Toast.makeText(
+                context,
+                when(state.action) {
+                    MODIFYEMAIL -> R.string.cascTitleModifyCancel
+                    MODIFYSTATUS -> R.string.cascTitleDesactivateCancel
+                    MODIFYSTATUSEMAIL -> R.string.cascTitleActivateCancel
+                    MODIFYPHONE -> R.string.cpcToast
+                },
+                Toast.LENGTH_SHORT
+            ).show()
             analytics.logEvent ( "ButtonClose" ) {
                 param("eventType", "Click")
             }

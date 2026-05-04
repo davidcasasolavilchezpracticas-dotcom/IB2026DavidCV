@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.useLocal
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
@@ -58,16 +60,9 @@ fun BillListScreen(
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
-
-    // Gestión del color de la statusBar al entrar y salir de la pantalla
-    DisposableEffect(Unit) {
+    SideEffect {
         window.statusBarColor = White.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-
-        onDispose {
-            // Aquí puedes decidir si volver al verde o dejarlo como estaba
-            // Por defecto, la mayoría de pantallas son blancas
-        }
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
     }
 
     LaunchedEffect(Unit) {

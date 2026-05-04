@@ -130,4 +130,8 @@
     <string name="cvcTextTimeLeftEnd">" para que se reinicien los reenvios."</string>
     <string name="Ok">Ok</string>
     <string name="dateSelector">Seleccionar fecha</string>
+    <string name="cpcToast">Se ha cancelado la edición del número de teléfono</string>
+    <string name="cascTitleModifyCancel">Se ha cancelado la modificación del email.</string>
+    <string name="cascTitleActivateCancel">Se ha cancelado la activación del contrato</string>
+    <string name="cascTitleDesactivateCancel">Se ha cancelado la modificación del estado del contrato</string>
 </resources>
