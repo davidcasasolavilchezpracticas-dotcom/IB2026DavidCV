@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,7 +40,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
+@SuppressLint("NonObservableLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateSelector(
@@ -52,10 +55,11 @@ fun DateSelector(
     var showDialog by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Picker,
+        yearRange = 1990..2030
     )
 
     // Formateador de fecha
-    val formatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd-MM-yyyy", LocalLocale.current.platformLocale)
     val selectedDateText = date?.let {
         formatter.format(Date.from(it.atZone(ZoneId.systemDefault()).toInstant()))
     } ?: ""
