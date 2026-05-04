@@ -1,15 +1,17 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.WifiOff
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,12 +20,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -43,6 +47,7 @@ fun BillListContent(
     modifier: Modifier,
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
+    val pullState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
 
     PullToRefreshBox (
@@ -55,7 +60,17 @@ fun BillListContent(
                 isRefreshing = false
             }
         },
-        modifier = modifier
+        state = pullState,
+        modifier = modifier,
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                state = pullState,
+                isRefreshing = isRefreshing,
+                modifier = Modifier.align(Alignment.TopCenter),
+                containerColor = White,
+                color = EnergyGreen
+            )
+        }
     ){
         when (state) {
             is BillListState.Loading -> {
