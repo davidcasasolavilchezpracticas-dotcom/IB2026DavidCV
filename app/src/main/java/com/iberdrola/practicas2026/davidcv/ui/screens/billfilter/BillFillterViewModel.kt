@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.launch
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.util.fastRoundToInt
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.R
@@ -24,14 +26,19 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlin.math.nextDown
 
 @HiltViewModel
 class BillViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val getLightBillsUseCase: GetLightBillsUseCase,
     private val getGasBillsUseCase: GetGasBillsUseCase
 ) : ViewModel() {
 
-    private var _state = MutableStateFlow(BillFilterState())
+
+    private var _state = MutableStateFlow(
+        savedStateHandle.get<BillFilterState>("initial_filters") ?: BillFilterState()
+    )
     val state: StateFlow<BillFilterState> = _state
 
     // Variable para almacenar el precio máximo detectado
@@ -43,13 +50,25 @@ class BillViewModel @Inject constructor(
 
 
     init {
-        calculateMaxMinPrice()
+        viewModelScope.launch {
+            savedStateHandle.getStateFlow<BillFilterState?>("initial_filters", null)
+                .collect { filters ->
+                    if (filters != null) {
+                        _state.value = filters
+                    } else {
+                        calculateMaxMinPrice()
+                        Log.d("Comprobaciones", "filters -> ${filters}")
+                    }
+                }
+        }
+    }
+
+    fun setInitialFilters(filters: BillFilterState) {
+        _state.value = filters
     }
 
     private fun calculateMaxMinPrice() {
         viewModelScope.launch {
-            // Combinamos o consultamos ambos tipos de facturas
-            // Nota: Aquí asumo que quieres el máximo absoluto entre Luz y Gas
             combine(
                 getLightBillsUseCase(),
                 getGasBillsUseCase()
@@ -62,17 +81,11 @@ class BillViewModel @Inject constructor(
                 allBills
             }.collect { bills ->
                 if (bills.isNotEmpty()) {
-                    // Buscamos el valor máximo. Usamos .toFloat() porque el estado suele usar Float para Sliders
-                    val max = bills.maxOf { it.value.toFloat() }
-                    _maxPrice.value = max
+                    val max = bills.maxOf { it.value }
+                    _maxPrice.value = kotlin.math.ceil(max)
 
-                    val min = bills.minOf { it.value.toFloat() }
-                    _minPrice.value = min
-
-                    // Opcional: Si quieres que el rango por defecto empiece en el máximo
-                    if (_state.value.priceRange == null) {
-                        _state.value = _state.value.copy(priceRange = 0f..max)
-                    }
+                    val min = bills.minOf { it.value }
+                    _minPrice.value = kotlin.math.floor(min)
                 }
             }
         }

@@ -42,6 +42,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
+import kotlin.math.roundToInt
 
 /**
  * FilterScreen
@@ -65,13 +66,20 @@ fun FilterScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
+        val initialFilters = navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.get<BillFilterState>("initial_filters")
+
+        initialFilters?.let {
+            viewModel.setInitialFilters(it)
+        }
+
         analytics.logEvent ( "FilterScreen" ) {
             param("eventType", "View")
         }
     }
 
     BackHandler {
-        viewModel.deleteFilters()
         navController.previousBackStackEntry?.savedStateHandle?.set(" ", state)
         onBack()
         analytics.logEvent("ButtonBack") {

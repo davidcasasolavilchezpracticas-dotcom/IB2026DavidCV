@@ -46,6 +46,11 @@ class BillListViewModel @Inject constructor(
     private var allLightBills: List<Bill> = emptyList()
     private var allGasBills: List<Bill> = emptyList()
 
+    /**
+     * Devuelve los filtros aplicados actualmente.
+     */
+    fun getCurrentFilters(): BillFilterState = currentFilters
+
 
     /**
      * applyFilters

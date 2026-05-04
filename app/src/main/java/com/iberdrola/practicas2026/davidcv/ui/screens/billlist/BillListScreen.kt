@@ -157,6 +157,8 @@ fun BillListScreen(
                 }
             },
             onFilterClick = {
+                val currentFilters = viewModel.getCurrentFilters()
+                navController.currentBackStackEntry?.savedStateHandle?.set("initial_filters", currentFilters)
                 navController.navigate(Routes.FILTER)
                 state.analytics.logEvent("ButtonFilter") {
                     param("eventType", "Click")
