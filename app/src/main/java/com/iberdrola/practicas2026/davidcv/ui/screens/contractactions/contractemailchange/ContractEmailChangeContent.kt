@@ -93,6 +93,7 @@ fun ContractEmailChangeContent(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.DarkGray,
                     unfocusedIndicatorColor = Color.LightGray,
                     cursorColor = Color.Black

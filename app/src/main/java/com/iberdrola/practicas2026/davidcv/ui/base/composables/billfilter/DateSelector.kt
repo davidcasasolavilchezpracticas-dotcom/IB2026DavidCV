@@ -2,6 +2,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -120,7 +121,6 @@ fun DateSelector(
         }
     }
 
-    // Tu TextField se mantiene igual...
     TextField(
         value = selectedDateText,
         onValueChange = {},
@@ -133,6 +133,7 @@ fun DateSelector(
             )
         },
         modifier = modifier
+            .height(64.dp)
             .fillMaxWidth()
             .clickable { showDialog = true },
         readOnly = true,
