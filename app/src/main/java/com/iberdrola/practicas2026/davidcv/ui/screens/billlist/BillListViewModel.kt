@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
@@ -12,6 +11,7 @@ import com.iberdrola.practicas2026.davidcv.domain.usecase.GetGasBillsUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetLightBillsUseCase
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,27 +39,36 @@ class BillListViewModel @Inject constructor(
     private val _gasBillsState = MutableStateFlow<BillListState>(BillListState.Loading)
     val gasBillsState: StateFlow<BillListState> = _gasBillsState
 
-    // Guardamos el filtro actual para aplicarlo siempre sobre los datos cargados
     private var currentFilters: BillFilterState = BillFilterState()
 
-    // Listas originales para poder filtrar siempre sobre el total
-    private var allLightBills: List<Bill> = emptyList()
-    private var allGasBills: List<Bill> = emptyList()
+    private var allLightBills: List<Bill>? = null
+    private var allGasBills: List<Bill>? = null
+
+    private var lightBillsJob: Job? = null
+    private var gasBillsJob: Job? = null
 
     /**
      * Devuelve los filtros aplicados actualmente.
      */
     fun getCurrentFilters(): BillFilterState = currentFilters
 
-
     /**
      * applyFilters
-     * Aplica los filtros recibidos a las listas originales y actualiza el estado
+     * Solo actualiza el estado de la UI si ya tenemos datos cargados.
+     * Si estamos cargando, solo guarda los filtros para usarlos cuando lleguen los datos.
      */
     fun applyFilters(filters: BillFilterState) {
         currentFilters = filters
-        _lightBillsState.value = BillListState.Success(filterList(allLightBills, currentFilters))
-        _gasBillsState.value = BillListState.Success(filterList(allGasBills, currentFilters))
+
+        if (_lightBillsState.value is BillListState.Success && allLightBills != null) {
+            _lightBillsState.value =
+                BillListState.Success(filterList(allLightBills!!, currentFilters))
+        }
+
+        if (_gasBillsState.value is BillListState.Success && allGasBills != null) {
+            _gasBillsState.value =
+                BillListState.Success(filterList(allGasBills!!, currentFilters))
+        }
     }
 
     private fun filterList(list: List<Bill>, filters: BillFilterState): List<Bill> {
@@ -70,7 +79,7 @@ class BillListViewModel @Inject constructor(
 
             // Filtro por Precio
             val matchPrice = filters.priceRange?.let { range ->
-                bill.value.toFloat() in range
+                bill.value in range
             } ?: true
 
             // Filtro por Estado (Si no hay ninguno marcado, se muestran todos)
@@ -108,21 +117,30 @@ class BillListViewModel @Inject constructor(
 
     /**
      * getLightBills
-     * Obtiene las facturas de luz
+     * Obtiene las facturas de luz. Controlado para evitar parpadeos en refresco.
      */
     fun getLightBills() {
-        viewModelScope.launch {
-            _lightBillsState.value = BillListState.Loading
+        lightBillsJob?.cancel()
+        lightBillsJob = viewModelScope.launch {
+            // Solo ponemos Loading si no estamos ya en Success (evita parpadeo en refresh)
+            val wasAlreadyLoaded = allLightBills != null
+            if (!wasAlreadyLoaded) {
+                _lightBillsState.value = BillListState.Loading
+            }
+            
             delay(Random.nextLong(1000, 3000))
-            _getLightBillsUseCase().collect { billsList ->
-                when (billsList) {
+            _getLightBillsUseCase().collect { result ->
+                when (result) {
                     is BaseResult.Success -> {
-                        allLightBills = billsList.data
-                        // Aplicamos el filtro actual (que puede ser el por defecto si no se ha filtrado)
-                        _lightBillsState.value = BillListState.Success(filterList(allLightBills, currentFilters))
+                        if (wasAlreadyLoaded && result.data.isEmpty() && !allLightBills.isNullOrEmpty()) {
+                            return@collect
+                        }
+
+                        allLightBills = result.data
+                        _lightBillsState.value = BillListState.Success(filterList(result.data, currentFilters))
                     }
                     is BaseResult.Error -> {
-                        _lightBillsState.value = BillListState.Error(billsList.exception as BillException)
+                        _lightBillsState.value = BillListState.Error(result.exception as BillException)
                     }
                 }
             }
@@ -131,21 +149,29 @@ class BillListViewModel @Inject constructor(
 
     /**
      * getGasBills
-     * Obtiene las facturas de gas
+     * Obtiene las facturas de gas. Controlado para evitar parpadeos en refresco.
      */
     fun getGasBills() {
-        viewModelScope.launch {
-            _gasBillsState.value = BillListState.Loading
+        gasBillsJob?.cancel()
+        gasBillsJob = viewModelScope.launch {
+            val wasAlreadyLoaded = allGasBills != null
+            if (!wasAlreadyLoaded) {
+                _gasBillsState.value = BillListState.Loading
+            }
+            
             delay(Random.nextLong(1000, 3000))
-            _getGasBillsUseCase().collect { billsList ->
-                when (billsList) {
+            _getGasBillsUseCase().collect { result ->
+                when (result) {
                     is BaseResult.Success -> {
-                        allGasBills = billsList.data
-                        // Aplicamos el filtro actual
-                        _gasBillsState.value = BillListState.Success(filterList(allGasBills, currentFilters))
+                        if (wasAlreadyLoaded && result.data.isEmpty() && !allGasBills.isNullOrEmpty()) {
+                            return@collect
+                        }
+
+                        allGasBills = result.data
+                        _gasBillsState.value = BillListState.Success(filterList(result.data, currentFilters))
                     }
                     is BaseResult.Error -> {
-                        _gasBillsState.value = BillListState.Error(billsList.exception as BillException)
+                        _gasBillsState.value = BillListState.Error(result.exception as BillException)
                     }
                 }
             }

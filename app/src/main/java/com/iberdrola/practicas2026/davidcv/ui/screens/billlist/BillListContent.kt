@@ -59,9 +59,7 @@ fun BillListContent(
     ){
         when (state) {
             is BillListState.Loading -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = EnergyGreen)
-                }
+                BillListContentEmpty(modifier = modifier)
             }
 
             is BillListState.Error -> {
