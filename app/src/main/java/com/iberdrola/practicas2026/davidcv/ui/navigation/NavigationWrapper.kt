@@ -83,6 +83,21 @@ fun NavigationWrapper(
         )
     }
 
+    val safeClick = rememberDefaultClickHandler(
+        onClick = {
+            handleBackNavigation(
+                currentRoute = currentRoute,
+                navController = navController,
+                bsCounter = bsCounter,
+                dataStoreViewModel = dataStoreViewModel,
+                analytics = analytics,
+                onShowOpinionBS = {
+                    showOpinionBS = true
+                }
+            )
+        }
+    )
+
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { navegator, destination, _ ->
             val route = destination.route ?: "unknown"
@@ -106,16 +121,7 @@ fun NavigationWrapper(
                 currentRoute = currentRoute,
                 navController = navController,
                 handleBackNavigation = {
-                    handleBackNavigation(
-                        currentRoute = currentRoute,
-                        navController = navController,
-                        bsCounter = bsCounter,
-                        dataStoreViewModel = dataStoreViewModel,
-                        analytics = analytics,
-                        onShowOpinionBS = {
-                            showOpinionBS = true
-                        }
-                    )
+                    safeClick()
                 }
             )
         }
@@ -130,16 +136,7 @@ fun NavigationWrapper(
                     navController = navController,
                     analytics = analytics,
                     onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
+                        safeClick()
                     }
                 )
             }
@@ -148,18 +145,7 @@ fun NavigationWrapper(
                 EditProfileScreen(
                     navController = navController,
                     analytics = analytics,
-                    onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
-                    }
+                    onBack = safeClick
                 )
             }
 
@@ -170,16 +156,7 @@ fun NavigationWrapper(
                     analytics = analytics,
                     remoteConfig = remoteConfig,
                     onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
+                        safeClick()
                     },
                     modifier = Modifier
                 )
@@ -192,16 +169,7 @@ fun NavigationWrapper(
                     analytics = analytics,
                     remoteConfig = remoteConfig,
                     onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
+                        safeClick()
                     },
                     modifier = Modifier
                 )
@@ -221,16 +189,7 @@ fun NavigationWrapper(
                     navController = navController,
                     analytics = analytics,
                     onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
+                        safeClick()
                     }
                 )
             }
@@ -241,16 +200,7 @@ fun NavigationWrapper(
                     remoteConfig = remoteConfig,
                     analytics = analytics,
                     onBack = {
-                        handleBackNavigation(
-                            currentRoute = currentRoute,
-                            navController = navController,
-                            bsCounter = bsCounter,
-                            dataStoreViewModel = dataStoreViewModel,
-                            analytics = analytics,
-                            onShowOpinionBS = {
-                                showOpinionBS = true
-                            }
-                        )
+                        safeClick()
                     }
                 )
             }
@@ -266,16 +216,7 @@ fun NavigationWrapper(
                         viewModel = CreateViewModel(entry, navController),
                         analytics = analytics,
                         onBack = {
-                            handleBackNavigation(
-                                currentRoute = currentRoute,
-                                navController = navController,
-                                bsCounter = bsCounter,
-                                dataStoreViewModel = dataStoreViewModel,
-                                analytics = analytics,
-                                onShowOpinionBS = {
-                                    showOpinionBS = true
-                                }
-                            )
+                            safeClick()
                         }
                     )
                 }
