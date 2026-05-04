@@ -55,18 +55,20 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
 
                     Box(
                         modifier = modifier
-                            .size(285.dp, 20.dp)
+                            .size(250.dp, 20.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .background( color = SkeletonGreen )
                             .shimmerEffect()
                     )
                 }
 
-                Box(modifier = modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background( color = SkeletonGreen )
-                    .shimmerEffect())
+                Box(
+                    modifier = modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background( color = SkeletonGreen )
+                        .shimmerEffect()
+                )
             }
 
             Spacer(modifier = modifier.height(24.dp))
