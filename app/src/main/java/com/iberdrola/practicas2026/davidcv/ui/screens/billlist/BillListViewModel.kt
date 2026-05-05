@@ -3,12 +3,15 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetGasBillsUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetLightBillsUseCase
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.useLocal
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -46,6 +49,7 @@ class BillListViewModel @Inject constructor(
 
     private var lightBillsJob: Job? = null
     private var gasBillsJob: Job? = null
+
 
     /**
      * Devuelve los filtros aplicados actualmente.
@@ -115,6 +119,20 @@ class BillListViewModel @Inject constructor(
         }
     }
 
+    fun onErrorClick(
+        onRefresh: () -> Unit,
+        currentState: BillListState,
+        navController: NavController,
+        useLocal: (BillListState) -> Unit,
+    ) {
+        if (currentState is BillListState.Error && currentState.exception is BillException.ConexionFailed){
+            useLocal(currentState)
+            navController.popBackStack()
+        } else {
+            onRefresh()
+        }
+    }
+
     /**
      * getLightBills
      * Obtiene las facturas de luz. Controlado para evitar parpadeos en refresco.
@@ -127,23 +145,19 @@ class BillListViewModel @Inject constructor(
             if (!wasAlreadyLoaded) {
                 _lightBillsState.value = BillListState.Loading
             }
-            
-            delay(Random.nextLong(1000, 3000))
             _getLightBillsUseCase().collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
-                        if (wasAlreadyLoaded && result.data.isEmpty() && !allLightBills.isNullOrEmpty()) {
-                            return@collect
-                        }
-
                         allLightBills = result.data
                         _lightBillsState.value = BillListState.Success(filterList(result.data, currentFilters))
                     }
                     is BaseResult.Error -> {
-                        _lightBillsState.value = BillListState.Error(BillException.ConexionFailed)
+                        _lightBillsState.value = BillListState.Error(result.exception as BillException)
                     }
                 }
             }
+
+            delay(Random.nextLong(1000, 3000))
         }
     }
 
@@ -158,15 +172,9 @@ class BillListViewModel @Inject constructor(
             if (!wasAlreadyLoaded) {
                 _gasBillsState.value = BillListState.Loading
             }
-            
-            delay(Random.nextLong(1000, 3000))
             _getGasBillsUseCase().collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
-                        if (wasAlreadyLoaded && result.data.isEmpty() && !allGasBills.isNullOrEmpty()) {
-                            return@collect
-                        }
-
                         allGasBills = result.data
                         _gasBillsState.value = BillListState.Success(filterList(result.data, currentFilters))
                     }
@@ -175,6 +183,7 @@ class BillListViewModel @Inject constructor(
                     }
                 }
             }
+            delay(Random.nextLong(1000, 3000))
         }
     }
 }

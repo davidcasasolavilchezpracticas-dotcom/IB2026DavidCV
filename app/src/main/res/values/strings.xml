@@ -7,6 +7,7 @@
     <string name="seeBills">Ver facturas</string>
     <string name="noBills">No hay facturas</string>
     <string name="noAviableBills">No hay facturas disponibles</string>
+    <string name="noAviableBillsFilter">No hay facturas disponibles para los siguientes filtros</string>
     <string name="recargar">Recargar</string>
     <string name="error">Error</string>
     <string name="serverFail">Algo salió mal con el servidor</string>
@@ -134,4 +135,6 @@
     <string name="cascTitleModifyCancel">Se ha cancelado la modificación del email.</string>
     <string name="cascTitleActivateCancel">Se ha cancelado la activación del contrato</string>
     <string name="cascTitleDesactivateCancel">Se ha cancelado la modificación del estado del contrato</string>
+    <string name="ebsBackInitial">Volver al inicio</string>
+    <string name="refresh">Refrescar</string>
 </resources>

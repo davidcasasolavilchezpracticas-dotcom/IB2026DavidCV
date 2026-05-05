@@ -32,7 +32,8 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 @Composable
 fun EmptyBillsScreen(
     modifier: Modifier = Modifier,
-    onRefresh: (() -> Unit)? = null
+    onRefresh: (() -> Unit)? = null,
+    isFiltered: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -51,7 +52,7 @@ fun EmptyBillsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.noAviableBills),
+            text = stringResource(if(isFiltered) R.string.noAviableBillsFilter else R.string.noAviableBills),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -67,7 +68,7 @@ fun EmptyBillsScreen(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.ebsDeleteFilters),
+                    text = stringResource(if(isFiltered) R.string.ebsDeleteFilters else R.string.ebsBackInitial),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )

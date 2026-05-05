@@ -81,7 +81,8 @@ fun ErrorScreen(
             modifier = Modifier.padding(top = LocalSpacing.current.lg)
         ) {
             Text(
-                text = if (exception is BillException.ConexionFailed) stringResource(R.string.useLocal) else stringResource(R.string.goBack),
+                text = if (exception is BillException.ConexionFailed) stringResource(R.string.useLocal)
+                        else stringResource(R.string.refresh),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = White,

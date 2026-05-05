@@ -64,6 +64,7 @@ uiText = "1.10.6"
 workRuntimeKtx = "2.11.2"
 androidxMaterial3 = "1.4.0"
 androidxFoundationLayout = "1.11.0"
+runtimeVersion = "1.11.0"
 
 
 [libraries]
@@ -149,6 +150,7 @@ androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", ve
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxMaterial3" }
 foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "androidxFoundationLayout" }
+androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtimeVersion" }
 
 
 

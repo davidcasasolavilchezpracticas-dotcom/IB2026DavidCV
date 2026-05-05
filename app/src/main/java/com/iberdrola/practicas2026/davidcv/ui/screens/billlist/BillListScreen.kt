@@ -97,6 +97,7 @@ fun BillListScreen(
         ?.observeAsState()
         ?: remember { mutableStateOf(null) }
 
+
     LaunchedEffect(filterResult) {
         filterResult?.let { filters ->
             viewModel.applyFilters(filters)
@@ -141,17 +142,28 @@ fun BillListScreen(
 
         val events = BillListEvents(
             onErrorClick = { currentState ->
-                useLocal(currentState)
-                navController.popBackStack()
+                viewModel.onErrorClick(
+                    onRefresh = { viewModel.refreshBills(state.pagerState) },
+                    currentState = currentState,
+                    navController = navController,
+                    useLocal = { useLocal(it) }
+                )
                 state.analytics.logEvent("ButtonError") {
                     param("eventType", "Click")
                 }
             },
             onEmptyClick = {
-                navController.navigate(if (state.pagerState.currentPage == 0) Routes.LIST_LIGHT else Routes.LIST_GAS) {
+                navController.navigate(Routes.INITIAL) {
                     // Al añadir esto, quitamos la pantalla actual de la pila antes de poner la nueva
                     popUpTo(navController.currentDestination?.route!!) { inclusive = true }
                 }
+                state.analytics.logEvent("ButtonEmpty") {
+                    param("eventType", "Click")
+                }
+            },
+            onEmptyFilterClick = {
+                viewModel.applyFilters(BillFilterState())
+                viewModel.refreshBills(state.pagerState)
                 state.analytics.logEvent("ButtonEmpty") {
                     param("eventType", "Click")
                 }
@@ -169,7 +181,8 @@ fun BillListScreen(
                 state.analytics.logEvent("ButtonRefresh") {
                     param("eventType", "Click")
                 }
-            }
+            },
+            getCurrentFilters = viewModel::getCurrentFilters
         )
 
         HorizontalPage(

@@ -26,6 +26,7 @@ import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import kotlinx.coroutines.delay
@@ -83,21 +84,22 @@ fun BillListContent(
                     message = state.exception.message ?: R.string.blcUnknownError.toString(),
                     modifier = modifier.verticalScroll(rememberScrollState()),
                     img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
-                    onClick = {
-                        events.onErrorClick(state)
-                    }
+                    onClick = { events.onErrorClick(state) }
                 )
             }
 
             is BillListState.Success -> {
                 val bills = state.bills
+                val isFiltered = (events.getCurrentFilters() != BillFilterState())
+
 
                 if (bills.isEmpty()) {
                     EmptyBillsScreen(
                         modifier = modifier.verticalScroll(rememberScrollState()),
-                        onRefresh = {
-                            events.onEmptyClick()
-                        }
+                        onRefresh = if(isFiltered) {
+                            events.onEmptyFilterClick
+                        } else events.onEmptyClick,
+                        isFiltered = isFiltered
                     )
                 } else {
                     BillListContentInfo(

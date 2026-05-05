@@ -58,6 +58,10 @@ class BillRepositoryDelegate @Inject constructor(
                 if (response.isSuccessful) {
                     val body = response.body() ?: throw BillException.DataCorrupted
                     billsToInsert = body.map { it.toModel().toEntity() }
+                    
+                    // Sincronizamos SIEMPRE que la respuesta sea exitosa, incluso si viene vacía.
+                    // Al usar clearAndInsert (transacción), Room no emitirá un estado vacío intermedio.
+                    _dao.clearAndInsert(billsToInsert)
                 } else {
                     throw BillException.ResponseError("Error RED: ${response.code()}")
                 }
@@ -77,15 +81,7 @@ class BillRepositoryDelegate @Inject constructor(
                 }
 
                 billsToInsert = entities.map { it.toModel().toEntity() }
-            }
-
-            if (billsToInsert.isNotEmpty()) {
-                // Realizamos el borrado e inserción. 
-                // Idealmente esto debería estar en una @Transaction en el DAO
-                // para que Room no emita el estado intermedio vacío.
-                _dao.deleteAll()
-                _dao.insertAll(billsToInsert)
-                Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente.")
+                _dao.clearAndInsert(billsToInsert)
             }
 
         } catch (e: BillException) {
@@ -107,7 +103,7 @@ class BillRepositoryDelegate @Inject constructor(
             }
         )
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e.toString())))
+        emit(BaseResult.Error(e as? BillException ?: BillException.UnknownError(e.message)))
     }.flowOn(Dispatchers.IO)
 
     override fun getBillsByType(type: BillType): Flow<BaseResult<List<Bill>>> = flow<BaseResult<List<Bill>>> {
@@ -119,7 +115,7 @@ class BillRepositoryDelegate @Inject constructor(
             }
         )
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e.toString())))
+        emit(BaseResult.Error(e as? BillException ?: BillException.UnknownError(e.message)))
     }.flowOn(Dispatchers.IO)
 
     override fun getBillById(id: Int): Flow<BaseResult<Bill>> = flow<BaseResult<Bill>> {
@@ -127,8 +123,7 @@ class BillRepositoryDelegate @Inject constructor(
             emit(BaseResult.Success(entity.toModel()))
         }
     }.catch { e ->
-        val exception = if (e is Exception) e else Exception(e.toString())
-        emit(BaseResult.Error(exception))
+        emit(BaseResult.Error(e as? BillException ?: BillException.UnknownError(e.message)))
     }.flowOn(Dispatchers.IO)
 
     override fun updateBill(bill: Bill): Flow<BaseResult<Bill>> = flow {
