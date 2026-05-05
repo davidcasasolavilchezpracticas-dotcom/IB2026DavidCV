@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusProperties
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -46,7 +49,9 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.AlertDialogOK
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import java.time.LocalDateTime
 
 
@@ -86,12 +91,12 @@ fun BillListContentInfo(
                     OutlinedButton(
                         onClick = { onFilterClick() },
                         shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(1.dp, Color(0xFF006633))
+                        border = BorderStroke(1.dp, Color(0xFF006633)),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Tune,
                             contentDescription = null,
-                            tint = Color(0xFF006633),
+                            tint = EnergyGreen,
                             modifier = Modifier.size(18.dp)
                         )
 
@@ -100,7 +105,7 @@ fun BillListContentInfo(
                         Text(
                             text = stringResource(R.string.blciButtonFilter),
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFF006633)
+                            color = EnergyGreen
                         )
                     }
                 }

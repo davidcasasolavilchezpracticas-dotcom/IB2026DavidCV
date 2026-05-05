@@ -49,6 +49,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ContractS
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ServiceSection
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSwitchItem
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 @Composable
 fun InitialContent(
@@ -64,6 +65,7 @@ fun InitialContent(
     if (showIpDialog) {
         AlertDialog(
             onDismissRequest = { showIpDialog = false },
+            containerColor = White,
             title = { Text(text = "Configurar IP Local") },
             text = {
                 Column {
@@ -161,7 +163,10 @@ fun InitialContent(
 
                         DropdownMenu(
                             expanded = showConnectionMenu,
-                            onDismissRequest = { showConnectionMenu = false }
+                            onDismissRequest = { showConnectionMenu = false },
+                            modifier = Modifier.background(
+                                color = White
+                            )
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Emulador (10.0.2.2)") },

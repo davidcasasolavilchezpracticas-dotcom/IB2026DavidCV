@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,8 +72,8 @@ fun FilterScreen(
     val minDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("min_date_limit") }
     val maxDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("max_date_limit") }
     
-    val minDateLimit = remember(minDateLimitStr) { minDateLimitStr?.let { LocalDateTime.parse(it) } }
-    val maxDateLimit = remember(maxDateLimitStr) { maxDateLimitStr?.let { LocalDateTime.parse(it) } }
+    val minDateLimit = remember(minDateLimitStr) { try { minDateLimitStr?.let { LocalDateTime.parse(it) } } catch (e: Exception) { null } }
+    val maxDateLimit = remember(maxDateLimitStr) { try { maxDateLimitStr?.let { LocalDateTime.parse(it) } } catch (e: Exception) { null } }
 
     // Sincronizamos con el ViewModel al cargar
     LaunchedEffect(initialFilters, minLimit, maxLimit, minDateLimit, maxDateLimit) {
@@ -88,7 +90,7 @@ fun FilterScreen(
     }
 
     val state by viewModel.state.collectAsState()
-
+    val scrollState = rememberScrollState()
 
     BackHandler {
         onBack()
@@ -97,114 +99,128 @@ fun FilterScreen(
         }
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = LocalSpacing.current.la)
-            .background(White),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .background(White)
     ) {
-        Column {
-            Spacer(modifier = Modifier.height(4.dp))
+        // Área de contenido con scroll
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
+                .padding(horizontal = LocalSpacing.current.la),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                DateSelector(
-                    label = stringResource(R.string.fsSubtituloFecha1),
-                    date = state.startDate,
-                    modifier = Modifier.weight(1f),
-                    onConfirm = {
-                        date -> viewModel.onStartDateSelected(date, context)
-                        analytics.logEvent ( "SetStartDate" ) {
-                            param("eventType", "RelevantMovements")
-                        }
-                    },
-                    onValidDate = viewModel::onValidStartDate,
-                    minDate = LocalDateTime.parse(minDateLimitStr) ?: minDateLimit,
-                    maxDate = state.endDate?.minusDays(1) ?: maxDateLimit
-                )
-                DateSelector(
-                    label = stringResource(R.string.fsSubtituloFecha2),
-                    date = state.endDate,
-                    modifier = Modifier.weight(1f),
-                    onConfirm = {
-                        date -> viewModel.onEndDateSelected(date, context)
-                        analytics.logEvent ( "SetEndDate" ) {
-                            param("eventType", "RelevantMovements")
-                        }
-                    },
-                    onValidDate = viewModel::onValidEndDate,
-                    minDate = state.endDate?.plusDays(1) ?: minDateLimit,
-                    maxDate = LocalDateTime.parse(maxDateLimitStr) ?: maxDateLimit
-                )
-            }
-        }
-
-        // Priorizamos los límites reales del ViewModel, pero usamos los pasados por navegación como respaldo inmediato
-        val currentMin = minLimit ?: 0f
-        val currentMax = maxLimit ?: 500f
-
-        PriceRangeSelector(
-            selectedRange = state.priceRange ?: (currentMin..currentMax),
-            totalRange = currentMin..currentMax,
-            onSliderChange = {
-                range -> viewModel.onPriceRangeChanged(range)
-                analytics.logEvent ( "SetPriceRange" ) {
-                    param("eventType", "RelevantMovements")
+                Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    DateSelector(
+                        label = stringResource(R.string.fsSubtituloFecha1),
+                        date = state.startDate,
+                        modifier = Modifier.weight(1f),
+                        onConfirm = {
+                            date -> viewModel.onStartDateSelected(date, context)
+                            analytics.logEvent ( "SetStartDate" ) {
+                                param("eventType", "RelevantMovements")
+                            }
+                        },
+                        onValidDate = viewModel::onValidStartDate,
+                        minDate = minDateLimit,
+                        maxDate = state.endDate?.minusDays(1) ?: maxDateLimit
+                    )
+                    DateSelector(
+                        label = stringResource(R.string.fsSubtituloFecha2),
+                        date = state.endDate,
+                        modifier = Modifier.weight(1f),
+                        onConfirm = {
+                            date -> viewModel.onEndDateSelected(date, context)
+                            analytics.logEvent ( "SetEndDate" ) {
+                                param("eventType", "RelevantMovements")
+                            }
+                        },
+                        onValidDate = viewModel::onValidEndDate,
+                        minDate = state.startDate?.plusDays(1) ?: minDateLimit,
+                        maxDate = maxDateLimit
+                    )
                 }
             }
-        )
 
-        Column {
-            Text(text = stringResource(R.string.fsTituloEstado), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            // Priorizamos los límites reales del ViewModel, pero usamos los pasados por navegación como respaldo inmediato
+            val currentMin = minLimit ?: 0f
+            val currentMax = maxLimit ?: 500f
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            FilterOption(
-                label = PaymentStatus.PAID.label,
-                value = state.paymentStatusPaid,
-                onCheckedChange = viewModel::onStateChangePaid
+            PriceRangeSelector(
+                selectedRange = state.priceRange ?: (currentMin..currentMax),
+                totalRange = currentMin..currentMax,
+                onSliderChange = {
+                    range -> viewModel.onPriceRangeChanged(range)
+                    analytics.logEvent ( "SetPriceRange" ) {
+                        param("eventType", "RelevantMovements")
+                    }
+                }
             )
 
+            Column {
+                Text(text = stringResource(R.string.fsTituloEstado), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                FilterOption(
+                    label = PaymentStatus.PAID.label,
+                    value = state.paymentStatusPaid,
+                    onCheckedChange = viewModel::onStateChangePaid
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    label = PaymentStatus.PENDING.label,
+                    value = state.paymentStatusPending,
+                    onCheckedChange = viewModel::onStateChangePending
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    label = PaymentStatus.TRAMITED.label,
+                    value = state.paymentStatusTramited,
+                    onCheckedChange = viewModel::onStateChangeTramited
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    label = PaymentStatus.CANCELED.label,
+                    value = state.paymentStatusCanceled,
+                    onCheckedChange = viewModel::onStateChangeCanceled
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    label = PaymentStatus.FIXED_PAYMENT.label,
+                    value = state.paymentStatusFixed,
+                    onCheckedChange = viewModel::onStateChangeFixed
+                )
+            }
+            
             Spacer(modifier = Modifier.height(8.dp))
-
-            FilterOption(
-                label = PaymentStatus.PENDING.label,
-                value = state.paymentStatusPending,
-                onCheckedChange = viewModel::onStateChangePending
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FilterOption(
-                label = PaymentStatus.TRAMITED.label,
-                value = state.paymentStatusTramited,
-                onCheckedChange = viewModel::onStateChangeTramited
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FilterOption(
-                label = PaymentStatus.CANCELED.label,
-                value = state.paymentStatusCanceled,
-                onCheckedChange = viewModel::onStateChangeCanceled
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FilterOption(
-                label = PaymentStatus.FIXED_PAYMENT.label,
-                value = state.paymentStatusFixed,
-                onCheckedChange = viewModel::onStateChangeFixed
-            )
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        // Botones Sticky al final
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(LocalSpacing.current.la),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(
                 onClick = {
                     navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
