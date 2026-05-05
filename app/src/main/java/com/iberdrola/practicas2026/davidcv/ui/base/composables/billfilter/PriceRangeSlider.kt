@@ -51,7 +51,6 @@ fun PriceRangeSelector(
     onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit
 ) {
     var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
-    val minGap = 1f
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -79,14 +78,8 @@ fun PriceRangeSelector(
             value = sliderPosition,
             onValueChange = { newValues ->
                 // Comprobamos si se está respetando la distancia mínima
-                sliderPosition = if (newValues.endInclusive - newValues.start >= minGap) {
-                    newValues
-                } else {
-                    if (newValues.start != sliderPosition.start) {
-                        (newValues.endInclusive - minGap)..newValues.endInclusive
-                    } else {
-                        newValues.start..(newValues.start + minGap)
-                    }
+                if (newValues.endInclusive != sliderPosition.start && newValues.start != sliderPosition.endInclusive) {
+                    sliderPosition = newValues
                 }
                 onSliderChange(sliderPosition)
             },

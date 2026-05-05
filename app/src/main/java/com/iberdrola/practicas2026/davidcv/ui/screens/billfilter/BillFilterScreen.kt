@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +43,6 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
-import kotlin.math.roundToInt
 
 /**
  * FilterScreen
@@ -59,34 +59,32 @@ fun FilterScreen(
     analytics: FirebaseAnalytics,
     onBack: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
-    val maxPrice by viewModel.maxPrice.collectAsState()
-    val minPrice by viewModel.minPrice.collectAsState()
-
     val context = LocalContext.current
+    
+    // Recuperamos los datos de navegación inmediatamente
+    val backStackEntry = remember { navController.previousBackStackEntry }
+    val initialFilters = remember { backStackEntry?.savedStateHandle?.get<BillFilterState>("initial_filters") }
+    val minLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("min_limit") }
+    val maxLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("max_limit") }
 
-    LaunchedEffect(Unit) {
-        val initialFilters = navController.previousBackStackEntry
-            ?.savedStateHandle
-            ?.get<BillFilterState>("initial_filters")
-
-        initialFilters?.let {
-            viewModel.setInitialFilters(it)
-        }
-
+    // Sincronizamos con el ViewModel al cargar
+    LaunchedEffect(initialFilters, minLimit, maxLimit) {
+        viewModel.setInitialFilters(initialFilters ?: BillFilterState())
         analytics.logEvent ( "FilterScreen" ) {
             param("eventType", "View")
         }
     }
 
+    val state by viewModel.state.collectAsState()
+    val maxPrice by viewModel.maxPrice.collectAsState()
+    val minPrice by viewModel.minPrice.collectAsState()
+
     BackHandler {
-        navController.previousBackStackEntry?.savedStateHandle?.set(" ", state)
         onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -131,9 +129,13 @@ fun FilterScreen(
             }
         }
 
+        // Priorizamos los límites reales del ViewModel, pero usamos los pasados por navegación como respaldo inmediato
+        val currentMin = minPrice ?: minLimit ?: 0f
+        val currentMax = maxPrice ?: maxLimit ?: 500f
+
         PriceRangeSelector(
-            selectedRange = state.priceRange ?: minPrice..maxPrice,
-            totalRange = minPrice..maxPrice,
+            selectedRange = state.priceRange ?: (currentMin..currentMax),
+            totalRange = currentMin..currentMax,
             onSliderChange = {
                 range -> viewModel.onPriceRangeChanged(range)
                 analytics.logEvent ( "SetPriceRange" ) {

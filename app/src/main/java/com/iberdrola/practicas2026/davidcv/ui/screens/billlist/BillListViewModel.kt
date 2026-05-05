@@ -57,6 +57,15 @@ class BillListViewModel @Inject constructor(
     fun getCurrentFilters(): BillFilterState = currentFilters
 
     /**
+     * Obtiene los límites de precio de todas las facturas cargadas.
+     */
+    fun getPriceLimits(): Pair<Float, Float>? {
+        val all = (allLightBills.orEmpty()) + (allGasBills.orEmpty())
+        if (all.isEmpty()) return null
+        return all.minOf { it.value } to all.maxOf { it.value }
+    }
+
+    /**
      * applyFilters
      * Solo actualiza el estado de la UI si ya tenemos datos cargados.
      * Si estamos cargando, solo guarda los filtros para usarlos cuando lleguen los datos.
@@ -75,34 +84,37 @@ class BillListViewModel @Inject constructor(
         }
     }
 
-    private fun filterList(list: List<Bill>, filters: BillFilterState): List<Bill> {
-        return list.filter { bill ->
-            // Filtro por Fecha
-            val matchDate = (filters.startDate == null || !bill.startDate.isBefore(filters.startDate)) &&
-                    (filters.endDate == null || !bill.endDate.isAfter(filters.endDate))
+    companion object {
+        fun filterList(list: List<Bill>, filters: BillFilterState): List<Bill> {
+            return list.filter { bill ->
+                // Filtro por Fecha
+                val matchDate =
+                    (filters.startDate == null || !bill.startDate.isBefore(filters.startDate)) &&
+                            (filters.endDate == null || !bill.endDate.isAfter(filters.endDate))
 
-            // Filtro por Precio
-            val matchPrice = filters.priceRange?.let { range ->
-                bill.value in range
-            } ?: true
+                // Filtro por Precio
+                val matchPrice = filters.priceRange?.let { range ->
+                    bill.value in range
+                } ?: true
 
-            // Filtro por Estado (Si no hay ninguno marcado, se muestran todos)
-            val anyStatusSelected = filters.paymentStatusPaid || filters.paymentStatusPending ||
-                    filters.paymentStatusTramited || filters.paymentStatusCanceled || filters.paymentStatusFixed
+                // Filtro por Estado (Si no hay ninguno marcado, se muestran todos)
+                val anyStatusSelected = filters.paymentStatusPaid || filters.paymentStatusPending ||
+                        filters.paymentStatusTramited || filters.paymentStatusCanceled || filters.paymentStatusFixed
 
-            val matchStatus = if (!anyStatusSelected) {
-                true
-            } else {
-                when (bill.paymentStatus) {
-                    PaymentStatus.PAID -> filters.paymentStatusPaid
-                    PaymentStatus.PENDING -> filters.paymentStatusPending
-                    PaymentStatus.TRAMITED -> filters.paymentStatusTramited
-                    PaymentStatus.CANCELED -> filters.paymentStatusCanceled
-                    PaymentStatus.FIXED_PAYMENT -> filters.paymentStatusFixed
+                val matchStatus = if (!anyStatusSelected) {
+                    true
+                } else {
+                    when (bill.paymentStatus) {
+                        PaymentStatus.PAID -> filters.paymentStatusPaid
+                        PaymentStatus.PENDING -> filters.paymentStatusPending
+                        PaymentStatus.TRAMITED -> filters.paymentStatusTramited
+                        PaymentStatus.CANCELED -> filters.paymentStatusCanceled
+                        PaymentStatus.FIXED_PAYMENT -> filters.paymentStatusFixed
+                    }
                 }
-            }
 
-            matchDate && matchPrice && matchStatus
+                matchDate && matchPrice && matchStatus
+            }
         }
     }
 

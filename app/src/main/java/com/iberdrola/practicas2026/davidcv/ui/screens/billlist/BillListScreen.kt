@@ -170,7 +170,16 @@ fun BillListScreen(
             },
             onFilterClick = {
                 val currentFilters = viewModel.getCurrentFilters()
-                navController.currentBackStackEntry?.savedStateHandle?.set("initial_filters", currentFilters)
+                val priceLimits = viewModel.getPriceLimits()
+                
+                navController.currentBackStackEntry?.savedStateHandle?.apply {
+                    set("initial_filters", currentFilters)
+                    priceLimits?.let {
+                        set("min_limit", it.first)
+                        set("max_limit", it.second)
+                    }
+                }
+
                 navController.navigate(Routes.FILTER)
                 state.analytics.logEvent("ButtonFilter") {
                     param("eventType", "Click")

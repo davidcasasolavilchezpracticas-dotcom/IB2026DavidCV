@@ -60,8 +60,8 @@ class BillRepositoryDelegate @Inject constructor(
                     billsToInsert = body.map { it.toModel().toEntity() }
                     
                     // Sincronizamos SIEMPRE que la respuesta sea exitosa, incluso si viene vacía.
-                    // Al usar clearAndInsert (transacción), Room no emitirá un estado vacío intermedio.
                     _dao.clearAndInsert(billsToInsert)
+                    Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde RED.")
                 } else {
                     throw BillException.ResponseError("Error RED: ${response.code()}")
                 }
@@ -82,6 +82,7 @@ class BillRepositoryDelegate @Inject constructor(
 
                 billsToInsert = entities.map { it.toModel().toEntity() }
                 _dao.clearAndInsert(billsToInsert)
+                Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde MOCK.")
             }
 
         } catch (e: BillException) {
