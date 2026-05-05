@@ -15,6 +15,7 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,9 +40,8 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Date
-import java.util.Locale
-import androidx.compose.ui.platform.LocalLocale
 
 @SuppressLint("NonObservableLocale")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,14 +52,33 @@ fun DateSelector(
     modifier: Modifier = Modifier,
     onConfirm: (String) -> Unit,
     onValidDate: (String) -> Boolean,
+    minDate: LocalDateTime?,
+    maxDate: LocalDateTime?,
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    
+    // Configuramos las fechas seleccionables para restringir el calendario
+    val selectableDates = remember(minDate, maxDate) {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val minMillis = minDate?.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli() ?: Long.MIN_VALUE
+                val maxMillis = maxDate?.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli() ?: Long.MAX_VALUE
+                return utcTimeMillis in minMillis..maxMillis
+            }
+
+            override fun isSelectableYear(year: Int): Boolean {
+                return year >= (minDate?.year ?: 0) && year <= (maxDate?.year ?: 3000)
+            }
+        }
+    }
+
     val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = minDate?.plusDays(1)?.atZone(ZoneId.systemDefault())?.toInstant()?.toEpochMilli(),
         initialDisplayMode = DisplayMode.Picker,
-        yearRange = 1990..2030
+        yearRange = (minDate?.year ?: 2000)..(maxDate?.year ?: LocalDateTime.now().year),
+        selectableDates = selectableDates
     )
 
-    // Formateador de fecha
     val formatter = SimpleDateFormat("dd-MM-yyyy", LocalLocale.current.platformLocale)
     val selectedDateText = date?.let {
         formatter.format(Date.from(it.atZone(ZoneId.systemDefault()).toInstant()))
@@ -83,14 +103,10 @@ fun DateSelector(
                     Text(text = stringResource(R.string.cancel), color = EnergyGreen)
                 }
             },
-            // Personalizamos el contenedor del diálogo
-            colors = DatePickerDefaults.colors(
-                containerColor = Color.White // El fondo base del diálogo será blanco
-            ),
+            colors = DatePickerDefaults.colors(containerColor = Color.White),
             shape = RoundedCornerShape(28.dp),
             modifier = Modifier.clip(RoundedCornerShape(28.dp))
         ) {
-            // CABECERA VERDE
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,21 +121,20 @@ fun DateSelector(
                 )
             }
 
-            // CALENDARIO (ZONA BLANCA)
             DatePicker(
                 state = datePickerState,
-                title = null, // Ya lo pusimos en el Box de arriba
-                headline = null, // Quitamos la fecha enorme para que no pise la zona blanca
+                title = null,
+                headline = null,
                 showModeToggle = false,
                 colors = DatePickerDefaults.colors(
-                    containerColor = Color.White, // Aseguramos blanco para que cuadren los días
+                    containerColor = Color.White,
                     weekdayContentColor = Color.Gray,
                     dayContentColor = Color.Black,
                     selectedDayContainerColor = EnergyGreen,
                     selectedDayContentColor = Color.White,
                     todayContentColor = EnergyGreen,
                     todayDateBorderColor = EnergyGreen,
-                    navigationContentColor = Color.Black // Flechas y mes en negro
+                    navigationContentColor = Color.Black
                 )
             )
         }
@@ -159,6 +174,8 @@ fun pwDateSelector(){
         label = "Fecha",
         date = LocalDateTime.now(),
         onConfirm = {},
-        onValidDate = {true}
+        onValidDate = {true},
+        minDate = null,
+        maxDate = null
     )
 }

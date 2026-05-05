@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +31,8 @@ class BillViewModel @Inject constructor(
     // Límites de respaldo
     private var minLimit: Float? = null
     private var maxLimit: Float? = null
+    private var minDateLimit: LocalDateTime? = null
+    private var maxDateLimit: LocalDateTime? = null
 
     // 1. Fuente de verdad de los filtros seleccionados
     private val _state = MutableStateFlow(
@@ -37,51 +40,25 @@ class BillViewModel @Inject constructor(
     )
     val state: StateFlow<BillFilterState> = _state.asStateFlow()
 
-    // 2. Fuente de datos base (Todas las facturas cargadas)
-    private val _allBills = MutableStateFlow<List<Bill>>(emptyList())
-
-    // 3. Facturas filtradas en tiempo real
-    val filteredBills: StateFlow<List<Bill>> = combine(_allBills, _state) { bills, filters ->
-        BillListViewModel.filterList(bills, filters)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // 4. Facturas filtradas para límites (excluyendo el filtro de precio propio)
-    private val billsForPriceLimits: StateFlow<List<Bill>> = combine(_allBills, _state) { bills, filters ->
-        val filtersWithoutPrice = filters.copy(priceRange = null)
-        BillListViewModel.filterList(bills, filtersWithoutPrice)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    // 5. Límites dinámicos
-    val maxPrice: StateFlow<Float?> = billsForPriceLimits.map { list ->
-        if (list.isNotEmpty()) kotlin.math.ceil(list.maxOf { it.value }) else maxLimit
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), maxLimit)
-
-    val minPrice: StateFlow<Float?> = billsForPriceLimits.map { list ->
-        if (list.isNotEmpty()) kotlin.math.floor(list.minOf { it.value }) else minLimit
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), minLimit)
 
     init {
-        loadData()
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-            combine(getLightBillsUseCase(), getGasBillsUseCase()) { light, gas ->
-                (light as? BaseResult.Success)?.data.orEmpty() +
-                (gas as? BaseResult.Success)?.data.orEmpty()
-            }.collect { merged ->
-                _allBills.value = merged
-                validatePriceRange()
-            }
-        }
+        validatePriceRange()
     }
 
     /**
      * Inicializa los filtros y los límites sugeridos desde la pantalla anterior.
      */
-    fun setInitialFilters(filters: BillFilterState, min: Float? = null, max: Float? = null) {
+    fun setInitialFilters(
+        filters: BillFilterState,
+        min: Float? = null,
+        max: Float? = null,
+        minDate: LocalDateTime? = null,
+        maxDate: LocalDateTime? = null
+    ) {
         this.minLimit = min
         this.maxLimit = max
+        this.minDateLimit = minDate
+        this.maxDateLimit = maxDate
         
         _state.update {
             val newFilters = if (filters.priceRange == null && min != null && max != null) {
@@ -93,8 +70,8 @@ class BillViewModel @Inject constructor(
     }
 
     private fun validatePriceRange() {
-        val max = maxPrice.value ?: return
-        val min = minPrice.value ?: return
+        val max = _state.value.priceRange?.endInclusive ?: return
+        val min = _state.value.priceRange?.start ?: return
         val currentRange = _state.value.priceRange
 
         if (currentRange == null) {
@@ -102,7 +79,7 @@ class BillViewModel @Inject constructor(
         } else {
             val safeStart = currentRange.start.coerceIn(min, max)
             val safeEnd = currentRange.endInclusive.coerceIn(safeStart, max)
-            if (safeStart != currentRange.start || safeEnd != currentRange.endInclusive) {
+            if (safeStart != currentRange.endInclusive || safeEnd != currentRange.start) {
                 _state.update { it.copy(priceRange = safeStart..safeEnd) }
             }
         }

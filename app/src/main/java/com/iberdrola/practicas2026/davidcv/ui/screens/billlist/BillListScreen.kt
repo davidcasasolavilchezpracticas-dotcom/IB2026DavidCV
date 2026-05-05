@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -36,7 +35,6 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.useLocal
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
-import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
@@ -171,12 +169,17 @@ fun BillListScreen(
             onFilterClick = {
                 val currentFilters = viewModel.getCurrentFilters()
                 val priceLimits = viewModel.getPriceLimits()
+                val dateLimits = viewModel.getDateLimits()
                 
                 navController.currentBackStackEntry?.savedStateHandle?.apply {
                     set("initial_filters", currentFilters)
                     priceLimits?.let {
                         set("min_limit", it.first)
                         set("max_limit", it.second)
+                    }
+                    dateLimits?.let {
+                        set("min_date_limit", it.first.toString())
+                        set("max_date_limit", it.second.toString())
                     }
                 }
 

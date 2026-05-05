@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -63,6 +64,15 @@ class BillListViewModel @Inject constructor(
         val all = (allLightBills.orEmpty()) + (allGasBills.orEmpty())
         if (all.isEmpty()) return null
         return all.minOf { it.value } to all.maxOf { it.value }
+    }
+
+    /**
+     * Obtiene los límites de fecha de todas las facturas cargadas.
+     */
+    fun getDateLimits(): Pair<LocalDateTime, LocalDateTime>? {
+        val all = (allLightBills.orEmpty()) + (allGasBills.orEmpty())
+        if (all.isEmpty()) return null
+        return all.minOf { it.emisionDate } to all.maxOf { it.emisionDate }
     }
 
     /**

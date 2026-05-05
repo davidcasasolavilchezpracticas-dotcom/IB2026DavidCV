@@ -43,6 +43,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.FilterOption
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billfilter.PriceRangeSelector
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
+import java.time.LocalDateTime
 
 /**
  * FilterScreen
@@ -66,18 +67,28 @@ fun FilterScreen(
     val initialFilters = remember { backStackEntry?.savedStateHandle?.get<BillFilterState>("initial_filters") }
     val minLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("min_limit") }
     val maxLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("max_limit") }
+    val minDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("min_date_limit") }
+    val maxDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("max_date_limit") }
+    
+    val minDateLimit = remember(minDateLimitStr) { minDateLimitStr?.let { LocalDateTime.parse(it) } }
+    val maxDateLimit = remember(maxDateLimitStr) { maxDateLimitStr?.let { LocalDateTime.parse(it) } }
 
     // Sincronizamos con el ViewModel al cargar
-    LaunchedEffect(initialFilters, minLimit, maxLimit) {
-        viewModel.setInitialFilters(initialFilters ?: BillFilterState())
+    LaunchedEffect(initialFilters, minLimit, maxLimit, minDateLimit, maxDateLimit) {
+        viewModel.setInitialFilters(
+            filters = initialFilters ?: BillFilterState(),
+            min = minLimit,
+            max = maxLimit,
+            minDate = minDateLimit,
+            maxDate = maxDateLimit
+        )
         analytics.logEvent ( "FilterScreen" ) {
             param("eventType", "View")
         }
     }
 
     val state by viewModel.state.collectAsState()
-    val maxPrice by viewModel.maxPrice.collectAsState()
-    val minPrice by viewModel.minPrice.collectAsState()
+
 
     BackHandler {
         onBack()
@@ -85,6 +96,7 @@ fun FilterScreen(
             param("eventType", "RelevantMovements")
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -112,7 +124,9 @@ fun FilterScreen(
                             param("eventType", "RelevantMovements")
                         }
                     },
-                    onValidDate = viewModel::onValidStartDate
+                    onValidDate = viewModel::onValidStartDate,
+                    minDate = LocalDateTime.parse(minDateLimitStr) ?: minDateLimit,
+                    maxDate = state.endDate?.minusDays(1) ?: maxDateLimit
                 )
                 DateSelector(
                     label = stringResource(R.string.fsSubtituloFecha2),
@@ -124,14 +138,16 @@ fun FilterScreen(
                             param("eventType", "RelevantMovements")
                         }
                     },
-                    onValidDate = viewModel::onValidEndDate
+                    onValidDate = viewModel::onValidEndDate,
+                    minDate = state.endDate?.plusDays(1) ?: minDateLimit,
+                    maxDate = LocalDateTime.parse(maxDateLimitStr) ?: maxDateLimit
                 )
             }
         }
 
         // Priorizamos los límites reales del ViewModel, pero usamos los pasados por navegación como respaldo inmediato
-        val currentMin = minPrice ?: minLimit ?: 0f
-        val currentMax = maxPrice ?: maxLimit ?: 500f
+        val currentMin = minLimit ?: 0f
+        val currentMax = maxLimit ?: 500f
 
         PriceRangeSelector(
             selectedRange = state.priceRange ?: (currentMin..currentMax),
