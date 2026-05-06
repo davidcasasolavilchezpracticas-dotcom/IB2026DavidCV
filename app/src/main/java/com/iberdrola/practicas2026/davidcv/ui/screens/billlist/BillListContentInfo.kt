@@ -67,7 +67,8 @@ fun BillListContentInfo(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        stickyHeader {
+
+        item {
             Column(
                 modifier = Modifier
                     .background(Color.White)
@@ -75,40 +76,6 @@ fun BillListContentInfo(
                 LastInvoiceCard(bill = bills[0])
 
                 Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = LocalSpacing.current.lg),
-                ) {
-                    Text(
-                        text = stringResource(R.string.blciTitle),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    OutlinedButton(
-                        onClick = { onFilterClick() },
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(1.dp, Color(0xFF006633)),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Tune,
-                            contentDescription = null,
-                            tint = EnergyGreen,
-                            modifier = Modifier.size(18.dp)
-                        )
-
-                        Spacer(modifier = Modifier.size(4.dp))
-
-                        Text(
-                            text = stringResource(R.string.blciButtonFilter),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = EnergyGreen
-                        )
-                    }
-                }
 
 
                 if (alertDialogActive) {
@@ -124,6 +91,44 @@ fun BillListContentInfo(
                 }
             }
         }
+
+        stickyHeader {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(White)
+                    .padding(horizontal = LocalSpacing.current.lg),
+            ) {
+                Text(
+                    text = stringResource(R.string.blciTitle),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedButton(
+                    onClick = { onFilterClick() },
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(1.dp, Color(0xFF006633)),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Tune,
+                        contentDescription = null,
+                        tint = EnergyGreen,
+                        modifier = Modifier.size(18.dp)
+                    )
+
+                    Spacer(modifier = Modifier.size(4.dp))
+
+                    Text(
+                        text = stringResource(R.string.blciButtonFilter),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = EnergyGreen
+                    )
+                }
+            }
+        }
+
 
 
 
