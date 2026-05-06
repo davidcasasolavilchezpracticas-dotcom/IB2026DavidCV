@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
@@ -36,10 +37,10 @@ fun SettingSwitchItem(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(
-            if (checked) 0.65f else 0.8f
+            if (checked) 0.8f else 0.85f
         ),
         shape = RoundedCornerShape(16.dp),
-        color = Color(0xFF006633).copy(alpha = 0.2f),
+        color = EnergyGreen.copy(alpha = 0.2f),
     ) {
         Row(
             modifier =
@@ -63,7 +64,7 @@ fun SettingSwitchItem(
                 onCheckedChange = onCheckedChange,
                 colors =
                     SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFF006633),
+                        checkedThumbColor = EnergyGreen,
                         checkedTrackColor = White.copy(alpha = 0.5f),
                         uncheckedThumbColor = Color.Gray,
                         uncheckedTrackColor = Color.LightGray.copy(alpha = 0.5f),

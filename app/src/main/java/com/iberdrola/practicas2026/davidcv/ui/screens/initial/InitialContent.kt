@@ -136,13 +136,6 @@ fun InitialContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            // Ajustes de Origen de Datos (Red vs Local)
-            SettingSwitchItem(
-                label = stringResource(R.string.isSwitchDataOrigin),
-                checked = DataSourceConfig.useNetwork,
-                onCheckedChange = { DataSourceConfig.useNetwork = it }
-            )
-
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (DataSourceConfig.useNetwork) {
                     Box {
@@ -195,16 +188,27 @@ fun InitialContent(
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.size(8.dp))
                 }
+
+                SettingSwitchItem(
+                    label = stringResource(R.string.isSwitchDataOrigin),
+                    checked = DataSourceConfig.useNetwork,
+                    onCheckedChange = { DataSourceConfig.useNetwork = it }
+                )
+
+                Spacer(modifier = Modifier.size(8.dp))
 
                 // Botón de Test de Error
                 IconButton(
                     onClick = { throw Exception("Error de prueba") },
-                    modifier = Modifier.background(
-                        color = Color.Red.copy(alpha = 0.2f),
-                        shape = CircleShape
-                    )
+                    modifier = Modifier
+                        .background(
+                            color = Color.Red.copy(alpha = 0.2f),
+                            shape = CircleShape
+                        ),
+
                 ) {
                     Icon(imageVector = Icons.Default.BugReport, contentDescription = "Error de prueba", tint = Color.Red)
                 }
