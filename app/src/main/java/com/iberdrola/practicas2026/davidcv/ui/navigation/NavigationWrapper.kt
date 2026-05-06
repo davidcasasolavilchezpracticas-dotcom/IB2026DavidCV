@@ -27,6 +27,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.GeneralTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
+import com.iberdrola.practicas2026.davidcv.ui.base.screens.ThanksForRatingDialog
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsScreen
@@ -59,6 +60,7 @@ fun NavigationWrapper(
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
     var viewSelected by rememberSaveable { mutableStateOf(true) }
     var showOpinionBS by remember { mutableStateOf(false) }
+    var showThanksDialog by remember { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -75,9 +77,17 @@ fun NavigationWrapper(
                 navController.popBackStack()
             },
             onRatingSelected = {
-                Toast.makeText(context, R.string.bsToast, Toast.LENGTH_SHORT).show()
                 dataStoreViewModel.updateBsCounter(10)
                 showOpinionBS = false
+                showThanksDialog = true
+            }
+        )
+    }
+
+    if (showThanksDialog) {
+        ThanksForRatingDialog (
+            onDismiss = {
+                showThanksDialog = false
                 navController.popBackStack()
             }
         )

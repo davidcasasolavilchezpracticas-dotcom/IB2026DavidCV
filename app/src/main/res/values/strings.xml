@@ -140,4 +140,6 @@
     <string name="delete">Eliminar</string>
     <string name="deleteFilters">Eliminar filtros</string>
     <string name="deleteFiltersText">¿Está seguro de que desea limpiar todos los filtros aplicados?</string>
+    <string name="textoAgradecimiento">Tu valoración nos ayuda a seguir mejorando dAcord para ofrecerte el mejor servicio posible.</string>
+    <string name="thanks">¡Muchas gracias!</string>
 </resources>
