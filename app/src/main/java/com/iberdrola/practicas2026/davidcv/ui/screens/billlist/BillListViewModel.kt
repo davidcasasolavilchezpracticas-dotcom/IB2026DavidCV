@@ -11,6 +11,7 @@ import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.domain.network.BaseResult
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetGasBillsUseCase
 import com.iberdrola.practicas2026.davidcv.domain.usecase.GetLightBillsUseCase
+import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.useLocal
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.BillFilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -94,7 +95,61 @@ class BillListViewModel @Inject constructor(
         }
     }
 
+    fun comprobateStatus() : List<String> {
+        val seleccionados = listOfNotNull(
+            if (currentFilters.paymentStatusPaid) "Pagado" else null,
+            if (currentFilters.paymentStatusPending) "Pendiente" else null,
+            if (currentFilters.paymentStatusTramited) "En trámite de cobro" else null,
+            if (currentFilters.paymentStatusCanceled) "Anulada" else null,
+            if (currentFilters.paymentStatusFixed) "Cuota fija" else null
+        )
+
+        return seleccionados
+    }
+
+    fun filtersActives() : List<String> {
+        val filters = mutableListOf<String>()
+        if (currentFilters.startDate != null) filters.add("Fecha mínima de emisión: ${currentFilters.startDate!!.format(dfNormalBill)}")
+        if (currentFilters.endDate != null) filters.add("Fecha máxima de emisión: ${currentFilters.endDate!!.format(dfNormalBill)}")
+        if (currentFilters.priceRange != null &&
+            (
+                currentFilters.priceRange?.start != getPriceLimits()?.first ||
+                currentFilters.priceRange?.endInclusive != getPriceLimits()?.second
+            )
+        ) { filters.add("Rango de precio: ${kotlin.math.truncate(currentFilters.priceRange!!.start)} - ${kotlin.math.ceil(currentFilters.priceRange!!.endInclusive)}") }
+
+        val seleccionados = comprobateStatus()
+
+        if (seleccionados.isNotEmpty()) filters.add("Estados seleccionados: ${seleccionados.joinToString(", ")}")
+
+        return filters
+    }
+
     companion object {
+        fun countFilters(cFilters: BillFilterState, min: Float, max: Float) : Int {
+            var c = 0
+            if (cFilters.startDate != null) c++
+            if (cFilters.endDate != null) c++
+            if (cFilters.priceRange != null && ( cFilters.priceRange.start != min || cFilters.priceRange.endInclusive != max )) c++
+            if (cFilters.paymentStatusPaid) c++
+            if (cFilters.paymentStatusPending) c++
+            if (cFilters.paymentStatusTramited) c++
+            if (cFilters.paymentStatusCanceled) c++
+            if (cFilters.paymentStatusFixed) c++
+            return c
+        }
+
+        fun alertDialogText(
+            filtersActives: () -> List<String>
+        ) : String {
+            val filters = filtersActives()
+            return if (filters.isNotEmpty()) {
+                if(filters.size == 1) "Se ha seleccionado el siguiente filtro:\n" + filters.joinToString("\n")
+                else "Se han seleccionado los siguientes filtros:\n" + filters.joinToString("\n")
+            } else {
+                "No hay filtros seleccionados"
+            }
+        }
         fun filterList(list: List<Bill>, filters: BillFilterState): List<Bill> {
             return list.filter { bill ->
                 // Filtro por Fecha
@@ -139,6 +194,10 @@ class BillListViewModel @Inject constructor(
                 getLightBills()
             }
         }
+    }
+
+    fun onDeleteFilters() {
+        applyFilters(BillFilterState())
     }
 
     fun onErrorClick(

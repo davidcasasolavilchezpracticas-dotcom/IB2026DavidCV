@@ -137,4 +137,7 @@
     <string name="cascTitleDesactivateCancel">Se ha cancelado la modificación del estado del contrato</string>
     <string name="ebsBackInitial">Volver al inicio</string>
     <string name="refresh">Refrescar</string>
+    <string name="delete">Eliminar</string>
+    <string name="deleteFilters">Eliminar filtros</string>
+    <string name="deleteFiltersText">¿Está seguro de que desea limpiar todos los filtros aplicados?</string>
 </resources>

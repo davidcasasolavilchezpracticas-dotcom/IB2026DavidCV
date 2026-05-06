@@ -7,6 +7,9 @@ data class BillListEvents(
     val onErrorClick: (BillListState) -> Unit,
     val onEmptyFilterClick: () -> Unit,
     val onFilterClick: () -> Unit,
+    val onDeleteFilters: () -> Unit,
     val onEmptyClick: () -> Unit,
     val onRefresh: () -> Unit,
+    val getSelectedFilters: () -> List<String>,
+    val getPriceLimits: () -> Pair<Float, Float>?
 )

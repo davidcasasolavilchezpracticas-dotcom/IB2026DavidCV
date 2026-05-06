@@ -39,12 +39,7 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 /**
  * BillListScreen
- * Se define la pantalla que muestra el listado de facturas con soporte para deslizamiento entre tipos
- *
- * @param viewModel
- * @param navController
- * @param modifier
- * @param viewSelected
+ * Pantalla que muestra el listado de facturas con soporte para deslizamiento entre tipos
  */
 @Composable
 fun BillListScreen(
@@ -69,7 +64,6 @@ fun BillListScreen(
         }
     }
 
-    // Simplificación de Remote Config: Leemos los valores una vez o usamos un estado
     val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
     val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
 
@@ -77,18 +71,13 @@ fun BillListScreen(
     val gasBillsState by viewModel.gasBillsState.collectAsStateWithLifecycle()
 
     val pagerState = rememberPagerState(
-        initialPage =
-            if (isLightActive && isGasActive && viewSelected) 0
-            else if (isLightActive && isGasActive) 1
-            else 0
-        ,
-        pageCount = {
-            if (isLightActive && isGasActive) 2
-            else 1
-        }
+        initialPage = if (isLightActive && isGasActive && viewSelected) 0
+                     else if (isLightActive && isGasActive) 1
+                     else 0,
+        pageCount = { if (isLightActive && isGasActive) 2 else 1 }
     )
 
-    // Observar el resultado de los filtros desde el SavedStateHandle de la navegación
+    // Observar el resultado de los filtros
     val filterResult by navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<BillFilterState>("filters_result")
@@ -99,6 +88,7 @@ fun BillListScreen(
     LaunchedEffect(filterResult) {
         filterResult?.let { filters ->
             viewModel.applyFilters(filters)
+            navController.currentBackStackEntry?.savedStateHandle?.remove<BillFilterState>("filters_result")
             analytics.logEvent("ApplyFilters") {
                 param("eventType", "RelevantMovements")
             }
@@ -107,6 +97,7 @@ fun BillListScreen(
 
     BackHandler {
         onBack()
+        navController.currentBackStackEntry?.savedStateHandle?.remove<BillFilterState>("initial_filters")
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
         }
@@ -152,7 +143,6 @@ fun BillListScreen(
             },
             onEmptyClick = {
                 navController.navigate(Routes.INITIAL) {
-                    // Al añadir esto, quitamos la pantalla actual de la pila antes de poner la nueva
                     popUpTo(navController.currentDestination?.route!!) { inclusive = true }
                 }
                 state.analytics.logEvent("ButtonEmpty") {
@@ -160,6 +150,10 @@ fun BillListScreen(
                 }
             },
             onEmptyFilterClick = {
+                navController.currentBackStackEntry?.savedStateHandle?.apply {
+                    remove<BillFilterState>("filters_result")
+                    remove<BillFilterState>("initial_filters")
+                }
                 viewModel.applyFilters(BillFilterState())
                 viewModel.refreshBills(state.pagerState)
                 state.analytics.logEvent("ButtonEmpty") {
@@ -188,13 +182,27 @@ fun BillListScreen(
                     param("eventType", "Click")
                 }
             },
+            onDeleteFilters = {
+                // Limpiamos rastro en navegación y ViewModel
+                navController.currentBackStackEntry?.savedStateHandle?.apply {
+                    remove<BillFilterState>("filters_result")
+                    remove<BillFilterState>("initial_filters")
+                }
+                viewModel.onDeleteFilters()
+                viewModel.refreshBills(state.pagerState)
+                state.analytics.logEvent("ButtonDeleteFilters") {
+                    param("eventType", "Click")
+                }
+            },
             onRefresh = {
                 viewModel.refreshBills(state.pagerState)
                 state.analytics.logEvent("ButtonRefresh") {
                     param("eventType", "Click")
                 }
             },
-            getCurrentFilters = viewModel::getCurrentFilters
+            getCurrentFilters = viewModel::getCurrentFilters,
+            getSelectedFilters = viewModel::filtersActives,
+            getPriceLimits = viewModel::getPriceLimits
         )
 
         HorizontalPage(

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.focus.FocusProperties
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
@@ -46,9 +49,12 @@ import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.ButtonFilter
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.ShowAlertDialogs
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.AlertDialogOK
+import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListViewModel.Companion.alertDialogText
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
@@ -57,11 +63,15 @@ import java.time.LocalDateTime
 
 @Composable
 fun BillListContentInfo(
-    modifier: Modifier = Modifier,
     bills: List<Bill>,
-    onFilterClick: () -> Unit
+    filtersCounter: Int,
+    onFilterClick: () -> Unit,
+    onDeleteFilters: () -> Unit,
+    modifier: Modifier = Modifier,
+    getSelectedFilters: () -> List<String>
 ) {
     var alertDialogActive by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -77,18 +87,14 @@ fun BillListContentInfo(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-
-                if (alertDialogActive) {
-                    AlertDialogOK(
-                        icon = Icons.Default.HourglassEmpty,
-                        titulo = stringResource(R.string.blciTitle),
-                        text = stringResource(R.string.blciText),
-                        confirmText = stringResource(R.string.blciButtonOk),
-                        onDismiss = {
-                            alertDialogActive = false
-                        }
-                    )
-                }
+                ShowAlertDialogs(
+                    alertDialogActive = alertDialogActive,
+                    desactiveAlertDialog = { alertDialogActive = false },
+                    showDeleteDialog = showDeleteDialog,
+                    desactiveDeleteDialog = { showDeleteDialog = false },
+                    onDeleteFilters = onDeleteFilters,
+                    getSelectedFilters = getSelectedFilters
+                )
             }
         }
 
@@ -106,26 +112,15 @@ fun BillListContentInfo(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                OutlinedButton(
-                    onClick = { onFilterClick() },
-                    shape = RoundedCornerShape(20.dp),
-                    border = BorderStroke(1.dp, Color(0xFF006633)),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Tune,
-                        contentDescription = null,
-                        tint = EnergyGreen,
-                        modifier = Modifier.size(18.dp)
-                    )
 
-                    Spacer(modifier = Modifier.size(4.dp))
-
-                    Text(
-                        text = stringResource(R.string.blciButtonFilter),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = EnergyGreen
-                    )
-                }
+                ButtonFilter(
+                    onFilterClick = onFilterClick,
+                    onLongClick = { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true },
+                    label = stringResource(R.string.blciButtonFilter),
+                    icon = Icons.Default.Tune,
+                    selectedFilters = getSelectedFilters(),
+                    filtersCount = filtersCounter
+                )
             }
         }
 
@@ -174,8 +169,11 @@ fun BillListContentInfoPreview() {
     )
     IB2026DavidCVTheme {
         BillListContentInfo(
+            filtersCounter = 0,
+            onFilterClick = {},
             bills = sampleBills,
-            onFilterClick = {}
+            onDeleteFilters = {},
+            getSelectedFilters = { listOf() },
         )
     }
 }

@@ -50,6 +50,7 @@ fun BillListContent(
     var isRefreshing by remember { mutableStateOf(false) }
     val pullState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
+    val (min, max) = events.getPriceLimits() ?: (0f to 0f)
 
     PullToRefreshBox (
         isRefreshing = isRefreshing,
@@ -105,7 +106,10 @@ fun BillListContent(
                     BillListContentInfo(
                         bills = bills,
                         modifier = modifier,
-                        onFilterClick = events.onFilterClick
+                        onFilterClick = events.onFilterClick,
+                        onDeleteFilters = events.onDeleteFilters,
+                        getSelectedFilters = events.getSelectedFilters,
+                        filtersCounter = BillListViewModel.countFilters(events.getCurrentFilters(), min = min, max = max),
                     )
                 }
             }
