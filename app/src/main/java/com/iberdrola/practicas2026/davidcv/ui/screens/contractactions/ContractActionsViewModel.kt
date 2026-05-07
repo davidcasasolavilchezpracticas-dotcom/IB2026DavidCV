@@ -73,10 +73,9 @@ class ContractActionsViewModel @Inject constructor(
 
 
     //region Code
-    fun generateNewCode(context: Context) {
+    fun generateNewCode() {
         _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString(), isLoading = true) }
         Log.d("ComprobacionesContractActionsViewModel", "Código = ${_state.value.verifyCode}")
-        Toast.makeText(context, "Nuevo código = ${_state.value.verifyCode}", Toast.LENGTH_LONG).show()
     }
 
     //endregion
@@ -84,17 +83,19 @@ class ContractActionsViewModel @Inject constructor(
     //region Censurator
 
     fun censurator(email: String) : String{
+        val censuredText = "*****"
         if(email.isNotEmpty()){
             if (email.length <= 7)
-                return (email.substring(0, 1) + "*****" + email.substring((email.lastIndexOf('@') - 1),email.length))
+                return (email.substring(0, 1) + censuredText + email.substring((email.lastIndexOf('@') - 1),email.length))
             else
-                return StringBuilder().append(email.substring(0, 1) + "*****" + email.substring((email.lastIndexOf('@') - 1), email.length - 1)).toString()
+                return StringBuilder().append(email.substring(0, 1) + censuredText + email.substring((email.lastIndexOf('@') - 1), email.length - 1)).toString()
         }
         return "a*****z@gmail.com"
     }
 
     fun phoneCensurator(phone: String) : String {
-        return "******" + if (state.value.contract?.phone != null) state.value.contract?.phone?.substring((state.value.contract?.phone?.length ?: 9) - 4) else "123"
+        val censuredText = "******"
+        return censuredText + if (state.value.contract?.phone != null) state.value.contract?.phone?.substring((state.value.contract?.phone?.length ?: 9) - 4) else "123"
     }
 
     //endregion

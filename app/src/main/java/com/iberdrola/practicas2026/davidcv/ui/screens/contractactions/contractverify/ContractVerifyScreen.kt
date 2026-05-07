@@ -1,6 +1,9 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify
 
+import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -8,16 +11,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
+import com.iberdrola.practicas2026.davidcv.domain.permissions.AppPermissions
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
+import com.iberdrola.practicas2026.davidcv.ui.helper.NotificationHandler
+import com.iberdrola.practicas2026.davidcv.ui.helper.rememberPermissionsLauncher
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
@@ -25,6 +35,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions.*
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ContractVerifyScreen(
     navController: NavController,
@@ -49,8 +60,8 @@ fun ContractVerifyScreen(
 
     val events = ContractVerifyEvents(
         onVerifyCodeChanged = viewModel::onVerifyCodeChanged,
-        generateNewCode = { context ->
-            viewModel.generateNewCode(context)
+        generateNewCode = {
+            viewModel.generateNewCode()
             analytics.logEvent ( "ButtonNewVerifyCodeGenerated" ) {
                 param("eventType", "Click")
             }

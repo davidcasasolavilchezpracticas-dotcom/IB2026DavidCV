@@ -142,4 +142,7 @@
     <string name="deleteFiltersText">¿Está seguro de que desea limpiar todos los filtros aplicados?</string>
     <string name="textoAgradecimiento">Tu valoración nos ayuda a seguir mejorando dAcord para ofrecerte el mejor servicio posible.</string>
     <string name="thanks">¡Muchas gracias!</string>
+    <string name="cascSuccessVerify">Verificación correcta</string>
+    <string name="cascNewCode">Nuevo código de verificación</string>
+    <string name="cascNewCodeText">"Tu nuevo código es: "</string>
 </resources>
