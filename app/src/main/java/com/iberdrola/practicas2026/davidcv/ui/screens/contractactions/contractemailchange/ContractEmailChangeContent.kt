@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -32,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.R
@@ -99,12 +103,17 @@ fun ContractEmailChangeContent(
                     cursorColor = Color.Black
                 ),
                 singleLine = true,
-                isError = state.emailTry.isNotEmpty() && !state.isEmailValid
+                isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                )
             )
 
             if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
                 Text(
-                    text = "Introduce un email válido",
+                    text = stringResource(R.string.OnErrorEmail),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 4.dp)

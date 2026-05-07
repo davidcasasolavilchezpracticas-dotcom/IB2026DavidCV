@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Computer
@@ -35,8 +37,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -51,6 +57,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSw
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun InitialContent(
     navController: NavHostController,
@@ -58,6 +65,7 @@ fun InitialContent(
     isGasActive: Boolean,
     isLightActive: Boolean
 ) {
+    val context = LocalContext.current
     var showConnectionMenu by remember { mutableStateOf(false) }
     var showIpDialog by remember { mutableStateOf(false) }
     var tempIp by remember { mutableStateOf(DataSourceConfig.pcIp) }
@@ -66,17 +74,22 @@ fun InitialContent(
         AlertDialog(
             onDismissRequest = { showIpDialog = false },
             containerColor = White,
-            title = { Text(text = "Configurar IP Local") },
+            title = { Text(text = stringResource(R.string.ad_ConfigureIPTitle)) },
             text = {
                 Column {
-                    Text(text = "Introduce la IP de tu PC donde corre Mockoon:")
+                    Text(text = stringResource(R.string.ad_ConfigureIPText))
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = tempIp,
                         onValueChange = { tempIp = it },
-                        label = { Text("Dirección IP") },
+                        label = { Text(text = stringResource(R.string.ad_ConfigureIPLabel)) },
                         singleLine = true,
-                        placeholder = { Text(text = "192.168.1.XX") }
+                        placeholder = { Text(text = stringResource(R.string.ad_ConfigureIPPlaceHolder)) },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.None,
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        )
                     )
                 }
             },
@@ -86,12 +99,12 @@ fun InitialContent(
                     DataSourceConfig.connectionMode = ConnectionMode.LOCAL_IP
                     showIpDialog = false
                 }) {
-                    Text(text = "Confirmar")
+                    Text(text = stringResource(R.string.confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showIpDialog = false }) {
-                    Text(text = "Cancelar")
+                    Text(text = stringResource(R.string.cancel))
                 }
             }
         )
@@ -151,7 +164,7 @@ fun InitialContent(
                                 ConnectionMode.ADB_REVERSE -> Icons.Default.SettingsEthernet
                                 ConnectionMode.LOCAL_IP -> Icons.Default.Computer
                             }
-                            Icon(imageVector = icon, contentDescription = "Modo de conexión", tint = MaterialTheme.colorScheme.primary)
+                            Icon(imageVector = icon, contentDescription = stringResource(R.string.descriptionConexionButton), tint = MaterialTheme.colorScheme.primary)
                         }
 
                         DropdownMenu(
@@ -162,7 +175,7 @@ fun InitialContent(
                             )
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Emulador (10.0.2.2)") },
+                                text = { Text(text = stringResource(R.string.dropMenuItemTextEmulator)) },
                                 leadingIcon = { Icon(Icons.Default.Devices, contentDescription = null) },
                                 onClick = {
                                     DataSourceConfig.connectionMode = ConnectionMode.EMULATOR
@@ -170,7 +183,7 @@ fun InitialContent(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("ADB Reverse (127.0.0.1)") },
+                                text = { Text(text = stringResource(R.string.dropMenuItemTextADB)) },
                                 leadingIcon = { Icon(Icons.Default.SettingsEthernet, contentDescription = null) },
                                 onClick = {
                                     DataSourceConfig.connectionMode = ConnectionMode.ADB_REVERSE
@@ -178,7 +191,7 @@ fun InitialContent(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("IP Local PC (${DataSourceConfig.pcIp})") },
+                                text = { Text(text = stringResource(R.string.dropMenuItemTextIP) + "(${DataSourceConfig.pcIp})") },
                                 leadingIcon = { Icon(Icons.Default.Computer, contentDescription = null) },
                                 onClick = {
                                     tempIp = DataSourceConfig.pcIp
@@ -202,7 +215,7 @@ fun InitialContent(
 
                 // Botón de Test de Error
                 IconButton(
-                    onClick = { throw Exception("Error de prueba") },
+                    onClick = { throw Exception(context.getString(R.string.testError)) },
                     modifier = Modifier
                         .background(
                             color = Color.Red.copy(alpha = 0.2f),
@@ -210,7 +223,7 @@ fun InitialContent(
                         ),
 
                 ) {
-                    Icon(imageVector = Icons.Default.BugReport, contentDescription = "Error de prueba", tint = Color.Red)
+                    Icon(imageVector = Icons.Default.BugReport, contentDescription = context.getString(R.string.testError), tint = Color.Red)
                 }
             }
         }

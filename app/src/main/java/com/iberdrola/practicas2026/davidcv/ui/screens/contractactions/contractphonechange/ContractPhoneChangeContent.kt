@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -103,13 +105,14 @@ fun ContractPhoneChangeContent(
                 singleLine = true,
                 isError = state.phoneTry.isNotEmpty() && !state.isPhoneValid,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done
                 )
             )
 
             if (state.phoneTry.isNotEmpty() && !state.isPhoneValid) {
                 Text(
-                    text = "Introduce un número de teléfono válido",
+                    text = stringResource(R.string.OnErrorPhone),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 4.dp)
