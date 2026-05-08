@@ -19,9 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
@@ -32,12 +30,12 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.Prof
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.user_account.SaveButton
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import kotlinx.coroutines.launch
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     viewModel: DataStoreViewModel = hiltViewModel(),
-    navController: NavHostController,
     analytics: FirebaseAnalytics,
     onBack: () -> Unit
 ) {
@@ -103,12 +101,12 @@ fun EditProfileScreen(
 
 
         EditFields(
-            name = state.name,
-            onNameChange = viewModel::onNameChange,
-            email = state.email,
             onEmailChange = viewModel::onEmailChange,
+            onNameChange = viewModel::onNameChange,
             isEmailValid = state.isEmailValid,
-            isNameValid = state.isNameValid
+            isNameValid = state.isNameValid,
+            email = state.email,
+            name = state.name,
         )
 
         Spacer(modifier = Modifier.weight(3f))
@@ -125,7 +123,7 @@ fun EditProfileScreen(
                             profileImage = state.profileImage
                         )
                     )
-                    navController.popBackStack()
+                    onBack()
                 }
                 analytics.logEvent("ButtonSaveChange") {
                     param("eventType", "Click")

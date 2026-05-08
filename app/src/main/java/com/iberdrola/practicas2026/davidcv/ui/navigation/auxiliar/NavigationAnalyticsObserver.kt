@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.navigation
+package com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.foundation.layout)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.navigation.common.ktx)
+    implementation(libs.runtime)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

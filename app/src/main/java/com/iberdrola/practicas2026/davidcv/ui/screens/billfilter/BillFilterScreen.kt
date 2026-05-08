@@ -59,22 +59,22 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
-    navController: NavController,
     viewModel: BillViewModel = hiltViewModel(),
+    navController: NavController,
     analytics: FirebaseAnalytics,
-    onBack: () -> Unit
+    isProcesing: Boolean,
+    onBack: () -> Unit,
 ) {
     val context = LocalContext.current
-    var isClosing by remember{ mutableStateOf(false) }
 
     // Recuperamos los datos de navegación inmediatamente
     val backStackEntry = remember { navController.previousBackStackEntry }
     val initialFilters = remember { backStackEntry?.savedStateHandle?.get<BillFilterState>("initial_filters") }
-    val minLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("min_limit") }
-    val maxLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("max_limit") }
     val minDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("min_date_limit") }
     val maxDateLimitStr = remember { backStackEntry?.savedStateHandle?.get<String>("max_date_limit") }
-    
+    val minLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("min_limit") }
+    val maxLimit = remember { backStackEntry?.savedStateHandle?.get<Float>("max_limit") }
+
     val minDateLimit = remember(minDateLimitStr) { try { minDateLimitStr?.let { LocalDateTime.parse(it) } } catch (e: Exception) { null } }
     val maxDateLimit = remember(maxDateLimitStr) { try { maxDateLimitStr?.let { LocalDateTime.parse(it) } } catch (e: Exception) { null } }
 
@@ -82,21 +82,22 @@ fun FilterScreen(
     LaunchedEffect(initialFilters, minLimit, maxLimit, minDateLimit, maxDateLimit) {
         viewModel.setInitialFilters(
             filters = initialFilters ?: BillFilterState(),
+            minDate = minDateLimit,
+            maxDate = maxDateLimit,
             min = minLimit,
             max = maxLimit,
-            minDate = minDateLimit,
-            maxDate = maxDateLimit
         )
         analytics.logEvent ( "FilterScreen" ) {
             param("eventType", "View")
         }
     }
 
+
+    var applyButtonEnabled by remember { mutableStateOf(true) }
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
 
     BackHandler {
-        isClosing = true
         onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
@@ -108,7 +109,6 @@ fun FilterScreen(
             .fillMaxSize()
             .background(White)
     ) {
-        // Área de contenido con scroll
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -119,12 +119,22 @@ fun FilterScreen(
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text(text = stringResource(R.string.fsTituloFiltros), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.fsTituloFiltros),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = stringResource(R.string.fsTituloFecha), fontWeight = FontWeight.Bold)
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(
+                    text = stringResource(R.string.fsTituloFecha),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                     DateSelector(
                         label = stringResource(R.string.fsSubtituloFecha1),
                         date = state.startDate,
@@ -136,9 +146,8 @@ fun FilterScreen(
                             }
                         },
                         onValidDate = viewModel::onValidStartDate,
-                        minDate = minDateLimit,
                         maxDate = state.endDate?.minusDays(1) ?: maxDateLimit,
-                        enabled = !isClosing
+                        minDate = minDateLimit,
                     )
                     DateSelector(
                         label = stringResource(R.string.fsSubtituloFecha2),
@@ -153,7 +162,6 @@ fun FilterScreen(
                         onValidDate = viewModel::onValidEndDate,
                         minDate = state.startDate?.plusDays(1) ?: minDateLimit,
                         maxDate = maxDateLimit,
-                        enabled = !isClosing
                     )
                 }
             }
@@ -171,55 +179,53 @@ fun FilterScreen(
                         param("eventType", "RelevantMovements")
                     }
                 },
-                enabled = (!isClosing)
             )
 
             Column {
-                Text(text = stringResource(R.string.fsTituloEstado), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.fsTituloEstado),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 FilterOption(
+                    onCheckedChange = viewModel::onStateChangePaid,
                     label = PaymentStatus.PAID.label,
                     value = state.paymentStatusPaid,
-                    onCheckedChange = viewModel::onStateChangePaid,
-                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 FilterOption(
+                    onCheckedChange = viewModel::onStateChangePending,
                     label = PaymentStatus.PENDING.label,
                     value = state.paymentStatusPending,
-                    onCheckedChange = viewModel::onStateChangePending,
-                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 FilterOption(
+                    onCheckedChange = viewModel::onStateChangeTramited,
                     label = PaymentStatus.TRAMITED.label,
                     value = state.paymentStatusTramited,
-                    onCheckedChange = viewModel::onStateChangeTramited,
-                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 FilterOption(
+                    onCheckedChange = viewModel::onStateChangeCanceled,
                     label = PaymentStatus.CANCELED.label,
                     value = state.paymentStatusCanceled,
-                    onCheckedChange = viewModel::onStateChangeCanceled,
-                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 FilterOption(
+                    onCheckedChange = viewModel::onStateChangeFixed,
                     label = PaymentStatus.FIXED_PAYMENT.label,
                     value = state.paymentStatusFixed,
-                    onCheckedChange = viewModel::onStateChangeFixed,
-                    enabled = !isClosing
                 )
             }
             
@@ -228,25 +234,26 @@ fun FilterScreen(
 
         // Botones Sticky al final
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(LocalSpacing.current.la)
                 .fillMaxWidth()
-                .padding(LocalSpacing.current.la),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
                 onClick = {
+                    applyButtonEnabled = false
                     navController.previousBackStackEntry?.savedStateHandle?.set("filters_result", state)
-                    navController.popBackStack()
+                    onBack()
                     analytics.logEvent ( "ButtonApplyFilters" ) {
                         param("eventType", "Click")
                     }
                 },
+                enabled = applyButtonEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
                 shape = RoundedCornerShape(28.dp),
-                enabled = !isClosing
             ) {
                 Text(
                     text = stringResource(R.string.fsButtonApply),
@@ -259,18 +266,19 @@ fun FilterScreen(
 
             TextButton(
                 onClick = {
-                    viewModel.deleteFilters()
-                    analytics.logEvent ( "ButtonDeleteFilters" ) {
-                        param("eventType", "Click")
+                    if (!isProcesing) {
+                        viewModel.deleteFilters()
+                        analytics.logEvent("ButtonDeleteFilters") {
+                            param("eventType", "Click")
+                        }
                     }
                 },
-                enabled = !isClosing
             ) {
                 Text(
-                    text = stringResource(R.string.fsButtonDelete),
-                    color = Color(0xFF2E5D4B),
                     textDecoration = TextDecoration.Underline,
+                    text = stringResource(R.string.fsButtonDelete),
                     fontWeight = FontWeight.Bold,
+                    color = Color(0xFF2E5D4B),
                     fontSize = 14.sp
                 )
             }
@@ -281,5 +289,5 @@ fun FilterScreen(
 @Preview
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current), onBack = {})
+    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current), onBack = {}, isProcesing = false)
 }

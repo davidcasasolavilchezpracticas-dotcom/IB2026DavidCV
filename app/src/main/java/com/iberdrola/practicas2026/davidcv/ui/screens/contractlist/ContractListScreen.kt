@@ -4,17 +4,12 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -28,11 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.ConfigUpdate
@@ -42,19 +34,19 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
-import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyContractsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractListScreen(
     viewModel: ContractListViewModel = hiltViewModel(),
-    navController: NavHostController,
     remoteConfig: FirebaseRemoteConfig,
     analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val view = LocalView.current
@@ -71,6 +63,7 @@ fun ContractListScreen(
             param("eventType", "RelevantMovements")
         }
     }
+
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractListScreen" ) {
             param("eventType", "View")
@@ -99,7 +92,6 @@ fun ContractListScreen(
         // Suscribirse a cambios en tiempo real (si está configurado en Firebase)
         remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener {
             override fun onUpdate(configUpdate: ConfigUpdate) {
-                Log.d("ComprobacionesRemoteConfig", "Updated keys: " + configUpdate.updatedKeys)
                 if (configUpdate.updatedKeys.contains("ContractGasAviable") || configUpdate.updatedKeys.contains("ContractLightAviable")) {
                     remoteConfig.activate().addOnCompleteListener {
                         gasContractActive = remoteConfig.getBoolean("ContractGasAviable")
@@ -116,55 +108,52 @@ fun ContractListScreen(
 
     when (state.value) {
         is ContractListState.Error -> {
-            Log.d("Comprobaciones", "Error")
             ErrorScreen(
                 message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
                 modifier = Modifier,
                 img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                 onClick = {
                     DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
-                    navController.popBackStack()
+                    onBack()
                 }
             )
         }
         is ContractListState.Success -> {
             val contracts = (state.value as ContractListState.Success).contracts
             if (contracts.isEmpty()) {
-                Log.d("Comprobaciones", "Success.Empty")
                 EmptyContractsScreen(
                     modifier = Modifier,
                     onRefresh = {
-                        navController.navigateUp()
+                        onNavigate(Routes.CONTRACTS)
                         analytics.logEvent ( "RefreshContracts" ) {
                             param("eventType", "RelevantMovements")
                         }
                     }
                 )
             } else {
-                Log.d("Comprobaciones", "Success.Contract")
                 ContractListContent(
+                    lightContractActive = lightContractActive,
+                    gasContractActive = gasContractActive,
                     contracts = contracts,
                     modifier = Modifier,
                     onClick = { id ->
-                        navController.navigate(Routes.CONTRACT_ACTIONS + "/$id")
+                        onNavigate(Routes.CONTRACT_ACTIONS + "/$id")
                         analytics.logEvent ( "ButtonContractsInfo" ) {
                             param("eventType", "Click")
                         }
                     },
                     onEmptyClick = {
-                        navController.navigate(Routes.INITIAL)
+                        onNavigate(Routes.INITIAL)
                         analytics.logEvent ( "ButtonEmpty" ) {
                             param("eventType", "Click")
                         }
                     },
-                    gasContractActive = gasContractActive,
-                    lightContractActive = lightContractActive
                 )
             }
         }
         is ContractListState.Loading -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color(0xFF006633))
+                CircularProgressIndicator(color = EnergyGreen)
             }
         }
 

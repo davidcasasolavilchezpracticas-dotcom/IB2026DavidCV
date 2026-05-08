@@ -66,6 +66,7 @@ androidxMaterial3 = "1.4.0"
 androidxFoundationLayout = "1.11.0"
 runtimeVersion = "1.11.0"
 navigationCommonKtx = "2.9.8"
+androidxRuntime = "1.11.1"
 
 
 [libraries]
@@ -153,6 +154,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "androidxFoundationLayout" }
 androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtimeVersion" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
+runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "androidxRuntime" }
 
 
 

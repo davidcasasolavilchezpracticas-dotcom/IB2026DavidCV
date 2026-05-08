@@ -44,7 +44,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
@@ -60,7 +59,7 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun InitialContent(
-    navController: NavHostController,
+    onNavigate: (String) -> Unit,
     analytics: FirebaseAnalytics,
     isGasActive: Boolean,
     isLightActive: Boolean
@@ -123,23 +122,24 @@ fun InitialContent(
 
         Spacer(modifier = Modifier.weight(2f))
 
-        // Sección Facturas
+        // Sección Facturas - Ahora usa onNavigate para evitar dobles clics
         ServiceSection(
+            onLightClick = { onNavigate(Routes.LIST_LIGHT) },
+            onGasClick = { onNavigate(Routes.LIST_GAS) },
             title = stringResource(R.string.isSubtitleBills),
             isLightActive = isLightActive,
             isGasActive = isGasActive,
-            onLightClick = { navController.navigate(Routes.LIST_LIGHT) },
-            onGasClick = { navController.navigate(Routes.LIST_GAS) },
-            analytics = analytics
+            analytics = analytics,
         )
 
         Spacer(modifier = Modifier.weight(2f))
 
-        // Sección Contratos
+        // Sección Contratos - Ahora usa onNavigate
         ContractSection {
-            navController.navigate(Routes.CONTRACTS)
-            analytics.logEvent("ButtonContractsList")
-                { param("eventType", "Click") }
+            onNavigate(Routes.CONTRACTS)
+            analytics.logEvent("ButtonContractsList") { 
+                param("eventType", "Click") 
+            }
         }
 
         Spacer(modifier = Modifier.weight(2f))
@@ -160,8 +160,8 @@ fun InitialContent(
                             )
                         ) {
                             val icon = when (DataSourceConfig.connectionMode) {
-                                ConnectionMode.EMULATOR -> Icons.Default.Devices
                                 ConnectionMode.ADB_REVERSE -> Icons.Default.SettingsEthernet
+                                ConnectionMode.EMULATOR -> Icons.Default.Devices
                                 ConnectionMode.LOCAL_IP -> Icons.Default.Computer
                             }
                             Icon(imageVector = icon, contentDescription = stringResource(R.string.descriptionConexionButton), tint = MaterialTheme.colorScheme.primary)
@@ -195,8 +195,8 @@ fun InitialContent(
                                 leadingIcon = { Icon(Icons.Default.Computer, contentDescription = null) },
                                 onClick = {
                                     tempIp = DataSourceConfig.pcIp
-                                    showIpDialog = true
                                     showConnectionMenu = false
+                                    showIpDialog = true
                                 }
                             )
                         }
@@ -206,14 +206,13 @@ fun InitialContent(
                 }
 
                 SettingSwitchItem(
+                    onCheckedChange = { DataSourceConfig.useNetwork = it },
                     label = stringResource(R.string.isSwitchDataOrigin),
                     checked = DataSourceConfig.useNetwork,
-                    onCheckedChange = { DataSourceConfig.useNetwork = it }
                 )
 
                 Spacer(modifier = Modifier.size(8.dp))
 
-                // Botón de Test de Error
                 IconButton(
                     onClick = { throw Exception(context.getString(R.string.testError)) },
                     modifier = Modifier
@@ -223,7 +222,11 @@ fun InitialContent(
                         ),
 
                 ) {
-                    Icon(imageVector = Icons.Default.BugReport, contentDescription = context.getString(R.string.testError), tint = Color.Red)
+                    Icon(
+                        contentDescription = context.getString(R.string.testError),
+                        imageVector = Icons.Default.BugReport,
+                        tint = Color.Red
+                    )
                 }
             }
         }

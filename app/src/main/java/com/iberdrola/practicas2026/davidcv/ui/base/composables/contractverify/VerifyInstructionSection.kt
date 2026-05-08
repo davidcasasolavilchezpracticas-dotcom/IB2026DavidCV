@@ -21,10 +21,8 @@ fun VerifyInstructionSection(
     state: ContractActionsState,
     events: ContractVerifyEvents
 ) {
-    Column(
-        modifier = Modifier
-            .padding(LocalSpacing.current.la)
-    ) {
+    Column{
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             stringResource(R.string.cvcSubtitleInsertCode),
             fontWeight = FontWeight.Bold,

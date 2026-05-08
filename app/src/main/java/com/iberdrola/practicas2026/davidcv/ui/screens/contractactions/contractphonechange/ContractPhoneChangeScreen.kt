@@ -11,21 +11,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
-import com.iberdrola.practicas2026.davidcv.ui.navigation.handleBackNavigation
-import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
+import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange.ContractPhoneChangeContent
 
 @Composable
 fun ContractPhoneChangeScreen(
-    navController: NavController,
+    onNavigatePopUpTo: (String, String) -> Unit,
     viewModel: ContractActionsViewModel,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
+    onBack: (Boolean) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractPhoneChangeScreen" ) {
@@ -37,7 +36,7 @@ fun ContractPhoneChangeScreen(
 
     val safeClick = rememberDefaultClickHandler(
         onClick = {
-            navController.popBackStack()
+            onBack(false)
         }
     )
 
@@ -45,31 +44,28 @@ fun ContractPhoneChangeScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         ContractPhoneChangeContent(
-            state = state,
             onPhoneChanged = viewModel::onPhoneChanged,
             onClose = {
-                navController.navigate(Routes.CONTRACTS) {
-                    popUpTo(Routes.CONTRACTS) {
-                        inclusive = true
-                    }
-                    Toast.makeText(context, R.string.cpcToast, Toast.LENGTH_SHORT).show()
-                }
+                onNavigatePopUpTo(Routes.CONTRACTS, Routes.CONTRACTS)
+                Toast.makeText(context, R.string.cpcToast, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
             },
             onNext = {
-                navController.navigate(Routes.CONTRACT_VERIFY)
+                onNavigate(Routes.CONTRACT_VERIFY)
                 analytics.logEvent ( "ButtonNext" ) {
                     param("eventType", "Click")
                 }
             },
             onBack = {
                 safeClick()
+                Toast.makeText(context, R.string.cpcToast, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }
-            }
+            },
+            state = state,
         )
 
         if (state.isLoading) {

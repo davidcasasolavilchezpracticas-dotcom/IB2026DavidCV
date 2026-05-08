@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -11,27 +10,27 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
-import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
+import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
 @Composable
 fun ContractActivateScreen(
-    navController: NavController,
-    viewModel: ContractActionsViewModel,
     viewModelDS: DataStoreViewModel = hiltViewModel(),
-    analytics: FirebaseAnalytics
+    onNavigatePopUpTo: (String, String) -> Unit,
+    viewModel: ContractActionsViewModel,
+    analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
+    onBack: (Boolean) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
     val account by viewModelDS.account.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -41,14 +40,13 @@ fun ContractActivateScreen(
     }
 
     BackHandler {
-        navController.popBackStack()
-        navController.popBackStack()
+        onBack(false)
+        Toast.makeText(context, R.string.cascTitleActivateCancel, Toast.LENGTH_SHORT).show()
     }
 
     val safeClick = rememberDefaultClickHandler(
         onClick = {
-            navController.popBackStack()
-            navController.popBackStack()
+            onBack(false)
         }
     )
 
@@ -60,24 +58,21 @@ fun ContractActivateScreen(
             onEmailChanged = viewModel::onEmailChanged,
             onAcceptedChanged = viewModel::onAcceptedChanged,
             onClose = {
-                navController.navigate(Routes.CONTRACTS) {
-                    popUpTo(Routes.CONTRACTS) {
-                        inclusive = true
-                    }
-                }
+                onNavigatePopUpTo(Routes.CONTRACTS, Routes.CONTRACTS)
                 Toast.makeText(context, R.string.cascTitleActivateCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
             },
             onNext = {
-                navController.navigate(Routes.CONTRACT_VERIFY)
+                onNavigate(Routes.CONTRACT_VERIFY)
                 analytics.logEvent ( "ButtonNext" ) {
                     param("eventType", "Click")
                 }
             },
             onBack = {
                 safeClick()
+                Toast.makeText(context, R.string.cascTitleActivateCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }

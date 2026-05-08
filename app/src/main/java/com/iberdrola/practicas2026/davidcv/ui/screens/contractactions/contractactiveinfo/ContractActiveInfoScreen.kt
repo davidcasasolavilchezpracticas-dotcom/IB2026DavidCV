@@ -13,10 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
@@ -24,9 +22,10 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 
 @Composable
 fun ContractActiveInfoScreen(
-    navController: NavController,
     viewModel: ContractActionsViewModel,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
+    onBack: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -39,8 +38,7 @@ fun ContractActiveInfoScreen(
     }
 
     BackHandler{
-        navController.popBackStack()
-        navController.popBackStack()
+        onBack(false)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -58,7 +56,7 @@ fun ContractActiveInfoScreen(
                     message = state.errorMessage!!,
                     img = Icons.Default.ErrorOutline,
                     onClick = {
-                        navController.popBackStack()
+                        onBack(false)
                         analytics.logEvent ( "ButtonBack" ) {
                             param("eventType", "Click")
                         }
@@ -70,14 +68,14 @@ fun ContractActiveInfoScreen(
                     contract = state.contract!!,
 
                     onModifyEmail = {
-                        navController.navigate(Routes.CONTRACT_EMAIL_CHANGE)
+                        onNavigate(Routes.CONTRACT_EMAIL_CHANGE)
                         state.action = ContractActions.MODIFYEMAIL
                         analytics.logEvent ( "ButtonModifyEmail" ) {
                             param("eventType", "Click")
                         }
                     },
                     onModifyPhone = {
-                        navController.navigate(Routes.CONTRACT_PHONE_CHANGE)
+                        onNavigate(Routes.CONTRACT_PHONE_CHANGE)
                         state.action = ContractActions.MODIFYPHONE
                         analytics.logEvent ( "ButtonModifyPhone" ) {
                             param("eventType", "Click")
@@ -90,7 +88,7 @@ fun ContractActiveInfoScreen(
                     message = state.errorMessage ?: "Unknown error",
                     img = Icons.Default.ErrorOutline,
                     onClick = {
-                        navController.popBackStack()
+                        onBack(false)
                         analytics.logEvent ( "ButtonBack" ) {
                             param("eventType", "Click")
                         }

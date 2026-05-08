@@ -1,4 +1,4 @@
-package com.iberdrola.practicas2026.davidcv.ui.navigation
+package com.iberdrola.practicas2026.davidcv.ui.navigation.graphs
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
@@ -14,86 +15,83 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.EditProfileScr
 import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScreen
 
 fun NavGraphBuilder.mainGraph(
-    viewSelected: Boolean,
-    isProcessing: Boolean,
+    onNavigatePopUpTo: (String, String) -> Unit,
+    remoteConfig: FirebaseRemoteConfig,
     navController: NavHostController,
     analytics: FirebaseAnalytics,
-    remoteConfig: FirebaseRemoteConfig,
-    safeClick: () -> Unit
+    onNavigate: (String) -> Unit,
+    safeBack: (Boolean) -> Unit,
+    viewSelected: Boolean,
+    isProcessing: Boolean,
 ) {
     composable(Routes.ACCOUNT_INFO) {
         UserAccountScreen(
-            navController = navController,
+            onBack = { safeBack(false) },
+            onNavigate = onNavigate,
             analytics = analytics,
-            onBack = {
-                safeClick()
-            }
         )
     }
 
     composable(Routes.ACCOUNT_EDIT) {
         EditProfileScreen(
-            navController = navController,
+            onBack = { safeBack(false) },
             analytics = analytics,
-            onBack = safeClick
         )
     }
 
     composable(Routes.LIST_LIGHT) {
         BillListScreen(
+            onNavigatePopUpTo = onNavigatePopUpTo,
             navController = navController,
+            onBack = { safeBack(false) },
             viewSelected = viewSelected,
-            analytics = analytics,
             remoteConfig = remoteConfig,
             isClosing = isProcessing,
-            onBack = {
-                safeClick()
-            },
-            modifier = Modifier
+            onNavigate = onNavigate,
+            analytics = analytics,
+            modifier = Modifier,
         )
     }
 
     composable(Routes.LIST_GAS) {
         BillListScreen(
+            onNavigatePopUpTo = onNavigatePopUpTo,
             navController = navController,
-            viewSelected = !viewSelected,
-            analytics = analytics,
+            onBack = { safeBack(false) },
+            viewSelected = viewSelected,
             remoteConfig = remoteConfig,
             isClosing = isProcessing,
-            onBack = {
-                safeClick()
-            },
-            modifier = Modifier
+            onNavigate = onNavigate,
+            analytics = analytics,
+            modifier = Modifier,
         )
     }
 
     composable(Routes.INITIAL) {
         InitialScreen(
             navController = navController,
-            modifier = Modifier,
+            remoteConfig = remoteConfig,
+            onNavigate = onNavigate,
             analytics = analytics,
-            remoteConfig = remoteConfig
+            modifier = Modifier,
         )
     }
 
     composable(Routes.FILTER) {
         FilterScreen(
             navController = navController,
+            onBack = { safeBack(false) },
+            isProcesing = isProcessing,
             analytics = analytics,
-            onBack = {
-                safeClick()
-            }
         )
     }
 
     composable(Routes.CONTRACTS) {
         ContractListScreen(
-            navController = navController,
+            onBack = { safeBack(false) },
             remoteConfig = remoteConfig,
+            onNavigate = onNavigate,
             analytics = analytics,
-            onBack = {
-                safeClick()
-            }
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,11 +46,12 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
  */@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialScreen(
+    dataStoreViewModel: DataStoreViewModel = hiltViewModel(),
+    remoteConfig: FirebaseRemoteConfig,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    dataStoreViewModel: DataStoreViewModel = hiltViewModel(),
+    onNavigate: (String) -> Unit,
     analytics: FirebaseAnalytics,
-    remoteConfig: FirebaseRemoteConfig
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
@@ -78,12 +78,10 @@ fun InitialScreen(
             { param("eventType", "View") }
     }
 
-    Log.d("InitialScreen", "Account: $account")
-
     Scaffold(
         topBar = {
             InitialTopBar(account) {
-                navController.navigate(Routes.ACCOUNT_INFO)
+                onNavigate(Routes.ACCOUNT_INFO)
                 analytics.logEvent("ButtonAccountInfo")
                     { param("eventType", "Click") }
             }
@@ -105,10 +103,10 @@ fun InitialScreen(
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
             ) {
                 InitialContent(
-                    navController = navController,
-                    analytics = analytics,
+                    isLightActive = isLightActive,
+                    onNavigate = onNavigate,
                     isGasActive = isGasActive,
-                    isLightActive = isLightActive
+                    analytics = analytics,
                 )
             }
         }
@@ -127,6 +125,7 @@ fun InitialScreenPreview() {
         navController = navController,
         modifier = Modifier,
         analytics = FirebaseAnalytics.getInstance(navController.context),
-        remoteConfig = FirebaseRemoteConfig.getInstance()
+        remoteConfig = FirebaseRemoteConfig.getInstance(),
+        onNavigate = {},
     )
 }

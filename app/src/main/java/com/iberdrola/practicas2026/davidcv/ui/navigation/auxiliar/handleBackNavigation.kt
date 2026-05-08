@@ -1,25 +1,37 @@
-package com.iberdrola.practicas2026.davidcv.ui.navigation
+package com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar
 
 import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 
 fun handleBackNavigation(
-    currentRoute: String?,
-    navController: NavController,
-    bsCounter: Int,
     dataStoreViewModel: DataStoreViewModel,
+    navController: NavController,
     analytics: FirebaseAnalytics,
+    onNavigationStart: () -> Unit,
     onShowOpinionBS: () -> Unit,
-    onNavigationStart: () -> Unit,  // Nuevo callback para iniciar bloqueo
-    onNavigationEnd: () -> Unit,     // Nuevo callback para finalizar bloqueo
+    onNavigationEnd: () -> Unit,
+    doubleBack: Boolean = false,
+    currentRoute: String?,
+    bsCounter: Int,
 ) {
-    onNavigationStart()  // Bloquear acciones al iniciar
+    onNavigationStart()
+
+    val goBack: () -> Unit = {
+        if (doubleBack) {
+            navController.popBackStack()
+            navController.popBackStack()
+        } else {
+            navController.popBackStack()
+        }
+    }
 
     if (currentRoute == Routes.LIST_GAS || currentRoute == Routes.LIST_LIGHT) {
         if (bsCounter > 0) {
             dataStoreViewModel.updateBsCounter(bsCounter - 1)
-            navController.popBackStack()
+            goBack()
         } else {
             analytics.logEvent("OpinionBottomSheet") {
                 param("eventType", "View")
@@ -28,9 +40,9 @@ fun handleBackNavigation(
         }
     } else {
         if (currentRoute != Routes.INITIAL && currentRoute != null) {
-            navController.popBackStack()
+            goBack()
         }
     }
 
-    onNavigationEnd()  // Desbloquear acciones al completar
+    onNavigationEnd()
 }

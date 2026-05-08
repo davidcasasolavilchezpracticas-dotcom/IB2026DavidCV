@@ -27,10 +27,9 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
 @Composable
 fun GeneralTopAppBar(
+    handleBackNavigation: (Boolean) -> Unit,
+    isNavigating: Boolean = false,
     currentRoute: String?,
-    navController: NavController,
-    handleBackNavigation: () -> Unit,
-    isNavigating: Boolean = false
 ) {
     if (
         (
@@ -50,10 +49,7 @@ fun GeneralTopAppBar(
                 .padding(start = LocalSpacing.current.sm)
                 .clip(RoundedCornerShape(12.dp))
                 .clickable(enabled = !isNavigating) {
-                    if (currentRoute == Routes.CONTRACT_INFO) {
-                        navController.popBackStack()
-                    }
-                    handleBackNavigation()
+                    handleBackNavigation(currentRoute == Routes.CONTRACT_INFO)
                 }
         ) {
             Icon(

@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -45,16 +44,19 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 @Composable
 fun BillListScreen(
     viewModel: BillListViewModel = hiltViewModel(),
+    onNavigatePopUpTo: (String, String) -> Unit,
+    remoteConfig: FirebaseRemoteConfig,
     navController: NavController,
-    modifier: Modifier,
     viewSelected: Boolean = true,
     analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
+    modifier: Modifier,
     isClosing: Boolean,
-    remoteConfig: FirebaseRemoteConfig,
     onBack: () -> Unit
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
+
     SideEffect {
         window.statusBarColor = White.toArgb()
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
@@ -66,8 +68,8 @@ fun BillListScreen(
         }
     }
 
-    val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
     val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
+    val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
 
     val lightBillsState by viewModel.lightBillsState.collectAsStateWithLifecycle()
     val gasBillsState by viewModel.gasBillsState.collectAsStateWithLifecycle()
@@ -135,8 +137,8 @@ fun BillListScreen(
             onErrorClick = { currentState ->
                 viewModel.onErrorClick(
                     onRefresh = { viewModel.refreshBills(state.pagerState) },
-                    currentState = currentState,
                     navController = navController,
+                    currentState = currentState,
                     useLocal = { useLocal(it) }
                 )
                 state.analytics.logEvent("ButtonError") {
@@ -144,9 +146,7 @@ fun BillListScreen(
                 }
             },
             onEmptyClick = {
-                navController.navigate(Routes.INITIAL) {
-                    popUpTo(navController.currentDestination?.route!!) { inclusive = true }
-                }
+                onNavigatePopUpTo(Routes.INITIAL, navController.currentDestination?.route!!)
                 state.analytics.logEvent("ButtonEmpty") {
                     param("eventType", "Click")
                 }
@@ -179,7 +179,7 @@ fun BillListScreen(
                     }
                 }
 
-                navController.navigate(Routes.FILTER)
+                onNavigate(Routes.FILTER)
                 state.analytics.logEvent("ButtonFilter") {
                     param("eventType", "Click")
                 }
@@ -208,10 +208,10 @@ fun BillListScreen(
         )
 
         HorizontalPage(
+            enabled = !isClosing,
             modifier = modifier,
             events = events,
             state = state,
-            enabled = !isClosing
         )
     }
 }

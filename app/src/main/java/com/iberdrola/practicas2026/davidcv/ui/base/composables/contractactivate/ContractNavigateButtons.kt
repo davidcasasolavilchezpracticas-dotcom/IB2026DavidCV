@@ -14,6 +14,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
@@ -29,6 +33,7 @@ fun ContractNavigateButtons(
     onBack: () -> Unit,
     onNext: () -> Unit,
 ) {
+    var enableBack by remember { mutableStateOf(true) }
     HorizontalDivider(
         thickness = 1.dp,
         color = Color.LightGray,
@@ -52,12 +57,16 @@ fun ContractNavigateButtons(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedButton(
-            onClick = onBack,
+            onClick = {
+                enableBack = false
+                onBack()
+            },
             modifier = Modifier
                 .weight(1f)
                 .height(48.dp),
             border = BorderStroke(1.dp, Color(0xFF006633)),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            enabled = enableBack
         ) {
             Text(stringResource(R.string.cscBack), color = Color(0xFF006633))
         }

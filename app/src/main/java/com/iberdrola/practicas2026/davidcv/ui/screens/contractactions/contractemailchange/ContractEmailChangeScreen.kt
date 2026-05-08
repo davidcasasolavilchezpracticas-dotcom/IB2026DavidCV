@@ -11,19 +11,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
-import com.iberdrola.practicas2026.davidcv.ui.navigation.rememberDefaultClickHandler
+import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 
 @Composable
 fun ContractEmailChangeScreen(
-    navController: NavController,
+    onNavigatePopUpTo: (String, String) -> Unit,
     viewModel: ContractActionsViewModel,
-    analytics: FirebaseAnalytics
+    analytics: FirebaseAnalytics,
+    onNavigate: (String) -> Unit,
+    onBack: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -36,7 +37,7 @@ fun ContractEmailChangeScreen(
 
     val safeClick = rememberDefaultClickHandler(
         onClick = {
-            navController.popBackStack()
+            onBack(false)
         }
     )
 
@@ -46,24 +47,21 @@ fun ContractEmailChangeScreen(
             state = state,
             onEmailChanged = viewModel::onEmailChanged,
             onClose = {
-                navController.navigate(Routes.CONTRACTS) {
-                    popUpTo(Routes.CONTRACTS) {
-                        inclusive = true
-                    }
-                }
+                onNavigatePopUpTo(Routes.CONTRACTS, Routes.CONTRACTS)
                 Toast.makeText(context, R.string.cascTitleModifyCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonClose" ) {
                     param("eventType", "Click")
                 }
             },
             onNext = {
-                navController.navigate(Routes.CONTRACT_VERIFY)
+                onNavigate(Routes.CONTRACT_VERIFY)
                 analytics.logEvent ( "ButtonNext" ) {
                     param("eventType", "Click")
                 }
             },
             onBack = {
                 safeClick()
+                Toast.makeText(context, R.string.cascTitleModifyCancel, Toast.LENGTH_SHORT).show()
                 analytics.logEvent ( "ButtonBack" ) {
                     param("eventType", "Click")
                 }

@@ -12,8 +12,11 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +44,8 @@ fun ContractActionSuccessContent(
     onAccept: () -> Unit,
     onClose: () -> Unit
 ) {
+    var enableEnd by remember { mutableStateOf(true) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +86,6 @@ fun ContractActionSuccessContent(
                 text = stringResource(
                     when(state.action) {
                         ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
-                        ContractActions.MODIFYSTATUS -> R.string.cascTitleDesactivate
                         ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
                         ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
                     }
@@ -107,7 +111,10 @@ fun ContractActionSuccessContent(
 
         // Botón Aceptar en la parte inferior
         Button(
-            onClick = onAccept,
+            onClick = {
+                enableEnd = false
+                onAccept()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
@@ -116,7 +123,8 @@ fun ContractActionSuccessContent(
                 containerColor = White,
                 contentColor = EnergyGreen
             ),
-            shape = RoundedCornerShape(28.dp)
+            shape = RoundedCornerShape(28.dp),
+            enabled = enableEnd
         ) {
             Text(
                 text = stringResource(R.string.cascAccept),
