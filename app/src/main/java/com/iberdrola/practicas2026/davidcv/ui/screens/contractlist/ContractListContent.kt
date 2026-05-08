@@ -31,7 +31,8 @@ fun ContractListContent(
     onClick: (Int) -> Unit,
     onEmptyClick: () -> Unit,
     gasContractActive: Boolean,
-    lightContractActive: Boolean
+    lightContractActive: Boolean,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -65,6 +66,7 @@ fun ContractListContent(
                                 Log.d("Comprobaciones", "Status -> ${contract.status}")
                                 onClick(contract.id)
                             },
+                            enabled = enabled
                         )
 
                         HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)

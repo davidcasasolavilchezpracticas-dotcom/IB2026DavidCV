@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
@@ -31,12 +32,13 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ButtonFilter(
+    selectedFilters: List<String>,
+    icon: ImageVector? = null,
     onFilterClick: () -> Unit,
     onLongClick: () -> Unit,
+    filtersCount: Int,
     label: String,
-    icon: ImageVector? = null,
-    selectedFilters: List<String>,
-    filtersCount: Int
+    enabled: Boolean = true, // Nuevo parámetro para controlar interacciones
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -47,15 +49,7 @@ fun ButtonFilter(
     BadgedBox(
         badge = {
             if (selectedFilters.isNotEmpty()) {
-                Badge(
-                    containerColor = EnergyGreen,
-                    contentColor = White,
-                    modifier = Modifier.size(16.dp)
-                ) {
-                    Text(
-                        text = filtersCount.toString()
-                    )
-                }
+                FilterBadge(count = filtersCount)
             }
         },
         modifier = Modifier.padding(4.dp)
@@ -64,35 +58,22 @@ fun ButtonFilter(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .combinedClickable(
+                    enabled = enabled,
                     interactionSource = interactionSource,
                     indication = LocalIndication.current,
-                    onClick = onFilterClick,
-                    onLongClick = onLongClick
+                    onClick = { if (enabled) onFilterClick() },
+                    onLongClick = { if (enabled) onLongClick() }
                 ),
             shape = RoundedCornerShape(20.dp),
             border = BorderStroke(1.dp, EnergyGreen),
             color = backgroundColor,
             contentColor = contentColor,
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = contentColor,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.size(4.dp))
-                }
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = contentColor
-                )
-            }
+            FilterContent(
+                label = label,
+                icon = icon,
+                color = contentColor
+            )
         }
     }
 }

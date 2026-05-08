@@ -1,6 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.contractlist
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,12 +30,14 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.IconGreen
 @Composable
 fun ContractItem(
     contract: Contract,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
+                enabled = enabled,
                 onClick = onClick
             )
             .padding(

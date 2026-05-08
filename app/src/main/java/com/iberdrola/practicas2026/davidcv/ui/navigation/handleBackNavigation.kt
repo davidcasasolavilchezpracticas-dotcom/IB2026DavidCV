@@ -10,8 +10,12 @@ fun handleBackNavigation(
     bsCounter: Int,
     dataStoreViewModel: DataStoreViewModel,
     analytics: FirebaseAnalytics,
-    onShowOpinionBS: () -> Unit
+    onShowOpinionBS: () -> Unit,
+    onNavigationStart: () -> Unit,  // Nuevo callback para iniciar bloqueo
+    onNavigationEnd: () -> Unit,     // Nuevo callback para finalizar bloqueo
 ) {
+    onNavigationStart()  // Bloquear acciones al iniciar
+
     if (currentRoute == Routes.LIST_GAS || currentRoute == Routes.LIST_LIGHT) {
         if (bsCounter > 0) {
             dataStoreViewModel.updateBsCounter(bsCounter - 1)
@@ -27,4 +31,6 @@ fun handleBackNavigation(
             navController.popBackStack()
         }
     }
+
+    onNavigationEnd()  // Desbloquear acciones al completar
 }

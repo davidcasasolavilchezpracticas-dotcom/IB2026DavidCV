@@ -36,6 +36,7 @@ fun HorizontalPage(
     state: HorizontalPageState,
     events: BillListEvents,
     modifier: Modifier,
+    enabled: Boolean = true
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -56,7 +57,8 @@ fun HorizontalPage(
                     state.analytics.logEvent("SlideToGas") {
                         param("eventType", "RelevantMovements")
                     }
-                }
+                },
+                enabled = enabled
             )
 
             Spacer(modifier = modifier.width(36.dp))
@@ -73,7 +75,8 @@ fun HorizontalPage(
                     state.analytics.logEvent("SlideToLight") {
                         param("eventType", "RelevantMovements")
                     }
-                }
+                },
+                enabled = enabled
             )
         }
     }
@@ -102,7 +105,8 @@ fun HorizontalPage(
         BillListContent(
             state = currentState,
             modifier = modifier,
-            events = events
+            events = events,
+            enabled = enabled
         )
     }
 }

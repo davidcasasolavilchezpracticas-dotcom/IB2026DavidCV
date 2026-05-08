@@ -54,6 +54,7 @@ fun DateSelector(
     onValidDate: (String) -> Boolean,
     minDate: LocalDateTime?,
     maxDate: LocalDateTime?,
+    enabled: Boolean = true
 ) {
     var showDialog by remember { mutableStateOf(false) }
     
@@ -84,7 +85,7 @@ fun DateSelector(
         formatter.format(Date.from(it.atZone(ZoneId.systemDefault()).toInstant()))
     } ?: ""
 
-    if (showDialog) {
+    if (showDialog && enabled) {
         DatePickerDialog(
             onDismissRequest = { showDialog = false },
             confirmButton = {
@@ -159,7 +160,7 @@ fun DateSelector(
         enabled = false,
         colors = TextFieldDefaults.colors(
             disabledTextColor = Color.Black,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = Color.White,
             disabledIndicatorColor = Color.Gray,
             disabledLabelColor = Color.Gray,
             disabledTrailingIconColor = Color.Gray

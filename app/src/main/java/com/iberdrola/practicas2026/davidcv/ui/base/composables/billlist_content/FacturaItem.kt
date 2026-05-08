@@ -32,17 +32,20 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.dfNormalBill
  *
  * @param bill Factura
  * @param onClick Función a ejecutar al hacer clic en el ítem
+ * @param enabled Controla si el ítem permite interacciones
  */
 @Composable
 fun FacturaItem(
     bill: Bill,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                onClick = { onClick() }
+                enabled = enabled,
+                onClick = onClick
             )
             .padding(
                 vertical = LocalSpacing.current.md,

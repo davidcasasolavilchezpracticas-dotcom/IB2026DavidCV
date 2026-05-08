@@ -23,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,7 +65,8 @@ fun FilterScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    
+    var isClosing by remember{ mutableStateOf(false) }
+
     // Recuperamos los datos de navegación inmediatamente
     val backStackEntry = remember { navController.previousBackStackEntry }
     val initialFilters = remember { backStackEntry?.savedStateHandle?.get<BillFilterState>("initial_filters") }
@@ -93,6 +96,7 @@ fun FilterScreen(
     val scrollState = rememberScrollState()
 
     BackHandler {
+        isClosing = true
         onBack()
         analytics.logEvent("ButtonBack") {
             param("eventType", "RelevantMovements")
@@ -133,7 +137,8 @@ fun FilterScreen(
                         },
                         onValidDate = viewModel::onValidStartDate,
                         minDate = minDateLimit,
-                        maxDate = state.endDate?.minusDays(1) ?: maxDateLimit
+                        maxDate = state.endDate?.minusDays(1) ?: maxDateLimit,
+                        enabled = !isClosing
                     )
                     DateSelector(
                         label = stringResource(R.string.fsSubtituloFecha2),
@@ -147,7 +152,8 @@ fun FilterScreen(
                         },
                         onValidDate = viewModel::onValidEndDate,
                         minDate = state.startDate?.plusDays(1) ?: minDateLimit,
-                        maxDate = maxDateLimit
+                        maxDate = maxDateLimit,
+                        enabled = !isClosing
                     )
                 }
             }
@@ -164,7 +170,8 @@ fun FilterScreen(
                     analytics.logEvent ( "SetPriceRange" ) {
                         param("eventType", "RelevantMovements")
                     }
-                }
+                },
+                enabled = (!isClosing)
             )
 
             Column {
@@ -175,7 +182,8 @@ fun FilterScreen(
                 FilterOption(
                     label = PaymentStatus.PAID.label,
                     value = state.paymentStatusPaid,
-                    onCheckedChange = viewModel::onStateChangePaid
+                    onCheckedChange = viewModel::onStateChangePaid,
+                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -183,7 +191,8 @@ fun FilterScreen(
                 FilterOption(
                     label = PaymentStatus.PENDING.label,
                     value = state.paymentStatusPending,
-                    onCheckedChange = viewModel::onStateChangePending
+                    onCheckedChange = viewModel::onStateChangePending,
+                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -191,7 +200,8 @@ fun FilterScreen(
                 FilterOption(
                     label = PaymentStatus.TRAMITED.label,
                     value = state.paymentStatusTramited,
-                    onCheckedChange = viewModel::onStateChangeTramited
+                    onCheckedChange = viewModel::onStateChangeTramited,
+                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -199,7 +209,8 @@ fun FilterScreen(
                 FilterOption(
                     label = PaymentStatus.CANCELED.label,
                     value = state.paymentStatusCanceled,
-                    onCheckedChange = viewModel::onStateChangeCanceled
+                    onCheckedChange = viewModel::onStateChangeCanceled,
+                    enabled = !isClosing
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -207,7 +218,8 @@ fun FilterScreen(
                 FilterOption(
                     label = PaymentStatus.FIXED_PAYMENT.label,
                     value = state.paymentStatusFixed,
-                    onCheckedChange = viewModel::onStateChangeFixed
+                    onCheckedChange = viewModel::onStateChangeFixed,
+                    enabled = !isClosing
                 )
             }
             
@@ -233,7 +245,8 @@ fun FilterScreen(
                     .fillMaxWidth()
                     .height(52.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
-                shape = RoundedCornerShape(28.dp)
+                shape = RoundedCornerShape(28.dp),
+                enabled = !isClosing
             ) {
                 Text(
                     text = stringResource(R.string.fsButtonApply),
@@ -250,7 +263,8 @@ fun FilterScreen(
                     analytics.logEvent ( "ButtonDeleteFilters" ) {
                         param("eventType", "Click")
                     }
-                }
+                },
+                enabled = !isClosing
             ) {
                 Text(
                     text = stringResource(R.string.fsButtonDelete),

@@ -48,7 +48,8 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreenLight
 fun PriceRangeSelector(
     selectedRange: ClosedFloatingPointRange<Float>,
     totalRange: ClosedFloatingPointRange<Float>,
-    onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit
+    onSliderChange: (ClosedFloatingPointRange<Float>) -> Unit,
+    enabled: Boolean = true
 ) {
     var sliderPosition by remember(selectedRange) { mutableStateOf(selectedRange) }
 
@@ -84,6 +85,7 @@ fun PriceRangeSelector(
                 onSliderChange(sliderPosition)
             },
             valueRange = totalRange,
+            enabled = enabled,
             startThumb = {
                 Box(
                     modifier = Modifier

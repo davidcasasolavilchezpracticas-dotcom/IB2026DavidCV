@@ -46,6 +46,7 @@ fun BillListContent(
     events: BillListEvents,
     state: BillListState,
     modifier: Modifier,
+    enabled: Boolean = true
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     val pullState = rememberPullToRefreshState()
@@ -110,6 +111,7 @@ fun BillListContent(
                         onDeleteFilters = events.onDeleteFilters,
                         getSelectedFilters = events.getSelectedFilters,
                         filtersCounter = BillListViewModel.countFilters(events.getCurrentFilters(), min = min, max = max),
+                        enabled = enabled
                     )
                 }
             }

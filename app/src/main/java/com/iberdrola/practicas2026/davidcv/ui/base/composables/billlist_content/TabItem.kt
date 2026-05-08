@@ -26,7 +26,8 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 fun TabItem(
     text: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
 
     Text(
@@ -36,8 +37,9 @@ fun TabItem(
         modifier = Modifier
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick() }
+                indication = null,
+                enabled = enabled
+            ) { if (enabled) onClick() }
             .drawBehind {
                 if (isSelected) {
                     val strokeWidth = 5.dp.toPx()
@@ -60,5 +62,5 @@ fun TabItem(
 @Composable
 @Preview
 fun TabItemPreview() {
-    TabItem(text = "Tab 1", isSelected = true) {}
+    TabItem(text = "Tab 1", isSelected = true, onClick = {})
 }

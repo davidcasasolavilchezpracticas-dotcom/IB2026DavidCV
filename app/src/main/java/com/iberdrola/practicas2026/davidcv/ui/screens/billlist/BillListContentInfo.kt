@@ -68,7 +68,8 @@ fun BillListContentInfo(
     onFilterClick: () -> Unit,
     onDeleteFilters: () -> Unit,
     modifier: Modifier = Modifier,
-    getSelectedFilters: () -> List<String>
+    getSelectedFilters: () -> List<String>,
+    enabled: Boolean = true
 ) {
     var alertDialogActive by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -119,7 +120,8 @@ fun BillListContentInfo(
                     label = stringResource(R.string.blciButtonFilter),
                     icon = Icons.Default.Tune,
                     selectedFilters = getSelectedFilters(),
-                    filtersCount = filtersCounter
+                    filtersCount = filtersCounter,
+                    enabled = enabled
                 )
             }
         }
@@ -142,7 +144,8 @@ fun BillListContentInfo(
             itemsIndexed(billsInYear) { index, bill ->
                 FacturaItem(
                     bill = bill,
-                    onClick = { alertDialogActive = true }
+                    onClick = { alertDialogActive = true },
+                    enabled = enabled
                 )
 
                 if (index < billsInYear.lastIndex) {

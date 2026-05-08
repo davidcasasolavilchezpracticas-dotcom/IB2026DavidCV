@@ -1,18 +1,27 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -26,6 +35,8 @@ import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.GeneralTopAppBar
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.navigation.BlockingOverlay
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.navigation.OpinionManager
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.OpinionBottomSheet
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ThanksForRatingDialog
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
@@ -47,238 +58,83 @@ import java.util.Locale
  * NavigationWrapper
  * Se define el contenedor del grafo de navegación con Scaffold integrado para la TopBar y lógica de navegación centralizada.
  */
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationWrapper(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     navController: NavHostController,
     remoteConfig: FirebaseRemoteConfig,
     analytics: FirebaseAnalytics
 ) {
-    val context = LocalContext.current
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
-    var viewSelected by rememberSaveable { mutableStateOf(true) }
+
+    // Estados de UI controlados
+    var isProcessing by remember { mutableStateOf(false) }
     var showOpinionBS by remember { mutableStateOf(false) }
     var showThanksDialog by remember { mutableStateOf(false) }
+    var viewSelected by rememberSaveable { mutableStateOf(true) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    if (showOpinionBS) {
-        OpinionBottomSheet(
-            onDismiss = {
-                showOpinionBS = false
-                navController.popBackStack()
-            },
-            onLaterClick = {
-                dataStoreViewModel.updateBsCounter(3)
-                showOpinionBS = false
-                navController.popBackStack()
-            },
-            onRatingSelected = {
-                dataStoreViewModel.updateBsCounter(10)
-                showOpinionBS = false
-                showThanksDialog = true
-            }
-        )
+    // Efecto de bloqueo
+    LaunchedEffect(isProcessing) {
+        if (isProcessing) {
+            delay(800)
+            isProcessing = false
+        }
     }
 
-    if (showThanksDialog) {
-        ThanksForRatingDialog (
-            onDismiss = {
-                showThanksDialog = false
-                navController.popBackStack()
-            }
-        )
-    }
+    NavigationAnalyticsObserver(navController, analytics)
 
-    val safeClick = rememberDefaultClickHandler(
-        onClick = {
+    // Lógica centralizada de clic seguro
+    val safeClick = rememberDefaultClickHandler {
+        if (!isProcessing) {
             handleBackNavigation(
                 currentRoute = currentRoute,
                 navController = navController,
                 bsCounter = bsCounter,
                 dataStoreViewModel = dataStoreViewModel,
                 analytics = analytics,
-                onShowOpinionBS = {
-                    showOpinionBS = true
-                }
+                onNavigationStart = { isProcessing = true },
+                onNavigationEnd = { isProcessing = false },
+                onShowOpinionBS = { showOpinionBS = true }
             )
-        }
-    )
-
-    DisposableEffect(navController) {
-        val listener = NavController.OnDestinationChangedListener { navegator, destination, _ ->
-            val route = destination.route ?: "unknown"
-            val originRoute = navegator.previousBackStackEntry?.destination?.route ?: "Start"
-            val eventName = "From${ originRoute.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }To${ route.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }"
-
-            analytics.logEvent(eventName) {
-                param("eventType", "Movement")
-            }
-        }
-        navController.addOnDestinationChangedListener(listener)
-        onDispose {
-            navController.removeOnDestinationChangedListener(listener)
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            GeneralTopAppBar(
-                currentRoute = currentRoute,
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = modifier,
+            topBar = {
+                GeneralTopAppBar(currentRoute, navController, handleBackNavigation = safeClick)
+            }
+        ) { innerPadding ->
+            NavHost(
                 navController = navController,
-                handleBackNavigation = {
-                    safeClick()
-                }
-            )
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Routes.INITIAL,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(Routes.ACCOUNT_INFO) {
-                UserAccountScreen(
-                    navController = navController,
-                    analytics = analytics,
-                    onBack = {
-                        safeClick()
-                    }
-                )
-            }
-
-            composable(Routes.ACCOUNT_EDIT) {
-                EditProfileScreen(
-                    navController = navController,
-                    analytics = analytics,
-                    onBack = safeClick
-                )
-            }
-
-            composable(Routes.LIST_LIGHT) {
-                BillListScreen(
-                    navController = navController,
-                    viewSelected = viewSelected,
-                    analytics = analytics,
-                    remoteConfig = remoteConfig,
-                    onBack = {
-                        safeClick()
-                    },
-                    modifier = Modifier
-                )
-            }
-
-            composable(Routes.LIST_GAS) {
-                BillListScreen(
-                    navController = navController,
-                    viewSelected = !viewSelected,
-                    analytics = analytics,
-                    remoteConfig = remoteConfig,
-                    onBack = {
-                        safeClick()
-                    },
-                    modifier = Modifier
-                )
-            }
-
-            composable(Routes.INITIAL) {
-                InitialScreen(
-                    navController = navController,
-                    modifier = Modifier,
-                    analytics = analytics,
-                    remoteConfig = remoteConfig
-                )
-            }
-
-            composable(Routes.FILTER) {
-                FilterScreen(
-                    navController = navController,
-                    analytics = analytics,
-                    onBack = {
-                        safeClick()
-                    }
-                )
-            }
-
-            composable(Routes.CONTRACTS) {
-                ContractListScreen(
-                    navController = navController,
-                    remoteConfig = remoteConfig,
-                    analytics = analytics,
-                    onBack = {
-                        safeClick()
-                    }
-                )
-            }
-
-            navigation(
-                route = "contract_flow/{contractId}",
-                startDestination = Routes.CONTRACT_ACTIONS + "/{contractId}"
+                startDestination = Routes.INITIAL,
+                modifier = Modifier.padding(innerPadding)
             ) {
-                composable(Routes.CONTRACT_ACTIONS + "/{contractId}") { entry ->
-                    ContractActionsScreen(
-                        contractId = entry.arguments?.getString("contractId")!!.toInt(),
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics,
-                        onBack = {
-                            safeClick()
-                        }
-                    )
-                }
-
-                composable(Routes.CONTRACT_INFO) { entry ->
-                    ContractActiveInfoScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics
-                    )
-                }
-
-                composable(Routes.CONTRACT_ACTIVATE) { entry ->
-                    ContractActivateScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics =  analytics
-                    )
-                }
-
-                composable(Routes.CONTRACT_EMAIL_CHANGE) { entry ->
-                    ContractEmailChangeScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics,
-                    )
-                }
-
-                composable(Routes.CONTRACT_PHONE_CHANGE) { entry ->
-                    ContractPhoneChangeScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics,
-                    )
-                }
-
-                composable(Routes.CONTRACT_VERIFY) { entry ->
-                    ContractVerifyScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics,
-                    )
-                }
-
-                composable(Routes.CONTRACT_SUCCESS) { entry ->
-                    ContractActionSuccessScreen(
-                        navController = navController,
-                        viewModel = CreateViewModel(entry, navController),
-                        analytics = analytics,
-                    )
-                }
+                mainGraph(viewSelected, isProcessing, navController, analytics, remoteConfig, safeClick)
+                contractGraph(navController, analytics, safeClick)
             }
+        }
+
+        // Modales y Overlays
+        OpinionManager(
+            showBS = showOpinionBS,
+            showThanks = showThanksDialog,
+            onDismissBS = { showOpinionBS = false },
+            onDismissThanks = { showThanksDialog = false },
+            onLater = { dataStoreViewModel.updateBsCounter(3) },
+            onRated = { dataStoreViewModel.updateBsCounter(10); showThanksDialog = true },
+            navController = navController
+        )
+
+        if (isProcessing) {
+            BlockingOverlay()
         }
     }
 }

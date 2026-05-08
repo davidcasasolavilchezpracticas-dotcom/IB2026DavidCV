@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.foundation.layout)
     implementation(libs.androidx.runtime)
+    implementation(libs.androidx.navigation.common.ktx)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 

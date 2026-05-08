@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -48,6 +49,7 @@ fun BillListScreen(
     modifier: Modifier,
     viewSelected: Boolean = true,
     analytics: FirebaseAnalytics,
+    isClosing: Boolean,
     remoteConfig: FirebaseRemoteConfig,
     onBack: () -> Unit
 ) {
@@ -208,7 +210,8 @@ fun BillListScreen(
         HorizontalPage(
             modifier = modifier,
             events = events,
-            state = state
+            state = state,
+            enabled = !isClosing
         )
     }
 }

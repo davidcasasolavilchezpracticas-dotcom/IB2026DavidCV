@@ -42,7 +42,8 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 fun FilterOption(
         label: String,
         value: Boolean,
-        onCheckedChange: (Boolean) -> Unit
+        onCheckedChange: (Boolean) -> Unit,
+        enabled: Boolean = true
 ) {
     val backgroundColor by animateColorAsState(
         if (value) EnergyGreen else Color.Transparent,
@@ -53,7 +54,7 @@ fun FilterOption(
         modifier = Modifier
             .clipToBounds()
             .clip(RoundedCornerShape(6.dp))
-            .clickable { onCheckedChange(!value) }
+            .clickable(enabled) { onCheckedChange(!value) }
             .padding(LocalSpacing.current.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -67,7 +68,7 @@ fun FilterOption(
                     color = EnergyGreen,
                     shape = RoundedCornerShape(6.dp)
                 )
-                .clickable { onCheckedChange(!value) }
+                .clickable(enabled) { onCheckedChange(!value) }
                 .padding(2.dp),
             contentAlignment = Alignment.Center
         ) {

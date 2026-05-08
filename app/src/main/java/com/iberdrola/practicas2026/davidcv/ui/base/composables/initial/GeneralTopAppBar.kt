@@ -25,12 +25,12 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
-
 @Composable
 fun GeneralTopAppBar(
     currentRoute: String?,
     navController: NavController,
-    handleBackNavigation: () -> Unit
+    handleBackNavigation: () -> Unit,
+    isNavigating: Boolean = false
 ) {
     if (
         (
@@ -40,7 +40,7 @@ fun GeneralTopAppBar(
             currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
             currentRoute != Routes.CONTRACT_VERIFY &&
             currentRoute != Routes.CONTRACT_SUCCESS
-        ) && currentRoute != null
+            ) && currentRoute != null
     ) {
         Row(
             horizontalArrangement = Arrangement.Start,
@@ -48,11 +48,9 @@ fun GeneralTopAppBar(
             modifier = Modifier
                 .padding(LocalSpacing.current.xs)
                 .padding(start = LocalSpacing.current.sm)
-                .clip(
-                    RoundedCornerShape(12.dp)
-                )
-                .clickable {
-                    if(currentRoute == Routes.CONTRACT_INFO){
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(enabled = !isNavigating) {
+                    if (currentRoute == Routes.CONTRACT_INFO) {
                         navController.popBackStack()
                     }
                     handleBackNavigation()
@@ -62,8 +60,7 @@ fun GeneralTopAppBar(
                 imageVector = Icons.Default.ChevronLeft,
                 contentDescription = null,
                 tint = EnergyGreen,
-                modifier = Modifier
-                    .size(36.dp)
+                modifier = Modifier.size(36.dp)
             )
             Text(
                 text = stringResource(R.string.matbTitle),
