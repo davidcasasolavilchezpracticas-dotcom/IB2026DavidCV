@@ -44,6 +44,8 @@ fun ContractActionSuccessContent(
     onAccept: () -> Unit,
     onClose: () -> Unit
 ) {
+    Log.d("Comprobaciones", "Contract Action -> ${state.action}")
+
     var enableEnd by remember { mutableStateOf(true) }
 
     Box(
@@ -101,7 +103,7 @@ fun ContractActionSuccessContent(
 
             // Mensaje descriptivo
             Text(
-                text = "Pronto recibirás un correo electrónico de verificación para recibir tus facturas en la dirección ${censurator(state.emailTry)}",
+                text = stringResource(R.string.emailForSuccessText) + censurator(state.emailTry),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.9f),
                 textAlign = TextAlign.Center,

@@ -157,4 +157,5 @@
     <string name="OnErrorEmail">Introduce un email válido</string>
     <string name="OnErrorPhone">Introduce un número de teléfono válido</string>
     <string name="OnErrorName">Introduce un nombre válido</string>
+    <string name="emailForSuccessText">"Pronto recibirás un correo electrónico de verificación para recibir tus facturas en la dirección "</string>
 </resources>

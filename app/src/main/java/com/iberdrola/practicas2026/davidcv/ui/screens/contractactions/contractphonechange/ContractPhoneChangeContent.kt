@@ -1,5 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +54,8 @@ fun ContractPhoneChangeContent(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
+    Log.d("Comprobaciones", "Contract Action -> ${state.action}")
+
     Scaffold(
         topBar = {
             ContractTopAppBar(

@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,8 @@ fun ContractVerifyScreen(
             onBack(false)
         }
     )
+
+    Log.d("Comprobaciones", "Contract Action -> ${state.action}")
 
 
     LaunchedEffect(Unit) {

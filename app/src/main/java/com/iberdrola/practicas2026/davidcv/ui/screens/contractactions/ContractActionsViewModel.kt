@@ -161,7 +161,7 @@ class ContractActionsViewModel @Inject constructor(
                             isLoading = false,
                             contract = result.data,
                             action = if(result.data.status == ContractStatus.ACTIVE)
-                                    ContractActions.MODIFYEMAIL
+                                    state.value.action
                                 else
                                     ContractActions.MODIFYSTATUSEMAIL
                         )
