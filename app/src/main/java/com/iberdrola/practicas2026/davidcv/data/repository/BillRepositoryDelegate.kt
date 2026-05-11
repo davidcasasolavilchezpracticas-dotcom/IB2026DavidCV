@@ -54,15 +54,29 @@ class BillRepositoryDelegate @Inject constructor(
             val billsToInsert: List<BillEntity>
             if (DataSourceConfig.useNetwork) {
                 Log.d("ComprobacionesBillRepository", "Intentando sincronizar desde RED...")
-                val response = _apiService.getBills()
+
+                // 1. Control de conexión física/red
+                val response = try {
+                    _apiService.getBills()
+                } catch (e: IOException) {
+                    throw BillException.ConexionFailed
+                }
+
                 if (response.isSuccessful) {
+                    // 2. Control de datos: Cuerpo nulo
                     val body = response.body() ?: throw BillException.DataCorrupted
-                    billsToInsert = body.map { it.toModel().toEntity() }
-                    
-                    // Sincronizamos SIEMPRE que la respuesta sea exitosa, incluso si viene vacía.
+
+                    // 3. Control de datos: Fallo en el mapeo/formato
+                    billsToInsert = try {
+                        body.map { it.toModel().toEntity() }
+                    } catch (e: Exception) {
+                        throw BillException.DataCorrupted
+                    }
+
                     _dao.clearAndInsert(billsToInsert)
                     Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde RED.")
                 } else {
+                    // Errores de servidor (4xx, 5xx)
                     throw BillException.ResponseError("Error RED: ${response.code()}")
                 }
             } else {
@@ -74,13 +88,20 @@ class BillRepositoryDelegate @Inject constructor(
                 }
 
                 val type = object : TypeToken<List<BillEntity>>() {}.type
+
+                // 4. Control de datos: Error de sintaxis JSON en Mock
                 val entities: List<BillEntity> = try {
                     _gson.fromJson(jsonString, type)
                 } catch (e: JsonSyntaxException) {
                     throw BillException.DataCorrupted
                 }
 
-                billsToInsert = entities.map { it.toModel().toEntity() }
+                billsToInsert = try {
+                    entities.map { it.toModel().toEntity() }
+                } catch (e: Exception) {
+                    throw BillException.DataCorrupted
+                }
+
                 _dao.clearAndInsert(billsToInsert)
                 Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde MOCK.")
             }
