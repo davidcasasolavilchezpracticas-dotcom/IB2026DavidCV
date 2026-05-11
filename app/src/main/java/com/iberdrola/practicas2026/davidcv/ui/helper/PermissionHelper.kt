@@ -74,9 +74,7 @@ private fun executePermissionFlow(
     }
 
     val activity = context as? Activity
-    if (activity?.shouldShowRationale(permissions) == true) {
-        openSettings(context)
-    } else {
+    if (activity?.shouldShowRationale(permissions) != true) {
         launchSystemRequest()
     }
 }
@@ -89,12 +87,4 @@ fun Context.checkAllPermissionsGranted(permissions: List<String>): Boolean {
 
 fun Activity.shouldShowRationale(permissions: List<String>): Boolean {
     return permissions.any { ActivityCompat.shouldShowRequestPermissionRationale(this, it) }
-}
-
-fun openSettings(context: Context) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", context.packageName, null)
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
-    context.startActivity(intent)
 }
