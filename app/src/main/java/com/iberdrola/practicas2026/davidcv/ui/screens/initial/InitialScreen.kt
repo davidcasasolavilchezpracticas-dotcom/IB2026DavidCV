@@ -15,7 +15,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -30,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.data.remote.firebase.RemoteConfigConstants
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.InitialTopBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.WelcomeHeader
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
@@ -57,9 +60,14 @@ fun InitialScreen(
     val window = (view.context as Activity).window
     val account by dataStoreViewModel.account.collectAsStateWithLifecycle()
 
-    // Simplificación de Remote Config: Leemos los valores una vez o usamos un estado
-    val isGasActive = remember { remoteConfig.getBoolean("ContractGasAviable") }
-    val isLightActive = remember { remoteConfig.getBoolean("ContractLightAviable") }
+    val isFirstRun = remoteConfig.info.lastFetchStatus == FirebaseRemoteConfig.LAST_FETCH_STATUS_NO_FETCH_YET
+
+    var isGasActive by remember {
+        mutableStateOf(if (isFirstRun) true else remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS))
+    }
+    var isLightActive by remember {
+        mutableStateOf(if (isFirstRun) true else remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT))
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -74,6 +82,16 @@ fun InitialScreen(
     }
 
     LaunchedEffect(Unit) {
+        isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
+        isLightActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT)
+
+        // 3. Descargamos valores reales del servidor
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
+                isLightActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT)
+            }
+        }
         analytics.logEvent("InitialScreen")
             { param("eventType", "View") }
     }
