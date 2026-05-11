@@ -22,6 +22,7 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
+import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -30,23 +31,6 @@ fun ContractActionSuccessScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
 ) {
-    val view = LocalView.current
-    val window = (view.context as Activity).window
-
-    DisposableEffect(Unit) {
-        onDispose {
-            window.statusBarColor = White.toArgb()
-            window.navigationBarColor = White.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-        }
-    }
-
-    SideEffect {
-        window.statusBarColor = EnergyGreen.toArgb()
-        window.navigationBarColor = EnergyGreen.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-    }
-
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActionSuccessScreen" ) {
             param("eventType", "View")

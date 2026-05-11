@@ -6,6 +6,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.Black
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreenLight
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 import java.text.SimpleDateFormat
@@ -48,6 +49,6 @@ val dfLastBill: DateTimeFormatter? = DateTimeFormatter.ofPattern("dd MMM. yyyy",
 val dfNormalBill: DateTimeFormatter? = DateTimeFormatter.ofPattern("dd 'de' MMMM", localeEs)
 val dfValidateDate: DateTimeFormatter? = DateTimeFormatter.ofPattern("dd-MM-yyyy", localeEs)
 
-
 //endregion
+
 

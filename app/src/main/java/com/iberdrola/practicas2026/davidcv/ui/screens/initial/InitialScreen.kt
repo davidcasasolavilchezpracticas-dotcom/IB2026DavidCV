@@ -1,11 +1,14 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
 import android.app.Activity
+import android.view.View
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -71,15 +74,14 @@ fun InitialScreen(
 
     DisposableEffect(Unit) {
         onDispose {
-            window.statusBarColor = White.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            val windowInsetsController = WindowCompat.getInsetsController(window, view)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+            windowInsetsController.isAppearanceLightStatusBars = true
         }
     }
 
-    SideEffect {
-        window.statusBarColor = EnergyGreen.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-    }
 
     LaunchedEffect(Unit) {
         isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
@@ -107,8 +109,9 @@ fun InitialScreen(
     ) { padding ->
         Column(
             modifier = modifier
+                .statusBarsPadding()
+                .background(EnergyGreen)
                 .fillMaxSize()
-                .background(Color(0xFF006633))
                 .padding(padding),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {

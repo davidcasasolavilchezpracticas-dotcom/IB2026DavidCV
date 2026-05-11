@@ -115,7 +115,7 @@ fun ContractVerifyScreen(
             events = events,
             state = state,
         )
-
-        LoadingScreen(state.isLoading)
     }
+
+    LoadingScreen(state.isLoading)
 }
