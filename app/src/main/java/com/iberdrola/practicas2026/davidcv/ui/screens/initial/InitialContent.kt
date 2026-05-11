@@ -122,7 +122,6 @@ fun InitialContent(
 
         Spacer(modifier = Modifier.weight(2f))
 
-        // Sección Facturas - Ahora usa onNavigate para evitar dobles clics
         ServiceSection(
             onLightClick = { onNavigate(Routes.LIST_LIGHT) },
             onGasClick = { onNavigate(Routes.LIST_GAS) },

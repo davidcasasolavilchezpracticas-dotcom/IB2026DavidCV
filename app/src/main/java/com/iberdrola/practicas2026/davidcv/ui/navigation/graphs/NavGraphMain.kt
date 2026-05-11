@@ -58,7 +58,7 @@ fun NavGraphBuilder.mainGraph(
             onNavigatePopUpTo = onNavigatePopUpTo,
             navController = navController,
             onBack = { safeBack(false) },
-            viewSelected = viewSelected,
+            viewSelected = !viewSelected,
             remoteConfig = remoteConfig,
             isClosing = isProcessing,
             onNavigate = onNavigate,
