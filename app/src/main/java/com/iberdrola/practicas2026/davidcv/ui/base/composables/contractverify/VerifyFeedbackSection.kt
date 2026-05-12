@@ -15,12 +15,12 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractve
 @SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun VerifyFeedbackSection(
-    successBanner: Boolean,
     showTimeLeftDialog: Boolean,
     state: ContractActionsState,
     events: ContractVerifyEvents,
     onDismissBanner: () -> Unit,
-    onDismissDialog: () -> Unit
+    onDismissDialog: () -> Unit,
+    successBanner: Boolean,
 ) {
     if (successBanner) {
         events.onLoadEnd()

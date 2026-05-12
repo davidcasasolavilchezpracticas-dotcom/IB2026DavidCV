@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,7 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.permissions.AppPermissions
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractverify.ResendCodeInfoBox
@@ -102,65 +106,96 @@ fun ContractVerifyContent(
         }
     }
 
-    Scaffold(
-        topBar = {
-            ContractTopAppBar(
-                title = appBarTitle,
-                progress = 0.75f,
-                onClose = events.onClose
-            )
-        },
-        bottomBar = {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ContractNavigateButtons(
-                    enable = state.canSubmitVerify,
-                    onBack = events.onBack,
-                    onNext = {
-                        events.onNext()
-                        requestSuccessPermission()
+
+    val clickManager = remember { ClickEventManager() }
+
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
+
+        Scaffold(
+            topBar = {
+                ContractTopAppBar(
+                    title = appBarTitle,
+                    progress = 0.75f,
+                    onClose ={
+                        canExecuteMethod(
+                            manager,
+                        ) { events.onClose() }
                     },
                 )
-            }
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = LocalSpacing.current.la)
-                .verticalScroll(rememberScrollState())
-        ) {
-            VerifyInstructionSection(state, events)
-
-            VerifyInputFields(state, events)
-
-            ResendCodeInfoBox(
-                trys = trys,
-                resendCode = shouldNotifyNewCode,
-                onResendClick = {
-                    if (trys > 0) {
-                        successBanner = true
-                        shouldNotifyNewCode = true
-                        events.generateNewCode()
-                        dataStoreViewModel.updateTrys(trys - 1)
-                    } else {
-                        showTimeLeftAlertDialog = true
-                    }
+            },
+            bottomBar = {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ContractNavigateButtons(
+                        enable = state.canSubmitVerify,
+                        onBack = {
+                            canExecuteMethod(
+                                manager,
+                            ) { events.onBack() }
+                        },
+                        onNext = {
+                            canExecuteMethod(
+                                manager,
+                            ) {
+                                events.onNext()
+                                requestSuccessPermission()
+                            }
+                        },
+                    )
                 }
-            )
+            }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = LocalSpacing.current.la)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                VerifyInstructionSection(state, events)
 
-            Spacer(modifier = Modifier.weight(1f))
+                VerifyInputFields(state, events)
 
-            VerifyFeedbackSection(
-                successBanner = successBanner,
-                showTimeLeftDialog = showTimeLeftAlertDialog,
-                state = state,
-                events = events,
-                onDismissBanner = { successBanner = false },
-                onDismissDialog = { showTimeLeftAlertDialog = false }
-            )
+                ResendCodeInfoBox(
+                    trys = trys,
+                    resendCode = shouldNotifyNewCode,
+                    onResendClick = {
+                        canExecuteMethod(
+                            manager,
+                        ) {
+                            if (trys > 0) {
+                                successBanner = true
+                                shouldNotifyNewCode = true
+                                events.generateNewCode()
+                                dataStoreViewModel.updateTrys(trys - 1)
+                            } else {
+                                showTimeLeftAlertDialog = true
+                            }
+                        }
+                    },
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                VerifyFeedbackSection(
+                    successBanner = successBanner,
+                    showTimeLeftDialog = showTimeLeftAlertDialog,
+                    state = state,
+                    events = events,
+                    onDismissBanner = {
+                        canExecuteMethod(
+                            manager,
+                        ) { successBanner = false }
+                    },
+                    onDismissDialog = {
+                        canExecuteMethod(
+                            manager,
+                        ) { showTimeLeftAlertDialog = false }
+                    }
+                )
+            }
         }
     }
 }

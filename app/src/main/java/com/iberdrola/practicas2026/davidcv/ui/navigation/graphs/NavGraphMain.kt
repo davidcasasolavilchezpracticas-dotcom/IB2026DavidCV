@@ -64,7 +64,6 @@ fun NavGraphBuilder.mainGraph(
         FilterScreen(
             navController = navController,
             onBack = { safeBack(false) },
-            isProcesing = isProcessing,
             analytics = analytics,
         )
     }

@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,8 +51,13 @@ import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.ConnectionMode
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ContractSection
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.DebugToolsRow
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.IpConfigurationDialog
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.ServiceSection
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.SettingSwitchItem
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -64,170 +71,94 @@ fun InitialContent(
     isGasActive: Boolean,
     isLightActive: Boolean
 ) {
-    val context = LocalContext.current
-    var showConnectionMenu by remember { mutableStateOf(false) }
     var showIpDialog by remember { mutableStateOf(false) }
-    var tempIp by remember { mutableStateOf(DataSourceConfig.pcIp) }
+    val context = LocalContext.current
+    val clickManager = remember { ClickEventManager() }
 
-    if (showIpDialog) {
-        AlertDialog(
-            onDismissRequest = { showIpDialog = false },
-            containerColor = White,
-            title = { Text(text = stringResource(R.string.ad_ConfigureIPTitle)) },
-            text = {
-                Column {
-                    Text(text = stringResource(R.string.ad_ConfigureIPText))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = tempIp,
-                        onValueChange = { tempIp = it },
-                        label = { Text(text = stringResource(R.string.ad_ConfigureIPLabel)) },
-                        singleLine = true,
-                        placeholder = { Text(text = stringResource(R.string.ad_ConfigureIPPlaceHolder)) },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.None,
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                Button(onClick = {
-                    DataSourceConfig.pcIp = tempIp
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
+
+        if (showIpDialog) {
+            IpConfigurationDialog(
+                initialIp = DataSourceConfig.pcIp,
+                onDismiss = { showIpDialog = false },
+                onConfirm = { newIp ->
+                    DataSourceConfig.pcIp = newIp
                     DataSourceConfig.connectionMode = ConnectionMode.LOCAL_IP
                     showIpDialog = false
-                }) {
-                    Text(text = stringResource(R.string.confirm))
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showIpDialog = false }) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-            }
-        )
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(LocalSpacing.current.xl)
-    ) {
-        Text(
-            text = stringResource(R.string.isSubtitle),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.weight(2f))
-
-        ServiceSection(
-            onLightClick = { onNavigate(Routes.LIST_LIGHT) },
-            onGasClick = { onNavigate(Routes.LIST_GAS) },
-            title = stringResource(R.string.isSubtitleBills),
-            isLightActive = isLightActive,
-            isGasActive = isGasActive,
-            analytics = analytics,
-        )
-
-        Spacer(modifier = Modifier.weight(2f))
-
-        // Sección Contratos - Ahora usa onNavigate
-        ContractSection {
-            onNavigate(Routes.CONTRACTS)
-            analytics.logEvent("ButtonContractsList") { 
-                param("eventType", "Click") 
-            }
+            )
         }
 
-        Spacer(modifier = Modifier.weight(2f))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(LocalSpacing.current.xl)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (DataSourceConfig.useNetwork) {
-                    Box {
-                        IconButton(
-                            onClick = { showConnectionMenu = true },
-                            modifier = Modifier.background(
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                shape = CircleShape
-                            )
-                        ) {
-                            val icon = when (DataSourceConfig.connectionMode) {
-                                ConnectionMode.ADB_REVERSE -> Icons.Default.SettingsEthernet
-                                ConnectionMode.EMULATOR -> Icons.Default.Devices
-                                ConnectionMode.LOCAL_IP -> Icons.Default.Computer
-                            }
-                            Icon(imageVector = icon, contentDescription = stringResource(R.string.descriptionConexionButton), tint = MaterialTheme.colorScheme.primary)
-                        }
+            Text(
+                text = stringResource(R.string.isSubtitle),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
 
-                        DropdownMenu(
-                            expanded = showConnectionMenu,
-                            onDismissRequest = { showConnectionMenu = false },
-                            modifier = Modifier.background(
-                                color = White
-                            )
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(R.string.dropMenuItemTextEmulator)) },
-                                leadingIcon = { Icon(Icons.Default.Devices, contentDescription = null) },
-                                onClick = {
-                                    DataSourceConfig.connectionMode = ConnectionMode.EMULATOR
-                                    showConnectionMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(R.string.dropMenuItemTextADB)) },
-                                leadingIcon = { Icon(Icons.Default.SettingsEthernet, contentDescription = null) },
-                                onClick = {
-                                    DataSourceConfig.connectionMode = ConnectionMode.ADB_REVERSE
-                                    showConnectionMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(text = stringResource(R.string.dropMenuItemTextIP) + "(${DataSourceConfig.pcIp})") },
-                                leadingIcon = { Icon(Icons.Default.Computer, contentDescription = null) },
-                                onClick = {
-                                    tempIp = DataSourceConfig.pcIp
-                                    showConnectionMenu = false
-                                    showIpDialog = true
-                                }
-                            )
-                        }
-                    }
+            Spacer(modifier = Modifier.weight(2f))
 
-                    Spacer(modifier = Modifier.size(8.dp))
-                }
+            ServiceSection(
+                onLightClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onNavigate(Routes.LIST_LIGHT) }
+                },
+                onGasClick = {
+                    canExecuteMethod(
+                        manager
+                    ) { onNavigate(Routes.LIST_GAS) }
+                },
+                title = stringResource(R.string.isSubtitleBills),
+                isLightActive = isLightActive,
+                isGasActive = isGasActive,
+                analytics = analytics
+            )
 
-                SettingSwitchItem(
-                    onCheckedChange = { DataSourceConfig.useNetwork = it },
-                    label = stringResource(R.string.isSwitchDataOrigin),
-                    checked = DataSourceConfig.useNetwork,
-                )
+            Spacer(modifier = Modifier.weight(2f))
 
-                Spacer(modifier = Modifier.size(8.dp))
-
-                IconButton(
-                    onClick = { throw Exception(context.getString(R.string.testError)) },
-                    modifier = Modifier
-                        .background(
-                            color = Color.Red.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        ),
-
+            ContractSection {
+                canExecuteMethod(
+                    manager
                 ) {
-                    Icon(
-                        contentDescription = context.getString(R.string.testError),
-                        imageVector = Icons.Default.BugReport,
-                        tint = Color.Red
-                    )
+                    onNavigate(Routes.CONTRACTS)
+                    analytics.logEvent("ButtonContractsList") { param("eventType", "Click") }
                 }
             }
+
+            Spacer(modifier = Modifier.weight(2f))
+
+            DebugToolsRow(
+                useNetwork = DataSourceConfig.useNetwork,
+                connectionMode = DataSourceConfig.connectionMode,
+                pcIp = DataSourceConfig.pcIp,
+                onNetworkToggle = {
+                    canExecuteMethod(
+                        manager
+                    ) { DataSourceConfig.useNetwork = it }
+                },
+                onModeChange = {
+                    canExecuteMethod(
+                        manager
+                    ) { DataSourceConfig.connectionMode = it }
+                },
+                onIpConfigClick = {
+                    canExecuteMethod(
+                        manager
+                    ) { showIpDialog = true }
+                },
+                onTestErrorClick = {
+                    canExecuteMethod(
+                        manager
+                    ) { throw Exception(context.getString(R.string.testError)) }
+                },
+            )
         }
     }
 }
+

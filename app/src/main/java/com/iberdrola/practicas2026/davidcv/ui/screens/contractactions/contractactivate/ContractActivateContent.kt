@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +31,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.CheckBoxPolite
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
@@ -49,119 +54,151 @@ fun ContractActivateContent(
     onNext: () -> Unit,
     onBack: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            ContractTopAppBar(
-                title = R.string.cacActivateElectronicBill,
-                progress = 0.5f,
-                onClose = onClose
-            )
-        },
-        bottomBar = {
+
+    val clickManager = remember { ClickEventManager() }
+
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
+
+        Scaffold(
+            topBar = {
+                ContractTopAppBar(
+                    title = R.string.cacActivateElectronicBill,
+                    progress = 0.5f,
+                    onClose = {
+                        canExecuteMethod(
+                            manager,
+                        ) { onClose() }
+                    },
+                )
+            },
+            bottomBar = {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ContractNavigateButtons(
+                        enable = state.canSubmitEmailAndPolicy,
+                        onBack = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onBack() }
+                        },
+                        onNext = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onNext() }
+                        },
+                    )
+                }
+            }
+        ) { padding ->
             Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ContractNavigateButtons(
-                    enable = state.canSubmitEmailAndPolicy,
-                    onBack = onBack,
-                    onNext = onNext,
-                )
-            }
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(LocalSpacing.current.lg)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Spacer(modifier = Modifier.height(LocalSpacing.current.md))
-
-            Text(
-                text = stringResource(R.string.cacTitleAccountEmail),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = onCensurator(state.contract?.email ?: "correoejemplo@gmail.com"),
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
-
-            Text(
-                text = stringResource(R.string.cacTitleEmailLinked),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-            TextField(
-                value = state.emailTry,
-                onValueChange = onEmailChanged,
-                label = { Text(stringResource(R.string.cacLabelEmailText)) },
-                modifier = Modifier.fillMaxWidth(),
-                isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Gray,
-                    unfocusedIndicatorColor = Color.LightGray
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.None,
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                )
-            )
-
-            if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
-                Text(
-                    text = stringResource(R.string.OnErrorEmail),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
-
-            Text(
-                text = stringResource(R.string.cscBasicInfo),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            LegalTextItem(R.string.cscLegalTextResponsable,R.string.cscLegalTextResponsableDescription)
-            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-            LegalTextItem(R.string.cscLegalTextFinalidad, R.string.cscLegalTextFinalidadDescription)
-            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-            LegalTextItem(R.string.cscLegalTextDerechos, R.string.cscLegalTextDerechosDescription)
-            Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
-
-            Row(
-                verticalAlignment = Alignment.Top,
                 modifier = Modifier
-                    .padding(LocalSpacing.current.sm)
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(LocalSpacing.current.lg)
+                    .verticalScroll(rememberScrollState())
             ) {
-                CheckBoxPolite(
-                    value = state.isAcceptedPolicy,
-                    onCheckedChange = onAcceptedChanged,
+                Spacer(modifier = Modifier.height(LocalSpacing.current.md))
+
+                Text(
+                    text = stringResource(R.string.cacTitleAccountEmail),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = onCensurator(state.contract?.email ?: "correoejemplo@gmail.com"),
+                    style = MaterialTheme.typography.titleSmall
                 )
 
-                Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
 
-                PoliteText(
-                    txt1 = R.string.csc_Txt1Policy,
-                    spTxt1 = R.string.csc_spTxt1Policy,
-                    txt2 = R.string.csc_Txt2Policy
+                Text(
+                    text = stringResource(R.string.cacTitleEmailLinked),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
+
+                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+                TextField(
+                    value = state.emailTry,
+                    onValueChange = onEmailChanged,
+                    label = { Text(stringResource(R.string.cacLabelEmailText)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.LightGray
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.None,
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    )
+                )
+
+                if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
+                    Text(
+                        text = stringResource(R.string.OnErrorEmail),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
+
+                Text(
+                    text = stringResource(R.string.cscBasicInfo),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                LegalTextItem(
+                    R.string.cscLegalTextResponsable,
+                    R.string.cscLegalTextResponsableDescription
+                )
+                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+                LegalTextItem(
+                    R.string.cscLegalTextFinalidad,
+                    R.string.cscLegalTextFinalidadDescription
+                )
+                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+                LegalTextItem(
+                    R.string.cscLegalTextDerechos,
+                    R.string.cscLegalTextDerechosDescription
+                )
+                Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
+
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier
+                        .padding(LocalSpacing.current.sm)
+                ) {
+                    CheckBoxPolite(
+                        value = state.isAcceptedPolicy,
+                        onCheckedChange = { value ->
+                            canExecuteMethod(
+                                manager,
+                            ) { onAcceptedChanged(value) }
+                        },
+                    )
+
+                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+
+                    PoliteText(
+                        txt1 = R.string.csc_Txt1Policy,
+                        spTxt1 = R.string.csc_spTxt1Policy,
+                        txt2 = R.string.csc_Txt2Policy
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

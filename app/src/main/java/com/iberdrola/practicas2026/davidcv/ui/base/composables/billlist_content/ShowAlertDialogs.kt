@@ -22,6 +22,7 @@ fun ShowAlertDialogs(
     onDeleteFilters: () -> Unit,
     alertDialogActive: Boolean,
     showDeleteDialog: Boolean,
+    count: Int
 ) {
     if (alertDialogActive) {
         AlertDialogOK(
@@ -60,7 +61,7 @@ fun ShowAlertDialogs(
             text = {
                 Column(){
                     Text(text = stringResource(R.string.deleteFiltersText))
-                    Text(text = alertDialogText(getSelectedFilters))
+                    Text(text = alertDialogText(getSelectedFilters, count))
                 }
             },
             containerColor = White

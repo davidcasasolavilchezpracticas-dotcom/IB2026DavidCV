@@ -3,6 +3,7 @@ package com.iberdrola.practicas2026.davidcv.ui.base.common
 import android.graphics.Color
 import androidx.compose.material3.CardColors
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.theme.Black
@@ -52,4 +53,22 @@ val dfValidateDate: DateTimeFormatter? = DateTimeFormatter.ofPattern("dd-MM-yyyy
 
 //endregion
 
+//region Gestor de Clicks
 
+class ClickEventManager {
+    private var lastClickTime = 0L
+    private val threshold = 350L
+
+    fun canExecute(): Boolean {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime > threshold) {
+            lastClickTime = currentTime
+            return true
+        }
+        return false
+    }
+}
+
+val LocalClickManager = staticCompositionLocalOf { ClickEventManager() }
+
+//endregion

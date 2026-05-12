@@ -23,7 +23,7 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractve
 fun VerifyInputFields(state: ContractActionsState, events: ContractVerifyEvents) {
     TextField(
         value = state.verifyCodeTry,
-        onValueChange = { events.onVerifyCodeChanged(it) },
+        onValueChange = events.onVerifyCodeChanged,
         label = {
             Text(
                 text = stringResource(R.string.cvcTextFieldVerifyCode),

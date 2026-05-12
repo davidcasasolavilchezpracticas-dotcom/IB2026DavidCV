@@ -140,11 +140,12 @@ class BillListViewModel @Inject constructor(
         }
 
         fun alertDialogText(
-            filtersActives: () -> List<String>
+            filtersActives: () -> List<String>,
+            count: Int
         ) : String {
             val filters = filtersActives()
             return if (filters.isNotEmpty()) {
-                if(filters.size == 1) "Se ha seleccionado el siguiente filtro:\n" + filters.joinToString("\n")
+                if(count == 1) "Se ha seleccionado el siguiente filtro:\n" + filters.joinToString("\n")
                 else "Se han seleccionado los siguientes filtros:\n" + filters.joinToString("\n")
             } else {
                 "No hay filtros seleccionados"

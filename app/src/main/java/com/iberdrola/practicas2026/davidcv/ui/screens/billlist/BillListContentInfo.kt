@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +34,11 @@ import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.Bill
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.BillType
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethodListString
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.ButtonFilter
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
@@ -59,87 +64,108 @@ fun BillListContentInfo(
 
     LaunchedEffect(Unit) { listState.scrollToItem(0) }
 
-    LazyColumn(
-        state = listState,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+    val clickManager = remember { ClickEventManager() }
 
-        item {
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-            ) {
-                LastInvoiceCard(bill = bills[0])
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
 
-                Spacer(modifier = Modifier.height(24.dp))
+        LazyColumn(
+            state = listState,
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
 
-                ShowAlertDialogs(
-                    alertDialogActive = alertDialogActive,
-                    desactiveAlertDialog = { alertDialogActive = false },
-                    showDeleteDialog = showDeleteDialog,
-                    desactiveDeleteDialog = { showDeleteDialog = false },
-                    onDeleteFilters = onDeleteFilters,
-                    getSelectedFilters = getSelectedFilters
-                )
-            }
-        }
-
-        stickyHeader {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(White)
-                    .padding(horizontal = LocalSpacing.current.lg),
-            ) {
-                Text(
-                    text = stringResource(R.string.blciTitle),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-
-                ButtonFilter(
-                    onFilterClick = onFilterClick,
-                    onLongClick = { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true },
-                    label = stringResource(R.string.blciButtonFilter),
-                    icon = Icons.Default.Tune,
-                    selectedFilters = getSelectedFilters(),
-                    filtersCount = filtersCounter,
-                    enabled = enabled
-                )
-            }
-        }
-
-
-
-
-        val groupedBills = bills.groupBy { it.emisionDate.year }
-
-        groupedBills.forEach { (year, billsInYear) ->
             item {
-                Text(
-                    text = year.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(LocalSpacing.current.lg)
-                )
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                ) {
+                    LastInvoiceCard(bill = bills[0])
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    ShowAlertDialogs(
+                        alertDialogActive = alertDialogActive,
+                        desactiveAlertDialog = { alertDialogActive = false },
+                        showDeleteDialog = showDeleteDialog,
+                        desactiveDeleteDialog = {  showDeleteDialog = false },
+                        onDeleteFilters = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onDeleteFilters() }
+                        },
+                        getSelectedFilters = getSelectedFilters,
+                        count = filtersCounter
+                    )
+                }
             }
 
-            itemsIndexed(billsInYear) { index, bill ->
-                FacturaItem(
-                    bill = bill,
-                    onClick = { alertDialogActive = true },
-                    enabled = enabled
-                )
-
-                if (index < billsInYear.lastIndex) {
-                    HorizontalDivider(
-                        color = Color.LightGray,
-                        thickness = 0.75.dp,
-                        modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+            stickyHeader {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(White)
+                        .padding(horizontal = LocalSpacing.current.lg),
+                ) {
+                    Text(
+                        text = stringResource(R.string.blciTitle),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
+
+                    ButtonFilter(
+                        onFilterClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onFilterClick() }
+                        },
+                        onLongClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true }
+                        },
+                        label = stringResource(R.string.blciButtonFilter),
+                        icon = Icons.Default.Tune,
+                        selectedFilters = getSelectedFilters(),
+                        filtersCount = filtersCounter,
+                        enabled = enabled
+                    )
+                }
+            }
+
+
+            val groupedBills = bills.groupBy { it.emisionDate.year }
+
+            groupedBills.forEach { (year, billsInYear) ->
+                item {
+                    Text(
+                        text = year.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(LocalSpacing.current.lg)
+                    )
+                }
+
+                itemsIndexed(billsInYear) { index, bill ->
+                    FacturaItem(
+                        bill = bill,
+                        onClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) {  alertDialogActive = true }
+                        },
+                        enabled = enabled
+                    )
+
+                    if (index < billsInYear.lastIndex) {
+                        HorizontalDivider(
+                            color = Color.LightGray,
+                            thickness = 0.75.dp,
+                            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+                        )
+                    }
                 }
             }
         }

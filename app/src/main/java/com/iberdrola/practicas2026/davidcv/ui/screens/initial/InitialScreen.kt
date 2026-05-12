@@ -76,7 +76,6 @@ fun InitialScreen(
         isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
         isLightActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT)
 
-        // 3. Descargamos valores reales del servidor
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
@@ -98,7 +97,6 @@ fun InitialScreen(
         ) {
             WelcomeHeader()
 
-            // Contenedor principal blanco
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = White,

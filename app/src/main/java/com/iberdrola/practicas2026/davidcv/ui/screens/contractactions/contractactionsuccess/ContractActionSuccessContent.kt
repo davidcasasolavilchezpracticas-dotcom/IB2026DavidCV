@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.permissions.AppPermissions
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.helper.NotificationHandler
 import com.iberdrola.practicas2026.davidcv.ui.helper.rememberPermissionsLauncher
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
@@ -44,95 +48,106 @@ fun ContractActionSuccessContent(
     onAccept: () -> Unit,
     onClose: () -> Unit
 ) {
-    Log.d("Comprobaciones", "Contract Action -> ${state.action}")
-
     var enableEnd by remember { mutableStateOf(true) }
+    val clickManager = remember { ClickEventManager() }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(EnergyGreen)
-            .padding(LocalSpacing.current.xl)
-    ) {
-        // Icono de cerrar en la esquina superior derecha
-        IconButton(
-            onClick = onClose,
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(R.string.close),
-                tint = Color.White
-            )
-        }
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
 
-        // Contenido Central
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .background(EnergyGreen)
+                .padding(LocalSpacing.current.xl)
         ) {
-            // Icono del pulgar hacia arriba (ThumbUp)
-            Icon(
-                imageVector = Icons.Outlined.ThumbUp,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(120.dp)
-            )
+            // Icono de cerrar en la esquina superior derecha
+            IconButton(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onClose() }
+                },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.close),
+                    tint = Color.White
+                )
+            }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            // Contenido Central
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Icono del pulgar hacia arriba (ThumbUp)
+                Icon(
+                    imageVector = Icons.Outlined.ThumbUp,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(120.dp)
+                )
 
-            // Título de éxito
-            Text(
-                text = stringResource(
-                    when(state.action) {
-                        ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
-                        ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
-                        ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
+                Spacer(modifier = Modifier.height(40.dp))
+
+                // Título de éxito
+                Text(
+                    text = stringResource(
+                        when (state.action) {
+                            ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
+                            ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
+                            ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
+                        }
+                    ),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 32.sp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Mensaje descriptivo
+                Text(
+                    text = stringResource(R.string.emailForSuccessText) + censurator(state.emailTry),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 22.sp
+                )
+            }
+
+            // Botón Aceptar en la parte inferior
+            Button(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) {
+                        enableEnd = false
+                        onAccept()
                     }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = White,
+                    contentColor = EnergyGreen
                 ),
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                lineHeight = 32.sp
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Mensaje descriptivo
-            Text(
-                text = stringResource(R.string.emailForSuccessText) + censurator(state.emailTry),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.9f),
-                textAlign = TextAlign.Center,
-                lineHeight = 22.sp
-            )
-        }
-
-        // Botón Aceptar en la parte inferior
-        Button(
-            onClick = {
-                enableEnd = false
-                onAccept()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .align(Alignment.BottomCenter),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = White,
-                contentColor = EnergyGreen
-            ),
-            shape = RoundedCornerShape(28.dp),
-            enabled = enableEnd
-        ) {
-            Text(
-                text = stringResource(R.string.cascAccept),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+                shape = RoundedCornerShape(28.dp),
+                enabled = enableEnd
+            ) {
+                Text(
+                    text = stringResource(R.string.cascAccept),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
