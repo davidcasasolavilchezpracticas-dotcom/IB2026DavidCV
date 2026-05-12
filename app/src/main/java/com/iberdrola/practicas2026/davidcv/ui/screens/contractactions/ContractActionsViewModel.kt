@@ -94,7 +94,10 @@ class ContractActionsViewModel @Inject constructor(
 
     fun phoneCensurator(phone: String) : String {
         val censuredText = "******"
-        return censuredText + if (state.value.contract?.phone != null) state.value.contract?.phone?.substring((state.value.contract?.phone?.length ?: 9) - 4) else "123"
+        return censuredText + if (state.value.contract?.phone != null) {
+            if (state.value.contract?.phone?.length!! <= 4) state.value.contract?.phone
+            else state.value.contract?.phone?.substring((state.value.contract?.phone?.length!!) - 4)
+        } else "123"
     }
 
     //endregion

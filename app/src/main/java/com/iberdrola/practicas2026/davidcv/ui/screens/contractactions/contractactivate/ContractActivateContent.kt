@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +23,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -41,6 +45,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.LegalTextItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.PoliteText
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,8 +134,14 @@ fun ContractActivateContent(
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
+                        errorContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.LightGray
+                        unfocusedIndicatorColor = Color.LightGray,
+                        cursorColor = EnergyGreen,
+                        selectionColors = TextSelectionColors(
+                            handleColor = EnergyGreen,
+                            backgroundColor = EnergyGreen.copy(alpha = 0.4f)
+                        )
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.None,

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -49,6 +50,7 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Compani
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,7 +131,11 @@ fun ContractPhoneChangeContent(
                         errorContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.DarkGray,
                         unfocusedIndicatorColor = Color.LightGray,
-                        cursorColor = Color.Black
+                        cursorColor = EnergyGreen,
+                        selectionColors = TextSelectionColors(
+                            handleColor = EnergyGreen,
+                            backgroundColor = EnergyGreen.copy(alpha = 0.4f)
+                        )
                     ),
                     singleLine = true,
                     isError = state.phoneTry.isNotEmpty() && !state.isPhoneValid,
