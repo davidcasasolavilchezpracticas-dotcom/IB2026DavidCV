@@ -82,7 +82,7 @@ fun ErrorScreen(
         ) {
             Text(
                 text = if (exception is BillException.ConexionFailed) stringResource(R.string.useLocal)
-                        else stringResource(R.string.refresh),
+                        else stringResource(R.string.goBack),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = White,

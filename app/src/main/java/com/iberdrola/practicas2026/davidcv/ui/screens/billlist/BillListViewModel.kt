@@ -201,17 +201,14 @@ class BillListViewModel @Inject constructor(
     }
 
     fun onErrorClick(
-        onRefresh: () -> Unit,
         currentState: BillListState,
         navController: NavController,
         useLocal: (BillListState) -> Unit,
     ) {
         if (currentState is BillListState.Error && currentState.exception is BillException.ConexionFailed){
             useLocal(currentState)
-            navController.popBackStack()
-        } else {
-            onRefresh()
         }
+        navController.popBackStack()
     }
 
     /**

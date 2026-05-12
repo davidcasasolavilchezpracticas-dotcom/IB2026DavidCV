@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetContractsUseCase @Inject constructor(
     private val _repository: ContractRepositoryInterface
 ) {
-    operator fun invoke(forceRefresh: Boolean = false): Flow<BaseResult<List<Contract>>> {
-        return _repository.getContracts(forceRefresh)
+    operator fun invoke(): Flow<BaseResult<List<Contract>>> {
+        return _repository.getContracts()
     }
 }

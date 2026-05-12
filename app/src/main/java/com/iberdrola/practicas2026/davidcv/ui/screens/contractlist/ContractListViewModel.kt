@@ -41,18 +41,15 @@ class ContractListViewModel @Inject constructor(
             // Delay para feedback visual (Shimmer)
             delay(Random.nextLong(1000, 1500))
             
-            _getContractsUseCase(forceRefresh).collect { result ->
+            _getContractsUseCase().collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
                         _contractsState.value = ContractListState.Success(result.data)
                     }
                     is BaseResult.Error -> {
-                        val contractException = if (result.exception is ContractException) {
-                            result.exception
-                        } else {
-                            ContractException.UnknownError(result.exception.message)
-                        }
-                        _contractsState.value = ContractListState.Error(contractException as ContractException)
+                        val contractException = result.exception as? ContractException
+                            ?: ContractException.UnknownError(result.exception.message)
+                        _contractsState.value = ContractListState.Error(contractException)
                     }
                 }
             }

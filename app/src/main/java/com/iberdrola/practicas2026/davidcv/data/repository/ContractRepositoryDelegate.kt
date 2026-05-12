@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,50 +67,43 @@ class ContractRepositoryDelegate @Inject constructor(
             val jsonString = _gson.toJson(currentEntities)
             val internalFile = File(_context.filesDir, MOCK_FILE_NAME)
             internalFile.writeText(jsonString)
-            Log.d("ComprobacionesContractRepository", "JSON Local actualizado con los cambios.")
         } catch (e: Exception) {
             Log.e("ComprobacionesContractRepository", "Error al guardar en JSON: ${e.message}")
         }
     }
 
-    private suspend fun syncContracts(forceRefresh: Boolean) {
+    private suspend fun syncContracts() {
         try {
             if (DataSourceConfig.useNetwork) {
-                Log.d("ComprobacionesContractRepository", "Sincronizando desde RED...")
                 val response = _apiService.getContracts()
                 if (response.isSuccessful) {
                     response.body()?.let { contracts ->
-                        if (forceRefresh) _dao.deleteAll()
-                        _dao.insertAll(contracts)
+                        _dao.clearAndInsert(contracts)
                         saveCurrentDbToJson()
-                        return // ÉXITO: Salimos de la función
+                        return
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e("ComprobacionesContractRepository", "Fallo de red, intentando local...")
             throw ContractException.ConexionFailed
         }
 
-        // SI LLEGAMOS AQUÍ es porque useNetwork es false, falló la red, o la respuesta no fue exitosa
-        Log.d("ComprobacionesContractRepository", "Sincronizando desde MOCK JSON (Fallback)...")
         getMockJsonContent()?.let { jsonString ->
             val type = object : TypeToken<List<ContractEntity>>() {}.type
             val contracts: List<ContractEntity> = _gson.fromJson(jsonString, type)
             if (contracts.isNotEmpty()) {
-                if (forceRefresh) _dao.deleteAll()
-                _dao.insertAll(contracts)
+                _dao.clearAndInsert(contracts)
             }
         }
     }
 
-    override fun getContracts(forceRefresh: Boolean): Flow<BaseResult<List<Contract>>> = flow {
-        syncContracts(forceRefresh)
+    override fun getContracts(): Flow<BaseResult<List<Contract>>> = flow {
+        syncContracts()
         emitAll(_dao.getAll().map { entities ->
             BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Contract>>
         })
     }.catch { e ->
-        emit(BaseResult.Error(if (e is Exception) e else Exception(e.message)))
+        emit(BaseResult.Error(if (e is IOException) ContractException.ConexionFailed else Exception(e.message)))
     }.flowOn(Dispatchers.IO)
 
     override suspend fun updateContractEmail(id: Int, email: String): BaseResult<Unit> = withContext(Dispatchers.IO) {

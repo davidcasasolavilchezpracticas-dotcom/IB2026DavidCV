@@ -49,7 +49,7 @@ fun GeneralTopAppBar(
                 .padding(start = LocalSpacing.current.sm)
                 .clip(RoundedCornerShape(12.dp))
                 .clickable(enabled = !isNavigating) {
-                    handleBackNavigation(currentRoute == Routes.CONTRACT_INFO)
+                    handleBackNavigation(false)
                 }
         ) {
             Icon(

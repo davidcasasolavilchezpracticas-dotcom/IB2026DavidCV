@@ -35,7 +35,7 @@ import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 @Composable
 fun EmptyContractsScreen(
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit
+    onBack: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -63,7 +63,7 @@ fun EmptyContractsScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
         Button(
-            onClick = { onRefresh() },
+            onClick = onBack,
             modifier = Modifier.fillMaxWidth(0.6f),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006633)),
             shape = RoundedCornerShape(12.dp)

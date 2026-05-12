@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import com.iberdrola.practicas2026.davidcv.data.local.entity.BillEntity
 import com.iberdrola.practicas2026.davidcv.data.local.entity.ContractEntity
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import kotlinx.coroutines.flow.Flow
@@ -32,4 +34,10 @@ interface ContractDao {
 
     @Query("DELETE FROM contracts")
     suspend fun deleteAll()
+
+    @Transaction
+    suspend fun clearAndInsert(contracts: List<ContractEntity>) {
+        deleteAll()
+        insertAll(contracts)
+    }
 }

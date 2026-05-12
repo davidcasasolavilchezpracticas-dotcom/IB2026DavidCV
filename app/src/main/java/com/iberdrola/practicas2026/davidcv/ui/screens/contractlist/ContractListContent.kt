@@ -76,7 +76,7 @@ fun ContractListContent(
         } else {
             EmptyContractsScreen (
                 modifier = modifier,
-                onRefresh = onEmptyClick
+                onBack = onEmptyClick
             )
         }
     }

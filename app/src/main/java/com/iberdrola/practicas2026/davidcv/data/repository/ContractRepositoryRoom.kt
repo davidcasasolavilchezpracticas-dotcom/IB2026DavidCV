@@ -21,7 +21,7 @@ class ContractRepositoryRoom @Inject constructor(
     private val _dao: ContractDao
 ) : ContractRepositoryInterface {
 
-    override fun getContracts(forceRefresh: Boolean): Flow<BaseResult<List<Contract>>> =
+    override fun getContracts(): Flow<BaseResult<List<Contract>>> =
         _dao.getAll().map { entities ->
             BaseResult.Success(entities.map { it.toModel() }) as BaseResult<List<Contract>>
         }.catch { e ->

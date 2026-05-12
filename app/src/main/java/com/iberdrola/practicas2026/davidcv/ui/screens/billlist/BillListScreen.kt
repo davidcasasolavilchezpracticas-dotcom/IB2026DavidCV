@@ -54,14 +54,6 @@ fun BillListScreen(
     isClosing: Boolean,
     onBack: () -> Unit
 ) {
-    val view = LocalView.current
-    val window = (view.context as Activity).window
-
-    SideEffect {
-        window.statusBarColor = White.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-    }
-
     LaunchedEffect(Unit) {
         analytics.logEvent("BillListScreen") {
             param("eventType", "View")
@@ -136,7 +128,6 @@ fun BillListScreen(
         val events = BillListEvents(
             onErrorClick = { currentState ->
                 viewModel.onErrorClick(
-                    onRefresh = { viewModel.refreshBills(state.pagerState) },
                     navController = navController,
                     currentState = currentState,
                     useLocal = { useLocal(it) }

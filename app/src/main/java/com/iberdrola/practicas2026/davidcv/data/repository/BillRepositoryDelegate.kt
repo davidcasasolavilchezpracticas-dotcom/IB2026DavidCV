@@ -53,9 +53,6 @@ class BillRepositoryDelegate @Inject constructor(
         try {
             val billsToInsert: List<BillEntity>
             if (DataSourceConfig.useNetwork) {
-                Log.d("ComprobacionesBillRepository", "Intentando sincronizar desde RED...")
-
-                // 1. Control de conexión física/red
                 val response = try {
                     _apiService.getBills()
                 } catch (e: IOException) {
@@ -63,10 +60,7 @@ class BillRepositoryDelegate @Inject constructor(
                 }
 
                 if (response.isSuccessful) {
-                    // 2. Control de datos: Cuerpo nulo
                     val body = response.body() ?: throw BillException.DataCorrupted
-
-                    // 3. Control de datos: Fallo en el mapeo/formato
                     billsToInsert = try {
                         body.map { it.toModel().toEntity() }
                     } catch (e: Exception) {
@@ -74,13 +68,10 @@ class BillRepositoryDelegate @Inject constructor(
                     }
 
                     _dao.clearAndInsert(billsToInsert)
-                    Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde RED.")
                 } else {
-                    // Errores de servidor (4xx, 5xx)
                     throw BillException.ResponseError("Error RED: ${response.code()}")
                 }
             } else {
-                Log.d("ComprobacionesBillRepository", "Sincronizando desde MOCK LOCAL...")
                 val jsonString = try {
                     _context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
                 } catch (e: IOException) {
@@ -89,7 +80,6 @@ class BillRepositoryDelegate @Inject constructor(
 
                 val type = object : TypeToken<List<BillEntity>>() {}.type
 
-                // 4. Control de datos: Error de sintaxis JSON en Mock
                 val entities: List<BillEntity> = try {
                     _gson.fromJson(jsonString, type)
                 } catch (e: JsonSyntaxException) {
@@ -103,14 +93,12 @@ class BillRepositoryDelegate @Inject constructor(
                 }
 
                 _dao.clearAndInsert(billsToInsert)
-                Log.d("ComprobacionesBillRepository", "Base de datos sincronizada correctamente desde MOCK.")
             }
-
         } catch (e: BillException) {
-            Log.e("ComprobacionesBillRepository", "Error controlado: ${e.message}")
+            Log.e("BillRepository", "Error controlado: ${e.message}")
             throw e
         } catch (e: Exception) {
-            Log.e("ComprobacionesBillRepository", "Excepción no controlada: ${e}")
+            Log.e("BillRepository", "Excepción no controlada: ${e}")
             throw BillException.UnknownError(e.message)
         }
     }

@@ -49,14 +49,6 @@ fun ContractListScreen(
     onNavigate: (String) -> Unit,
     onBack: () -> Unit
 ) {
-    val view = LocalView.current
-    val window = (view.context as Activity).window
-
-    SideEffect {
-        window.statusBarColor = White.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-    }
-
     BackHandler {
         onBack()
         analytics.logEvent("ButtonBack") {
@@ -123,8 +115,8 @@ fun ContractListScreen(
             if (contracts.isEmpty()) {
                 EmptyContractsScreen(
                     modifier = Modifier,
-                    onRefresh = {
-                        onNavigate(Routes.CONTRACTS)
+                    onBack = {
+                        onNavigate(Routes.INITIAL)
                         analytics.logEvent ( "RefreshContracts" ) {
                             param("eventType", "RelevantMovements")
                         }
