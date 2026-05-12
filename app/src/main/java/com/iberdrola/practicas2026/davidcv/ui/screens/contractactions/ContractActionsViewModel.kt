@@ -75,7 +75,6 @@ class ContractActionsViewModel @Inject constructor(
     //region Code
     fun generateNewCode() {
         _state.update { it.copy(verifyCode = Random.nextInt(99999, 999999).toString(), isLoading = true) }
-        Log.d("ComprobacionesContractActionsViewModel", "Código = ${_state.value.verifyCode}")
     }
 
     //endregion

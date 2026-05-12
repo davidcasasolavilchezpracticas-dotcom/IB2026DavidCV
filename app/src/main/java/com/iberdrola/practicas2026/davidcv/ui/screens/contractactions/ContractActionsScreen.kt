@@ -34,8 +34,6 @@ fun ContractActionsScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var hasNavigated by remember { mutableStateOf(false) }
-    var txt by remember { mutableStateOf("Caracola") }
-    var txt1 by remember { mutableStateOf("aaaa") }
 
     LaunchedEffect(contractId) {
         analytics.logEvent("ContractActionsScreen") {
@@ -43,7 +41,6 @@ fun ContractActionsScreen(
         }
         hasNavigated = false
         viewModel.getContract(contractId)
-        txt1 = "contractId: ${contractId}"
     }
 
     LaunchedEffect(state.contract) {
@@ -53,7 +50,6 @@ fun ContractActionsScreen(
                 val route = if (contract.status == ContractStatus.ACTIVE) {
                     Routes.CONTRACT_INFO
                 } else Routes.CONTRACT_ACTIVATE
-                txt = "Contract: ${contract}"
 
                 onNavigate(route)
             }
@@ -66,10 +62,8 @@ fun ContractActionsScreen(
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
-        Column(){
-            Text(txt)
+        Column{
             Spacer(modifier = Modifier.height(16.dp))
-            Text(txt1)
         }
     }
 }

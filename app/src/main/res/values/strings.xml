@@ -144,7 +144,7 @@
     <string name="thanks">¡Muchas gracias!</string>
     <string name="cascSuccessVerify">Verificación correcta</string>
     <string name="cascNewCode">Nuevo código de verificación</string>
-    <string name="cascNewCodeText">"Tu nuevo código es: "</string>
+    <string name="cascNewCodeText">"Tu código de verificación es: "</string>
     <string name="ad_ConfigureIPTitle">Configurar IP Local</string>
     <string name="ad_ConfigureIPText">Introduce la IP de tu PC donde corre Mockoon:</string>
     <string name="ad_ConfigureIPLabel">Dirección IP</string>
@@ -158,4 +158,5 @@
     <string name="OnErrorPhone">Introduce un número de teléfono válido</string>
     <string name="OnErrorName">Introduce un nombre válido</string>
     <string name="emailForSuccessText">"Pronto recibirás un correo electrónico de verificación para recibir tus facturas en la dirección "</string>
+    <string name="rcibTextOneMoreResendCode">Recuerda que hoy te queda un intento.</string>
 </resources>

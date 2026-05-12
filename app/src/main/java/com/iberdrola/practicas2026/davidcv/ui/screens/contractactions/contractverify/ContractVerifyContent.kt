@@ -61,7 +61,6 @@ fun ContractVerifyContent(
 
     val (appBarTitle, successNotifyText) = getActionResources(state.action)
 
-    // Launcher para notificación de éxito al finalizar
     val requestSuccessPermission = rememberPermissionsLauncher(
         permissions = listOf(AppPermissions.Notifications),
         onAllGranted = {
@@ -97,12 +96,9 @@ fun ContractVerifyContent(
         }
     )
 
-
-    // Reacciona al cambio de código para disparar la notificación en tiempo real
     LaunchedEffect(state.verifyCode) {
         if (shouldNotifyNewCode && state.verifyCode.isNotEmpty()) {
             requestNewCodePermission()
-            shouldNotifyNewCode = false
         }
     }
 
@@ -165,9 +161,9 @@ fun ContractVerifyContent(
                         canExecuteMethod(
                             manager,
                         ) {
+                            shouldNotifyNewCode = true
                             if (trys > 0) {
                                 successBanner = true
-                                shouldNotifyNewCode = true
                                 events.generateNewCode()
                                 dataStoreViewModel.updateTrys(trys - 1)
                             } else {

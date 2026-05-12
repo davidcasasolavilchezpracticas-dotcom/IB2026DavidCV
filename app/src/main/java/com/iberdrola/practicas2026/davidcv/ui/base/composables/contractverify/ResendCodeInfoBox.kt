@@ -34,10 +34,24 @@ fun ResendCodeInfoBox(
     resendCode: Boolean,
     trys: Int
 ) {
-    Surface(color = Color(0xFFE1F5FE), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.padding(LocalSpacing.current.lg)) {
-            Icon(Icons.Outlined.Info, null, tint = Color.DarkGray, modifier = Modifier.size(24.dp))
+    Surface(
+        color = Color(0xFFE1F5FE),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(LocalSpacing.current.lg)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                tint = Color.DarkGray,
+                modifier = Modifier.size(24.dp)
+            )
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Column {
                 Text(
                     text = stringResource(R.string.rcibTitleResendCode),
@@ -51,29 +65,38 @@ fun ResendCodeInfoBox(
                     style = MaterialTheme.typography.bodySmall
                 )
 
-                if ( resendCode && trys > 0 ){
-                    Text(
-                        "Recuerdas que hoy te quedan $trys intentos.",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                } else if ( trys == 0 ) {
-                    Text(
-                        stringResource(R.string.rcibTextNoMoreResendCode),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                if (resendCode) {
+                    when (trys) {
+                        0 -> {
+                            Text(
+                                text = stringResource(R.string.rcibTextNoMoreResendCode),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        1 -> {
+                            Text(
+                                text = stringResource(R.string.rcibTextOneMoreResendCode),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        else -> {
+                            Text(
+                                text = "Recuerda que hoy te quedan $trys intentos.",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
                 }
 
                 Text(
-                    stringResource(R.string.rcibTextResendCode),
+                    text = stringResource(R.string.rcibTextResendCode),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
                         .padding(top = LocalSpacing.current.xs)
                         .clickable(
-                            onClick = {
-                                onResendClick()
-                            }
+                            onClick = onResendClick
                         ),
                     color = Color(0xFF003366)
                 )
