@@ -21,11 +21,7 @@ class NotificationHandler(private val context: Context) {
         createNotificationChannel()
     }
 
-    /**
-     * Se encarga de crear el canal para la publicación de notificaciones.
-     */
     private fun createNotificationChannel() {
-        // Creo el canal
         val channel = NotificationChannel(
             notificationChannelID,
             "Cuentas",
@@ -34,18 +30,14 @@ class NotificationHandler(private val context: Context) {
             description = "Notificaciones de activación de cuenta"
         }
 
-        // Creo un canal de notificaciones para el canal creado anteriormente
         notificationManager.createNotificationChannel(channel)
     }
 
-    /**
-     * Encargado de lanzar la notificación
-     */
     fun showSimpleNotification(contentTitle: String, contentText: String) {
         val notification = NotificationCompat.Builder(context, notificationChannelID)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
-            .setSmallIcon(R.drawable.iberdorla_logo)
+            .setSmallIcon(R.drawable.iberdrola_logo_notificaciones)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setColor(ContextCompat.getColor(context, R.color.EnergyGreen))
