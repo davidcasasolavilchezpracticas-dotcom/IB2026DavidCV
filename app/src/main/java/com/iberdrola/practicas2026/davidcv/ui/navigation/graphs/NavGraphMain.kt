@@ -11,8 +11,6 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractlist.ContractListScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.initial.InitialScreen
-import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.EditProfileScreen
-import com.iberdrola.practicas2026.davidcv.ui.screens.useraccount.UserAccountScreen
 
 fun NavGraphBuilder.mainGraph(
     onNavigatePopUpTo: (String, String) -> Unit,
@@ -24,21 +22,6 @@ fun NavGraphBuilder.mainGraph(
     viewSelected: Boolean,
     isProcessing: Boolean,
 ) {
-    composable(Routes.ACCOUNT_INFO) {
-        UserAccountScreen(
-            onBack = { safeBack(false) },
-            onNavigate = onNavigate,
-            analytics = analytics,
-        )
-    }
-
-    composable(Routes.ACCOUNT_EDIT) {
-        EditProfileScreen(
-            onBack = { safeBack(false) },
-            analytics = analytics,
-        )
-    }
-
     composable(Routes.LIST_LIGHT) {
         BillListScreen(
             onNavigatePopUpTo = onNavigatePopUpTo,

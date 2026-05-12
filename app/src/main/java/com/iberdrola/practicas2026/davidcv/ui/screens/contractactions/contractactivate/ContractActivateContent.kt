@@ -1,7 +1,5 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,19 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -41,29 +29,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
-import com.iberdrola.practicas2026.davidcv.domain.model.account.Account
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.CheckBoxPolite
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractNavigateButtons
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ContractTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.LegalTextItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.PoliteText
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.contractactivate.ProgressBar
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
-import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractActivateContent(
-    state: ContractActionsState,
-    account: Account?,
-    onCensurator: (String) -> String,
-    onEmailChanged: (String) -> Unit,
     onAcceptedChanged: (Boolean) -> Unit,
-    onBack: () -> Unit,
+    onEmailChanged: (String) -> Unit,
+    onCensurator: (String) -> String,
+    state: ContractActionsState,
     onClose: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onBack: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -99,7 +83,7 @@ fun ContractActivateContent(
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = onCensurator(account?.email ?: "correoejemplo@gmail.com"),
+                text = onCensurator(state.contract?.email ?: "correoejemplo@gmail.com"),
                 style = MaterialTheme.typography.titleSmall
             )
 
@@ -191,16 +175,11 @@ fun ContractActivateContentPreview() {
                 emailTry = "ejemplo@correo.com",
                 isAcceptedPolicy = true
             ),
-            account = Account(
-                id = 1,
-                name = "David",
-                email = "david@example.com"
-            ),
+            onAcceptedChanged = {},
             onCensurator = { it },
             onEmailChanged = {},
-            onAcceptedChanged = {},
-            onBack = {},
             onClose = {},
+            onBack = {},
             onNext = {}
         )
     }

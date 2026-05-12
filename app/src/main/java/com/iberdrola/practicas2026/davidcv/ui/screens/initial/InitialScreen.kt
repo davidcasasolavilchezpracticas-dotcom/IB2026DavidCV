@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.initial
 
 import android.app.Activity
-import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,30 +15,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.data.remote.firebase.RemoteConfigConstants
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.InitialTopBar
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.WelcomeHeader
-import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
-import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
@@ -52,7 +43,6 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
  */@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialScreen(
-    dataStoreViewModel: DataStoreViewModel = hiltViewModel(),
     remoteConfig: FirebaseRemoteConfig,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -61,7 +51,6 @@ fun InitialScreen(
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
-    val account by dataStoreViewModel.account.collectAsStateWithLifecycle()
 
     val isFirstRun = remoteConfig.info.lastFetchStatus == FirebaseRemoteConfig.LAST_FETCH_STATUS_NO_FETCH_YET
 
@@ -98,15 +87,7 @@ fun InitialScreen(
             { param("eventType", "View") }
     }
 
-    Scaffold(
-        topBar = {
-            InitialTopBar(account) {
-                onNavigate(Routes.ACCOUNT_INFO)
-                analytics.logEvent("ButtonAccountInfo")
-                    { param("eventType", "Click") }
-            }
-        },
-    ) { padding ->
+    Scaffold { padding ->
         Column(
             modifier = modifier
                 .statusBarsPadding()
@@ -115,7 +96,7 @@ fun InitialScreen(
                 .padding(padding),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            WelcomeHeader(account?.name)
+            WelcomeHeader()
 
             // Contenedor principal blanco
             Surface(

@@ -29,7 +29,6 @@ fun ContractActivateScreen(
     onNavigate: (String) -> Unit,
     onBack: (Boolean) -> Unit,
 ) {
-    val account by viewModelDS.account.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
@@ -53,7 +52,6 @@ fun ContractActivateScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         ContractActivateContent(
             state = state,
-            account = account,
             onCensurator = viewModel::censurator,
             onEmailChanged = viewModel::onEmailChanged,
             onAcceptedChanged = viewModel::onAcceptedChanged,

@@ -39,7 +39,7 @@ fun NavGraphBuilder.contractGraph(
     safeBack: (Boolean) -> Unit,
 ) {
     navigation(
-        route = "contract_flow/{contractId}",
+        route = "${Routes.CONTRACT_FLOW}/{contractId}",
         startDestination = Routes.CONTRACT_ACTIONS + "/{contractId}"
     ) {
         composable(Routes.CONTRACT_ACTIONS + "/{contractId}") { entry ->
