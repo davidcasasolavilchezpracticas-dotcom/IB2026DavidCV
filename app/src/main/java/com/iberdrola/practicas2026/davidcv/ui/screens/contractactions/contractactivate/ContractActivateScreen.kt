@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.rememberDefaultClickHandler
@@ -27,6 +28,7 @@ fun ContractActivateScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     onBack: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
@@ -52,6 +54,7 @@ fun ContractActivateScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         ContractActivateContent(
             state = state,
+            manager = manager,
             onCensurator = viewModel::censurator,
             onEmailChanged = viewModel::onEmailChanged,
             onAcceptedChanged = viewModel::onAcceptedChanged,

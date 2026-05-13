@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
@@ -30,6 +31,7 @@ fun ContractActionSuccessScreen(
     onNavigatePopUpTo: (String, String) -> Unit,
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
+    manager: ClickEventManager,
 ) {
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActionSuccessScreen" ) {
@@ -48,6 +50,7 @@ fun ContractActionSuccessScreen(
     ) {
         ContractActionSuccessContent(
             state = state,
+            manager = manager,
             censurator = viewModel::censurator,
             onClose = {
                 onNavigatePopUpTo(Routes.CONTRACTS, Routes.CONTRACTS)

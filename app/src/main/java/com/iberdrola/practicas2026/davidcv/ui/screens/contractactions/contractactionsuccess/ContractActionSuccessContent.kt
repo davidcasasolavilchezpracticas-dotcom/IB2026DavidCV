@@ -45,109 +45,98 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 fun ContractActionSuccessContent(
     state: ContractActionsState,
     censurator: (String) -> String,
+    manager: ClickEventManager,
     onAccept: () -> Unit,
     onClose: () -> Unit
 ) {
     var enableEnd by remember { mutableStateOf(true) }
-    val clickManager = remember { ClickEventManager() }
-
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(EnergyGreen)
-                .padding(LocalSpacing.current.xl)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(EnergyGreen)
+            .padding(LocalSpacing.current.xl)
+    ) {
+        IconButton(
+            onClick = {
+                canExecuteMethod(
+                    manager,
+                ) { onClose() }
+            },
+            modifier = Modifier.align(Alignment.TopEnd)
         ) {
-            // Icono de cerrar en la esquina superior derecha
-            IconButton(
-                onClick = {
-                    canExecuteMethod(
-                        manager,
-                    ) { onClose() }
-                },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close),
-                    tint = Color.White
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.close),
+                tint = Color.White
+            )
+        }
 
-            // Contenido Central
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Icono del pulgar hacia arriba (ThumbUp)
-                Icon(
-                    imageVector = Icons.Outlined.ThumbUp,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(120.dp)
-                )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ThumbUp,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(120.dp)
+            )
 
-                Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-                // Título de éxito
-                Text(
-                    text = stringResource(
-                        when (state.action) {
-                            ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
-                            ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
-                            ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
-                        }
-                    ),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 32.sp
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Mensaje descriptivo
-                Text(
-                    text = stringResource(R.string.emailForSuccessText) + censurator(state.emailTry),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.9f),
-                    textAlign = TextAlign.Center,
-                    lineHeight = 22.sp
-                )
-            }
-
-            // Botón Aceptar en la parte inferior
-            Button(
-                onClick = {
-                    canExecuteMethod(
-                        manager,
-                    ) {
-                        enableEnd = false
-                        onAccept()
+            Text(
+                text = stringResource(
+                    when (state.action) {
+                        ContractActions.MODIFYEMAIL -> R.string.cascTitleModify
+                        ContractActions.MODIFYSTATUSEMAIL -> R.string.cascTitleActivate
+                        ContractActions.MODIFYPHONE -> R.string.cascTitleModifyPhone
                     }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = White,
-                    contentColor = EnergyGreen
                 ),
-                shape = RoundedCornerShape(28.dp),
-                enabled = enableEnd
-            ) {
-                Text(
-                    text = stringResource(R.string.cascAccept),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                lineHeight = 32.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.emailForSuccessText) + censurator(state.emailTry),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.9f),
+                textAlign = TextAlign.Center,
+                lineHeight = 22.sp
+            )
+        }
+
+        Button(
+            onClick = {
+                canExecuteMethod(
+                    manager,
+                ) {
+                    enableEnd = false
+                    onAccept()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .align(Alignment.BottomCenter),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = White,
+                contentColor = EnergyGreen
+            ),
+            shape = RoundedCornerShape(28.dp),
+            enabled = enableEnd
+        ) {
+            Text(
+                text = stringResource(R.string.cascAccept),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
@@ -19,6 +20,7 @@ fun NavGraphBuilder.mainGraph(
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
     safeBack: (Boolean) -> Unit,
+    manager: ClickEventManager,
     viewSelected: Boolean,
     isProcessing: Boolean,
 ) {
@@ -33,6 +35,7 @@ fun NavGraphBuilder.mainGraph(
             onNavigate = onNavigate,
             analytics = analytics,
             modifier = Modifier,
+            manager = manager
         )
     }
 
@@ -47,6 +50,7 @@ fun NavGraphBuilder.mainGraph(
             onNavigate = onNavigate,
             analytics = analytics,
             modifier = Modifier,
+            manager = manager
         )
     }
 
@@ -57,6 +61,7 @@ fun NavGraphBuilder.mainGraph(
             onNavigate = onNavigate,
             analytics = analytics,
             modifier = Modifier,
+            manager = manager
         )
     }
 
@@ -65,6 +70,7 @@ fun NavGraphBuilder.mainGraph(
             navController = navController,
             onBack = { safeBack(false) },
             analytics = analytics,
+            manager = manager
         )
     }
 
@@ -74,6 +80,7 @@ fun NavGraphBuilder.mainGraph(
             remoteConfig = remoteConfig,
             onNavigate = onNavigate,
             analytics = analytics,
+            manager = manager
         )
     }
 }

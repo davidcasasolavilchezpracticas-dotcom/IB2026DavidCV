@@ -16,6 +16,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.LoadingScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.DataStoreViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -32,6 +33,7 @@ fun ContractVerifyScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     onBack: (Boolean) -> Unit,
 ) {
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
@@ -42,8 +44,6 @@ fun ContractVerifyScreen(
             onBack(false)
         }
     )
-
-    Log.d("Comprobaciones", "Contract Action -> ${state.action}")
 
 
     LaunchedEffect(Unit) {
@@ -112,6 +112,7 @@ fun ContractVerifyScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         ContractVerifyContent(
             dataStoreViewModel = dataStoreViewModel,
+            manager = manager,
             events = events,
             state = state,
         )

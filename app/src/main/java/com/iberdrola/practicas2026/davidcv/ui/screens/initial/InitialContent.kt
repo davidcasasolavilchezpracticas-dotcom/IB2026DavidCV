@@ -68,97 +68,92 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.White
 fun InitialContent(
     onNavigate: (String) -> Unit,
     analytics: FirebaseAnalytics,
+    manager: ClickEventManager,
+    isLightActive: Boolean,
     isGasActive: Boolean,
-    isLightActive: Boolean
 ) {
     var showIpDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val clickManager = remember { ClickEventManager() }
 
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
+    if (showIpDialog) {
+        IpConfigurationDialog(
+            initialIp = DataSourceConfig.pcIp,
+            onDismiss = { showIpDialog = false },
+            onConfirm = { newIp ->
+                DataSourceConfig.pcIp = newIp
+                DataSourceConfig.connectionMode = ConnectionMode.LOCAL_IP
+                showIpDialog = false
+            }
+        )
+    }
 
-        if (showIpDialog) {
-            IpConfigurationDialog(
-                initialIp = DataSourceConfig.pcIp,
-                onDismiss = { showIpDialog = false },
-                onConfirm = { newIp ->
-                    DataSourceConfig.pcIp = newIp
-                    DataSourceConfig.connectionMode = ConnectionMode.LOCAL_IP
-                    showIpDialog = false
-                }
-            )
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(LocalSpacing.current.xl)
+    ) {
+        Text(
+            text = stringResource(R.string.isSubtitle),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
 
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(LocalSpacing.current.xl)
-        ) {
-            Text(
-                text = stringResource(R.string.isSubtitle),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+        Spacer(modifier = Modifier.weight(2f))
 
-            Spacer(modifier = Modifier.weight(2f))
-
-            ServiceSection(
-                onLightClick = {
-                    canExecuteMethod(
-                        manager,
-                    ) { onNavigate(Routes.LIST_LIGHT) }
-                },
-                onGasClick = {
-                    canExecuteMethod(
-                        manager
-                    ) { onNavigate(Routes.LIST_GAS) }
-                },
-                title = stringResource(R.string.isSubtitleBills),
-                isLightActive = isLightActive,
-                isGasActive = isGasActive,
-                analytics = analytics
-            )
-
-            Spacer(modifier = Modifier.weight(2f))
-
-            ContractSection {
+        ServiceSection(
+            onLightClick = {
+                canExecuteMethod(
+                    manager,
+                ) { onNavigate(Routes.LIST_LIGHT) }
+            },
+            onGasClick = {
                 canExecuteMethod(
                     manager
-                ) {
-                    onNavigate(Routes.CONTRACTS)
-                    analytics.logEvent("ButtonContractsList") { param("eventType", "Click") }
-                }
+                ) { onNavigate(Routes.LIST_GAS) }
+            },
+            title = stringResource(R.string.isSubtitleBills),
+            isLightActive = isLightActive,
+            isGasActive = isGasActive,
+            analytics = analytics
+        )
+
+        Spacer(modifier = Modifier.weight(2f))
+
+        ContractSection {
+            canExecuteMethod(
+                manager
+            ) {
+                onNavigate(Routes.CONTRACTS)
+                analytics.logEvent("ButtonContractsList") { param("eventType", "Click") }
             }
-
-            Spacer(modifier = Modifier.weight(2f))
-
-            DebugToolsRow(
-                useNetwork = DataSourceConfig.useNetwork,
-                connectionMode = DataSourceConfig.connectionMode,
-                pcIp = DataSourceConfig.pcIp,
-                onNetworkToggle = {
-                    canExecuteMethod(
-                        manager
-                    ) { DataSourceConfig.useNetwork = it }
-                },
-                onModeChange = {
-                    canExecuteMethod(
-                        manager
-                    ) { DataSourceConfig.connectionMode = it }
-                },
-                onIpConfigClick = {
-                    canExecuteMethod(
-                        manager
-                    ) { showIpDialog = true }
-                },
-                onTestErrorClick = {
-                    canExecuteMethod(
-                        manager
-                    ) { throw Exception(context.getString(R.string.testError)) }
-                },
-            )
         }
+
+        Spacer(modifier = Modifier.weight(2f))
+
+        DebugToolsRow(
+            useNetwork = DataSourceConfig.useNetwork,
+            connectionMode = DataSourceConfig.connectionMode,
+            pcIp = DataSourceConfig.pcIp,
+            onNetworkToggle = {
+                canExecuteMethod(
+                    manager
+                ) { DataSourceConfig.useNetwork = it }
+            },
+            onModeChange = {
+                canExecuteMethod(
+                    manager
+                ) { DataSourceConfig.connectionMode = it }
+            },
+            onIpConfigClick = {
+                canExecuteMethod(
+                    manager
+                ) { showIpDialog = true }
+            },
+            onTestErrorClick = {
+                canExecuteMethod(
+                    manager
+                ) { throw Exception(context.getString(R.string.testError)) }
+            },
+        )
     }
 }
-

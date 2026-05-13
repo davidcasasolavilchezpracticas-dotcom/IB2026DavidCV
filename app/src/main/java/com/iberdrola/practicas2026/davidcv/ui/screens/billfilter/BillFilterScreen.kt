@@ -66,6 +66,7 @@ fun FilterScreen(
     viewModel: BillViewModel = hiltViewModel(),
     navController: NavController,
     analytics: FirebaseAnalytics,
+    manager: ClickEventManager,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -105,234 +106,228 @@ fun FilterScreen(
         }
     }
 
-    val clickManager = remember { ClickEventManager() }
-
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(White)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(White)
+                .weight(1f)
+                .verticalScroll(scrollState)
+                .padding(horizontal = LocalSpacing.current.la),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = LocalSpacing.current.la),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(4.dp))
+            Column {
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = stringResource(R.string.fsTituloFiltros),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.fsTituloFecha),
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        DateSelector(
-                            label = stringResource(R.string.fsSubtituloFecha1),
-                            date = state.startDate,
-                            modifier = Modifier.weight(1f),
-                            onConfirm = { date ->
-                                canExecuteMethod(
-                                    manager,
-                                ) {
-                                    viewModel.onStartDateSelected(date, context)
-                                    analytics.logEvent("SetStartDate") {
-                                        param("eventType", "RelevantMovements")
-                                    }
-                                }
-                            },
-                            onValidDate = viewModel::onValidStartDate,
-                            maxDate = state.endDate?.minusDays(1) ?: maxDateLimit,
-                            minDate = minDateLimit,
-                        )
-                        DateSelector(
-                            label = stringResource(R.string.fsSubtituloFecha2),
-                            date = state.endDate,
-                            modifier = Modifier.weight(1f),
-                            onConfirm = { date ->
-                                canExecuteMethod(
-                                    manager,
-                                ) {
-                                    viewModel.onEndDateSelected(date, context)
-                                    analytics.logEvent("SetEndDate") {
-                                        param("eventType", "RelevantMovements")
-                                    }
-                                }
-                            },
-                            onValidDate = viewModel::onValidEndDate,
-                            minDate = state.startDate?.plusDays(1) ?: minDateLimit,
-                            maxDate = maxDateLimit,
-                        )
-                    }
-                }
-
-                val currentMin = minLimit ?: 0f
-                val currentMax = maxLimit ?: 500f
-
-                PriceRangeSelector(
-                    selectedRange = state.priceRange ?: (currentMin..currentMax),
-                    totalRange = currentMin..currentMax,
-                    onSliderChange = { range ->
-                        canExecuteMethod(
-                            manager,
-                        ) {
-                            viewModel.onPriceRangeChanged(range)
-                            analytics.logEvent("SetPriceRange") {
-                                param("eventType", "RelevantMovements")
-                            }
-                        }
-                    },
+                Text(
+                    text = stringResource(R.string.fsTituloFiltros),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
                 )
 
-                Column {
-                    Text(
-                        text = stringResource(R.string.fsTituloEstado),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.fsTituloFecha),
+                    fontWeight = FontWeight.Bold
+                )
 
-                    FilterOption(
-                        onCheckedChange = { value ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    DateSelector(
+                        label = stringResource(R.string.fsSubtituloFecha1),
+                        date = state.startDate,
+                        modifier = Modifier.weight(1f),
+                        onConfirm = { date ->
                             canExecuteMethod(
                                 manager,
-                            ) { viewModel.onStateChangePaid(value) }
+                            ) {
+                                viewModel.onStartDateSelected(date, context)
+                                analytics.logEvent("SetStartDate") {
+                                    param("eventType", "RelevantMovements")
+                                }
+                            }
                         },
-                        label = PaymentStatus.PAID.label,
-                        value = state.paymentStatusPaid,
+                        onValidDate = viewModel::onValidStartDate,
+                        maxDate = state.endDate?.minusDays(1) ?: maxDateLimit,
+                        minDate = minDateLimit,
                     )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    FilterOption(
-                        onCheckedChange = { value ->
+                    DateSelector(
+                        label = stringResource(R.string.fsSubtituloFecha2),
+                        date = state.endDate,
+                        modifier = Modifier.weight(1f),
+                        onConfirm = { date ->
                             canExecuteMethod(
                                 manager,
-                            ) { viewModel.onStateChangePending(value) }
+                            ) {
+                                viewModel.onEndDateSelected(date, context)
+                                analytics.logEvent("SetEndDate") {
+                                    param("eventType", "RelevantMovements")
+                                }
+                            }
                         },
-                        label = PaymentStatus.PENDING.label,
-                        value = state.paymentStatusPending,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    FilterOption(
-                        onCheckedChange = { value ->
-                            canExecuteMethod(
-                                manager,
-                            ) { viewModel.onStateChangeTramited(value) }
-                        },
-                        label = PaymentStatus.TRAMITED.label,
-                        value = state.paymentStatusTramited,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    FilterOption(
-                        onCheckedChange = { value ->
-                            canExecuteMethod(
-                                manager,
-                            ) { viewModel.onStateChangeCanceled(value) }
-                        },
-                        label = PaymentStatus.CANCELED.label,
-                        value = state.paymentStatusCanceled,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    FilterOption(
-                        onCheckedChange = { value ->
-                            canExecuteMethod(
-                                manager,
-                            ) { viewModel.onStateChangeFixed(value) }
-                        },
-                        label = PaymentStatus.FIXED_PAYMENT.label,
-                        value = state.paymentStatusFixed,
+                        onValidDate = viewModel::onValidEndDate,
+                        minDate = state.startDate?.plusDays(1) ?: minDateLimit,
+                        maxDate = maxDateLimit,
                     )
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(LocalSpacing.current.la)
-                    .fillMaxWidth()
-            ) {
-                Button(
-                    onClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) {
-                            applyButtonEnabled = false
-                            navController.previousBackStackEntry?.savedStateHandle?.set(
-                                "filters_result",
-                                state
-                            )
-                            onBack()
-                            analytics.logEvent("ButtonApplyFilters") {
-                                param("eventType", "Click")
-                            } }
-                    },
-                    enabled = applyButtonEnabled,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
-                    shape = RoundedCornerShape(28.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.fsButtonApply),
-                        color = Color.White,
-                        fontSize = 14.sp
-                    )
-                }
+            val currentMin = minLimit ?: 0f
+            val currentMax = maxLimit ?: 500f
+
+            PriceRangeSelector(
+                selectedRange = state.priceRange ?: (currentMin..currentMax),
+                totalRange = currentMin..currentMax,
+                onSliderChange = { range ->
+                    canExecuteMethod(
+                        manager,
+                    ) {
+                        viewModel.onPriceRangeChanged(range)
+                        analytics.logEvent("SetPriceRange") {
+                            param("eventType", "RelevantMovements")
+                        }
+                    }
+                },
+            )
+
+            Column {
+                Text(
+                    text = stringResource(R.string.fsTituloEstado),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                TextButton(
-                    onClick = {
+                FilterOption(
+                    onCheckedChange = { value ->
                         canExecuteMethod(
                             manager,
-                        ) {
-                            viewModel.deleteFilters()
-                            analytics.logEvent("ButtonDeleteFilters") {
-                                param("eventType", "Click")
-                            }
-                        }
+                        ) { viewModel.onStateChangePaid(value) }
                     },
-                ) {
-                    Text(
-                        textDecoration = TextDecoration.Underline,
-                        text = stringResource(R.string.fsButtonDelete),
-                        fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2E5D4B),
-                            fontSize = 14.sp
+                    label = PaymentStatus.PAID.label,
+                    value = state.paymentStatusPaid,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    onCheckedChange = { value ->
+                        canExecuteMethod(
+                            manager,
+                        ) { viewModel.onStateChangePending(value) }
+                    },
+                    label = PaymentStatus.PENDING.label,
+                    value = state.paymentStatusPending,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    onCheckedChange = { value ->
+                        canExecuteMethod(
+                            manager,
+                        ) { viewModel.onStateChangeTramited(value) }
+                    },
+                    label = PaymentStatus.TRAMITED.label,
+                    value = state.paymentStatusTramited,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    onCheckedChange = { value ->
+                        canExecuteMethod(
+                            manager,
+                        ) { viewModel.onStateChangeCanceled(value) }
+                    },
+                    label = PaymentStatus.CANCELED.label,
+                    value = state.paymentStatusCanceled,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FilterOption(
+                    onCheckedChange = { value ->
+                        canExecuteMethod(
+                            manager,
+                        ) { viewModel.onStateChangeFixed(value) }
+                    },
+                    label = PaymentStatus.FIXED_PAYMENT.label,
+                    value = state.paymentStatusFixed,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(LocalSpacing.current.la)
+                .fillMaxWidth()
+        ) {
+            Button(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) {
+                        applyButtonEnabled = false
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "filters_result",
+                            state
                         )
+                        onBack()
+                        analytics.logEvent("ButtonApplyFilters") {
+                            param("eventType", "Click")
+                        } }
+                },
+                enabled = applyButtonEnabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
+                shape = RoundedCornerShape(28.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.fsButtonApply),
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            TextButton(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) {
+                        viewModel.deleteFilters()
+                        analytics.logEvent("ButtonDeleteFilters") {
+                            param("eventType", "Click")
+                        }
                     }
+                },
+            ) {
+                Text(
+                    textDecoration = TextDecoration.Underline,
+                    text = stringResource(R.string.fsButtonDelete),
+                    fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2E5D4B),
+                        fontSize = 14.sp
+                    )
                 }
             }
-    }
+        }
 }
 
 @Preview
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current), onBack = {})
+    FilterScreen(navController = rememberNavController(), analytics = FirebaseAnalytics.getInstance(LocalContext.current), onBack = {}, manager = ClickEventManager())
 }

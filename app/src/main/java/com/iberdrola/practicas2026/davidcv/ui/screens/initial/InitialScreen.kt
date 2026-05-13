@@ -30,6 +30,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.data.remote.firebase.RemoteConfigConstants
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.WelcomeHeader
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
@@ -48,6 +49,7 @@ fun InitialScreen(
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit,
     analytics: FirebaseAnalytics,
+    manager: ClickEventManager,
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
@@ -73,13 +75,13 @@ fun InitialScreen(
 
 
     LaunchedEffect(Unit) {
-        isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
         isLightActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT)
+        isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
 
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
                 isLightActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_LIGHT)
+                isGasActive = remoteConfig.getBoolean(RemoteConfigConstants.ACTIVATE_GAS)
             }
         }
         analytics.logEvent("InitialScreen")
@@ -104,9 +106,10 @@ fun InitialScreen(
             ) {
                 InitialContent(
                     isLightActive = isLightActive,
-                    onNavigate = onNavigate,
                     isGasActive = isGasActive,
+                    onNavigate = onNavigate,
                     analytics = analytics,
+                    manager = manager,
                 )
             }
         }
@@ -122,10 +125,11 @@ fun InitialScreen(
 fun InitialScreenPreview() {
     val navController = rememberNavController()
     InitialScreen(
-        navController = navController,
-        modifier = Modifier,
         analytics = FirebaseAnalytics.getInstance(navController.context),
         remoteConfig = FirebaseRemoteConfig.getInstance(),
+        navController = navController,
+        manager = ClickEventManager(),
+        modifier = Modifier,
         onNavigate = {},
     )
 }

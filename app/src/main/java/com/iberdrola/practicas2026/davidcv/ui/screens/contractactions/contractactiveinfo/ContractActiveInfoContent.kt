@@ -50,150 +50,144 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractActiveInfoContent(
-    contract: Contract,
+    manager: ClickEventManager,
     onModifyEmail: () -> Unit,
-    onModifyPhone: () -> Unit
+    onModifyPhone: () -> Unit,
+    contract: Contract,
 ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(LocalSpacing.current.lg)
+        ) {
+            Text(
+                text = stringResource(R.string.caicTitleLight),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.caicAddress),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = LocalSpacing.current.sm)
+            )
 
-    val clickManager = remember { ClickEventManager() }
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
 
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
+            Text(
+                text = stringResource(R.string.caicInfoText),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.DarkGray
+            )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
+
+            // Sección Email
+            Text(
+                text = stringResource(R.string.caicEmailTitle),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.md))
+
+            Text(
+                text = contract.email!!,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = LocalSpacing.current.xxs)
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = LocalSpacing.current.lg),
+                thickness = 1.dp,
+                color = Color.LightGray.copy(alpha = 0.5f)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(0.9f),
+                verticalAlignment = Alignment.Top
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(LocalSpacing.current.md))
+                Text(
+                    text = stringResource(R.string.caicAlertText),
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                    color = Color.Gray,
+                    lineHeight = 18.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .padding(LocalSpacing.current.lg)
         ) {
-            Column(
+            Button(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onModifyPhone() }
+                },
                 modifier = Modifier
-                    .padding(LocalSpacing.current.lg)
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
+                shape = RoundedCornerShape(28.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.caicTitleLight),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = stringResource(R.string.caicAddress),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = LocalSpacing.current.sm)
-                )
-
-                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
-
-                Text(
-                    text = stringResource(R.string.caicInfoText),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.DarkGray
-                )
-
-                Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
-
-                // Sección Email
-                Text(
-                    text = stringResource(R.string.caicEmailTitle),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(LocalSpacing.current.md))
-
-                Text(
-                    text = contract.email!!,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(top = LocalSpacing.current.xxs)
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = LocalSpacing.current.lg),
-                    thickness = 1.dp,
-                    color = Color.LightGray.copy(alpha = 0.5f)
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    verticalAlignment = Alignment.Top
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Outlined.Info,
+                        imageVector = Icons.Outlined.Phone,
                         contentDescription = null,
-                        tint = Color.Gray,
                         modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(LocalSpacing.current.md))
+                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
                     Text(
-                        text = stringResource(R.string.caicAlertText),
-                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
-                        color = Color.Gray,
-                        lineHeight = 18.sp
+                        text = stringResource(R.string.caicButtonModifyPhone),
+                        fontSize = 16.sp
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
+            Button(
+                onClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onModifyEmail() }
+                },
                 modifier = Modifier
-                    .padding(LocalSpacing.current.lg)
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
+                shape = RoundedCornerShape(28.dp)
             ) {
-                Button(
-                    onClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) { onModifyPhone() }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
-                    shape = RoundedCornerShape(28.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.Phone,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
-                        Text(
-                            text = stringResource(R.string.caicButtonModifyPhone),
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) { onModifyEmail() }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E5D4B)),
-                    shape = RoundedCornerShape(28.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
-                        Text(
-                            text = stringResource(R.string.caicButtonModify),
-                            fontSize = 16.sp
-                        )
-                    }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
+                    Text(
+                        text = stringResource(R.string.caicButtonModify),
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
@@ -213,7 +207,8 @@ fun ContractActiveInfoContentPreview() {
                 phone = "600000000"
             ),
             onModifyEmail = {},
-            onModifyPhone = {}
+            onModifyPhone = {},
+            manager = remember { ClickEventManager() }
         )
     }
 }

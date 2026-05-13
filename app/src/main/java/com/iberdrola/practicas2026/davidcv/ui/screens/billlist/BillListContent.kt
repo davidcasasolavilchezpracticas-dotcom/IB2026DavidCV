@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyBillsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
@@ -43,10 +44,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillListContent(
+    manager: ClickEventManager,
+    enabled: Boolean = true,
     events: BillListEvents,
     state: BillListState,
     modifier: Modifier,
-    enabled: Boolean = true
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     val pullState = rememberPullToRefreshState()
@@ -82,11 +84,11 @@ fun BillListContent(
 
             is BillListState.Error -> {
                 ErrorScreen(
-                    exception = state.exception,
+                    img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                     message = state.exception.message ?: R.string.blcUnknownError.toString(),
                     modifier = modifier.verticalScroll(rememberScrollState()),
-                    img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
-                    onClick = { events.onErrorClick(state) }
+                    onClick = { events.onErrorClick(state) },
+                    exception = state.exception,
                 )
             }
 
@@ -98,20 +100,21 @@ fun BillListContent(
                 if (bills.isEmpty()) {
                     EmptyBillsScreen(
                         modifier = modifier.verticalScroll(rememberScrollState()),
+                        isFiltered = isFiltered,
                         onRefresh = if(isFiltered) {
                             events.onEmptyFilterClick
                         } else events.onEmptyClick,
-                        isFiltered = isFiltered
                     )
                 } else {
                     BillListContentInfo(
-                        bills = bills,
-                        modifier = modifier,
-                        onFilterClick = events.onFilterClick,
-                        onDeleteFilters = events.onDeleteFilters,
-                        getSelectedFilters = events.getSelectedFilters,
                         filtersCounter = BillListViewModel.countFilters(events.getCurrentFilters(), min = min, max = max),
-                        enabled = enabled
+                        getSelectedFilters = events.getSelectedFilters,
+                        onDeleteFilters = events.onDeleteFilters,
+                        onFilterClick = events.onFilterClick,
+                        modifier = modifier,
+                        manager = manager,
+                        enabled = enabled,
+                        bills = bills,
                     )
                 }
             }

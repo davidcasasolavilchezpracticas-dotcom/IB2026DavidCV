@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.NavigationActions
 import com.iberdrola.practicas2026.davidcv.ui.navigation.graphs.contractGraph
 import com.iberdrola.practicas2026.davidcv.ui.navigation.graphs.mainGraph
@@ -21,6 +22,7 @@ fun AppNavHost(
     navController: NavHostController,
     analytics: FirebaseAnalytics,
     safeBack: (Boolean) -> Unit,
+    manager: ClickEventManager,
     actions: NavigationActions,
     padding: PaddingValues,
     isProcessing: Boolean,
@@ -40,6 +42,7 @@ fun AppNavHost(
             remoteConfig = remoteConfig,
             analytics = analytics,
             safeBack = safeBack,
+            manager = manager
         )
         contractGraph(
             onNavigatePopUpTo = actions::navigatePopUpTo,
@@ -47,6 +50,7 @@ fun AppNavHost(
             navController = navController,
             analytics = analytics,
             safeBack = safeBack,
+            manager = manager
         )
     }
 }

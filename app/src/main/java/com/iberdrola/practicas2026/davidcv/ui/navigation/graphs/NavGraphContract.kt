@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.CreateViewModel
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsScreen
@@ -37,6 +38,7 @@ fun NavGraphBuilder.contractGraph(
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
     safeBack: (Boolean) -> Unit,
+    manager: ClickEventManager,
 ) {
     navigation(
         route = "${Routes.CONTRACT_FLOW}/{contractId}",
@@ -78,7 +80,8 @@ fun NavGraphBuilder.contractGraph(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigate = onNavigate,
                 analytics = analytics,
-                onBack = safeBack
+                onBack = safeBack,
+                manager = manager
             )
         }
 
@@ -89,6 +92,7 @@ fun NavGraphBuilder.contractGraph(
                 onNavigate = onNavigate,
                 analytics = analytics,
                 onBack = safeBack,
+                manager = manager
             )
         }
 
@@ -98,7 +102,8 @@ fun NavGraphBuilder.contractGraph(
                 onNavigatePopUpTo = onNavigatePopUpTo,
                 onNavigate = onNavigate,
                 analytics = analytics,
-                onBack = safeBack
+                onBack = safeBack,
+                manager = manager
             )
         }
 
@@ -108,7 +113,8 @@ fun NavGraphBuilder.contractGraph(
                 onNavigatePopUpTo = onNavigatePopUpTo,
                 onNavigate = onNavigate,
                 analytics = analytics,
-                onBack = safeBack
+                onBack = safeBack,
+                manager = manager
             )
         }
 
@@ -118,7 +124,8 @@ fun NavGraphBuilder.contractGraph(
                 onNavigatePopUpTo = onNavigatePopUpTo,
                 onNavigate = onNavigate,
                 analytics = analytics,
-                onBack = safeBack
+                onBack = safeBack,
+                manager = manager
             )
         }
 
@@ -127,6 +134,7 @@ fun NavGraphBuilder.contractGraph(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
                 analytics = analytics,
+                manager = manager
             )
         }
     }

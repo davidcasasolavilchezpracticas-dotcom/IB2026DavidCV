@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.BillListHeader
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.horizontalpage.HorizontalPage
@@ -50,6 +51,7 @@ fun BillListScreen(
     viewSelected: Boolean = true,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     modifier: Modifier,
     isClosing: Boolean,
     onBack: () -> Unit
@@ -201,6 +203,7 @@ fun BillListScreen(
         HorizontalPage(
             enabled = !isClosing,
             modifier = modifier,
+            manager = manager,
             events = events,
             state = state,
         )

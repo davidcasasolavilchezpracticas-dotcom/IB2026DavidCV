@@ -50,13 +50,14 @@ import java.time.LocalDateTime
 
 @Composable
 fun BillListContentInfo(
-    bills: List<Bill>,
-    filtersCounter: Int,
-    onFilterClick: () -> Unit,
-    onDeleteFilters: () -> Unit,
-    modifier: Modifier = Modifier,
     getSelectedFilters: () -> List<String>,
-    enabled: Boolean = true
+    modifier: Modifier = Modifier,
+    onDeleteFilters: () -> Unit,
+    manager: ClickEventManager,
+    onFilterClick: () -> Unit,
+    enabled: Boolean = true,
+    filtersCounter: Int,
+    bills: List<Bill>,
 ) {
     var alertDialogActive by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -64,108 +65,102 @@ fun BillListContentInfo(
 
     LaunchedEffect(Unit) { listState.scrollToItem(0) }
 
-    val clickManager = remember { ClickEventManager() }
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
 
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
+        item {
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+            ) {
+                LastInvoiceCard(bill = bills[0])
 
-        LazyColumn(
-            state = listState,
-            modifier = modifier
-                .fillMaxWidth()
-        ) {
+                Spacer(modifier = Modifier.height(24.dp))
 
+                ShowAlertDialogs(
+                    alertDialogActive = alertDialogActive,
+                    desactiveAlertDialog = { alertDialogActive = false },
+                    showDeleteDialog = showDeleteDialog,
+                    desactiveDeleteDialog = {  showDeleteDialog = false },
+                    onDeleteFilters = {
+                        canExecuteMethod(
+                            manager,
+                        ) { onDeleteFilters() }
+                    },
+                    getSelectedFilters = getSelectedFilters,
+                    count = filtersCounter
+                )
+            }
+        }
+
+        stickyHeader {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(White)
+                    .padding(horizontal = LocalSpacing.current.lg),
+            ) {
+                Text(
+                    text = stringResource(R.string.blciTitle),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                ButtonFilter(
+                    onFilterClick = {
+                        canExecuteMethod(
+                            manager,
+                        ) { onFilterClick() }
+                    },
+                    onLongClick = {
+                        canExecuteMethod(
+                            manager,
+                        ) { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true }
+                    },
+                    label = stringResource(R.string.blciButtonFilter),
+                    icon = Icons.Default.Tune,
+                    selectedFilters = getSelectedFilters(),
+                    filtersCount = filtersCounter,
+                    enabled = enabled
+                )
+            }
+        }
+
+
+        val groupedBills = bills.groupBy { it.emisionDate.year }
+
+        groupedBills.forEach { (year, billsInYear) ->
             item {
-                Column(
-                    modifier = Modifier
-                        .background(Color.White)
-                ) {
-                    LastInvoiceCard(bill = bills[0])
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    ShowAlertDialogs(
-                        alertDialogActive = alertDialogActive,
-                        desactiveAlertDialog = { alertDialogActive = false },
-                        showDeleteDialog = showDeleteDialog,
-                        desactiveDeleteDialog = {  showDeleteDialog = false },
-                        onDeleteFilters = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onDeleteFilters() }
-                        },
-                        getSelectedFilters = getSelectedFilters,
-                        count = filtersCounter
-                    )
-                }
+                Text(
+                    text = year.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(LocalSpacing.current.lg)
+                )
             }
 
-            stickyHeader {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(White)
-                        .padding(horizontal = LocalSpacing.current.lg),
-                ) {
-                    Text(
-                        text = stringResource(R.string.blciTitle),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+            itemsIndexed(billsInYear) { index, bill ->
+                FacturaItem(
+                    bill = bill,
+                    onClick = {
+                        canExecuteMethod(
+                            manager,
+                        ) {  alertDialogActive = true }
+                    },
+                    enabled = enabled
+                )
+
+                if (index < billsInYear.lastIndex) {
+                    HorizontalDivider(
+                        color = Color.LightGray,
+                        thickness = 0.75.dp,
+                        modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
                     )
-
-                    ButtonFilter(
-                        onFilterClick = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onFilterClick() }
-                        },
-                        onLongClick = {
-                            canExecuteMethod(
-                                manager,
-                            ) { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true }
-                        },
-                        label = stringResource(R.string.blciButtonFilter),
-                        icon = Icons.Default.Tune,
-                        selectedFilters = getSelectedFilters(),
-                        filtersCount = filtersCounter,
-                        enabled = enabled
-                    )
-                }
-            }
-
-
-            val groupedBills = bills.groupBy { it.emisionDate.year }
-
-            groupedBills.forEach { (year, billsInYear) ->
-                item {
-                    Text(
-                        text = year.toString(),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(LocalSpacing.current.lg)
-                    )
-                }
-
-                itemsIndexed(billsInYear) { index, bill ->
-                    FacturaItem(
-                        bill = bill,
-                        onClick = {
-                            canExecuteMethod(
-                                manager,
-                            ) {  alertDialogActive = true }
-                        },
-                        enabled = enabled
-                    )
-
-                    if (index < billsInYear.lastIndex) {
-                        HorizontalDivider(
-                            color = Color.LightGray,
-                            thickness = 0.75.dp,
-                            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
-                        )
-                    }
                 }
             }
         }
@@ -188,6 +183,7 @@ fun BillListContentInfoPreview() {
             onFilterClick = {},
             bills = sampleBills,
             onDeleteFilters = {},
+            manager = ClickEventManager(),
             getSelectedFilters = { listOf() },
         )
     }

@@ -55,161 +55,155 @@ fun ContractActivateContent(
     onEmailChanged: (String) -> Unit,
     onCensurator: (String) -> String,
     state: ContractActionsState,
+    manager: ClickEventManager,
     onClose: () -> Unit,
     onNext: () -> Unit,
     onBack: () -> Unit,
 ) {
-
-    val clickManager = remember { ClickEventManager() }
-
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
-
-        Scaffold(
-            topBar = {
-                ContractTopAppBar(
-                    title = R.string.cacActivateElectronicBill,
-                    progress = 0.5f,
-                    onClose = {
+    Scaffold(
+        topBar = {
+            ContractTopAppBar(
+                title = R.string.cacActivateElectronicBill,
+                progress = 0.5f,
+                onClose = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onClose() }
+                },
+            )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitEmailAndPolicy,
+                    onBack = {
                         canExecuteMethod(
                             manager,
-                        ) { onClose() }
+                        ) { onBack() }
+                    },
+                    onNext = {
+                        canExecuteMethod(
+                            manager,
+                        ) { onNext() }
                     },
                 )
-            },
-            bottomBar = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ContractNavigateButtons(
-                        enable = state.canSubmitEmailAndPolicy,
-                        onBack = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onBack() }
-                        },
-                        onNext = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onNext() }
-                        },
-                    )
-                }
             }
-        ) { padding ->
-            Column(
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(LocalSpacing.current.lg)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Spacer(modifier = Modifier.height(LocalSpacing.current.md))
+
+            Text(
+                text = stringResource(R.string.cacTitleAccountEmail),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = onCensurator(state.contract?.email ?: "correoejemplo@gmail.com"),
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
+
+            Text(
+                text = stringResource(R.string.cacTitleEmailLinked),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+            TextField(
+                value = state.emailTry,
+                onValueChange = onEmailChanged,
+                label = { Text(stringResource(R.string.cacLabelEmailText)) },
+                modifier = Modifier.fillMaxWidth(),
+                isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Gray,
+                    unfocusedIndicatorColor = Color.LightGray,
+                    cursorColor = EnergyGreen,
+                    selectionColors = TextSelectionColors(
+                        handleColor = EnergyGreen,
+                        backgroundColor = EnergyGreen.copy(alpha = 0.4f)
+                    )
+                ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
+                Text(
+                    text = stringResource(R.string.OnErrorEmail),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
+
+            Text(
+                text = stringResource(R.string.cscBasicInfo),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            LegalTextItem(
+                R.string.cscLegalTextResponsable,
+                R.string.cscLegalTextResponsableDescription
+            )
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+            LegalTextItem(
+                R.string.cscLegalTextFinalidad,
+                R.string.cscLegalTextFinalidadDescription
+            )
+            Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
+
+            LegalTextItem(
+                R.string.cscLegalTextDerechos,
+                R.string.cscLegalTextDerechosDescription
+            )
+            Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
+
+            Row(
+                verticalAlignment = Alignment.Top,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(LocalSpacing.current.lg)
-                    .verticalScroll(rememberScrollState())
+                    .padding(LocalSpacing.current.sm)
             ) {
-                Spacer(modifier = Modifier.height(LocalSpacing.current.md))
-
-                Text(
-                    text = stringResource(R.string.cacTitleAccountEmail),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = onCensurator(state.contract?.email ?: "correoejemplo@gmail.com"),
-                    style = MaterialTheme.typography.titleSmall
+                CheckBoxPolite(
+                    value = state.isAcceptedPolicy,
+                    onCheckedChange = { value ->
+                        canExecuteMethod(
+                            manager,
+                        ) { onAcceptedChanged(value) }
+                    },
                 )
 
-                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
+                Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
 
-                Text(
-                    text = stringResource(R.string.cacTitleEmailLinked),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                PoliteText(
+                    txt1 = R.string.csc_Txt1Policy,
+                    spTxt1 = R.string.csc_spTxt1Policy,
+                    txt2 = R.string.csc_Txt2Policy
                 )
-
-                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-                TextField(
-                    value = state.emailTry,
-                    onValueChange = onEmailChanged,
-                    label = { Text(stringResource(R.string.cacLabelEmailText)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.LightGray,
-                        cursorColor = EnergyGreen,
-                        selectionColors = TextSelectionColors(
-                            handleColor = EnergyGreen,
-                            backgroundColor = EnergyGreen.copy(alpha = 0.4f)
-                        )
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.None,
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
-                    Text(
-                        text = stringResource(R.string.OnErrorEmail),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
-
-                Text(
-                    text = stringResource(R.string.cscBasicInfo),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-
-                LegalTextItem(
-                    R.string.cscLegalTextResponsable,
-                    R.string.cscLegalTextResponsableDescription
-                )
-                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-                LegalTextItem(
-                    R.string.cscLegalTextFinalidad,
-                    R.string.cscLegalTextFinalidadDescription
-                )
-                Spacer(modifier = Modifier.height(LocalSpacing.current.sm))
-
-                LegalTextItem(
-                    R.string.cscLegalTextDerechos,
-                    R.string.cscLegalTextDerechosDescription
-                )
-                Spacer(modifier = Modifier.height(LocalSpacing.current.lg))
-
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .padding(LocalSpacing.current.sm)
-                ) {
-                    CheckBoxPolite(
-                        value = state.isAcceptedPolicy,
-                        onCheckedChange = { value ->
-                            canExecuteMethod(
-                                manager,
-                            ) { onAcceptedChanged(value) }
-                        },
-                    )
-
-                    Spacer(modifier = Modifier.width(LocalSpacing.current.sm))
-
-                    PoliteText(
-                        txt1 = R.string.csc_Txt1Policy,
-                        spTxt1 = R.string.csc_spTxt1Policy,
-                        txt2 = R.string.csc_Txt2Policy
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -223,6 +217,7 @@ fun ContractActivateContentPreview() {
                 emailTry = "ejemplo@correo.com",
                 isAcceptedPolicy = true
             ),
+            manager = ClickEventManager(),
             onAcceptedChanged = {},
             onCensurator = { it },
             onEmailChanged = {},

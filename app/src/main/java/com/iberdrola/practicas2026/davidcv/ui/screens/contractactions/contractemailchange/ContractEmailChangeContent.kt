@@ -54,108 +54,102 @@ import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractEmailChangeContent(
-    state: ContractActionsState,
     onEmailChanged: (String) -> Unit,
+    state: ContractActionsState,
+    manager: ClickEventManager,
     onClose: () -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
-
-    val clickManager = remember { ClickEventManager() }
-
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
-
-        Scaffold(
-            topBar = {
-                ContractTopAppBar(
-                    title = R.string.ceccTitle,
-                    progress = 0.5f,
-                    onClose = {
+    Scaffold(
+        topBar = {
+            ContractTopAppBar(
+                title = R.string.ceccTitle,
+                progress = 0.5f,
+                onClose = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onClose() }
+                },
+            )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitEmail,
+                    onBack = {
                         canExecuteMethod(
                             manager,
-                        ) { onClose() }
+                        ) { onBack() }
+                    },
+                    onNext = {
+                        canExecuteMethod(
+                            manager,
+                        ) { onNext() }
                     },
                 )
-            },
-            bottomBar = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ContractNavigateButtons(
-                        enable = state.canSubmitEmail,
-                        onBack = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onBack() }
-                        },
-                        onNext = {
-                            canExecuteMethod(
-                                manager,
-                            ) { onNext() }
-                        },
-                    )
-                }
             }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(LocalSpacing.current.la)
-            ) {
-                Text(
-                    text = stringResource(R.string.cacTitleEmailLinked),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
-                )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(LocalSpacing.current.la)
+        ) {
+            Text(
+                text = stringResource(R.string.cacTitleEmailLinked),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 24.sp
+            )
 
-                Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
+            Spacer(modifier = Modifier.height(LocalSpacing.current.xxl))
 
-                // Campo de texto estilo Material (solo línea inferior)
-                TextField(
-                    value = state.emailTry,
-                    onValueChange = onEmailChanged,
-                    label = {
-                        Text(
-                            text = stringResource(R.string.ceccLabelNewEmail),
-                            color = Color.Gray
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.DarkGray,
-                        unfocusedIndicatorColor = Color.LightGray,
-                        cursorColor = EnergyGreen,
-                        selectionColors = TextSelectionColors(
-                            handleColor = EnergyGreen,
-                            backgroundColor = EnergyGreen.copy(alpha = 0.4f)
-                        )
-                    ),
-                    singleLine = true,
-                    isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.None,
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
-                if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
+            // Campo de texto estilo Material (solo línea inferior)
+            TextField(
+                value = state.emailTry,
+                onValueChange = onEmailChanged,
+                label = {
                     Text(
-                        text = stringResource(R.string.OnErrorEmail),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
+                        text = stringResource(R.string.ceccLabelNewEmail),
+                        color = Color.Gray
                     )
-                }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.DarkGray,
+                    unfocusedIndicatorColor = Color.LightGray,
+                    cursorColor = EnergyGreen,
+                    selectionColors = TextSelectionColors(
+                        handleColor = EnergyGreen,
+                        backgroundColor = EnergyGreen.copy(alpha = 0.4f)
+                    )
+                ),
+                singleLine = true,
+                isError = state.emailTry.isNotEmpty() && !state.isEmailValid,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.None,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                )
+            )
 
-                Spacer(modifier = Modifier.weight(1f))
+            if (state.emailTry.isNotEmpty() && !state.isEmailValid) {
+                Text(
+                    text = stringResource(R.string.OnErrorEmail),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

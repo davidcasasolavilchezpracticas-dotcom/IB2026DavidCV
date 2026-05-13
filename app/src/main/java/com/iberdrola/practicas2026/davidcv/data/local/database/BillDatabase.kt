@@ -87,7 +87,6 @@ abstract class BillDatabase : RoomDatabase() {
             }
 
         private suspend fun prepopulateDatabase(context: Context, database: BillDatabase) {
-            Log.d("Comprobaciones", "Poblando base de datos desde el nuevo formato JSON...")
             try {
                 // val dao = database.billDao()
 
@@ -101,9 +100,6 @@ abstract class BillDatabase : RoomDatabase() {
                     .create()
 
                 val type = object : TypeToken<List<BillEntity>>() {}.type
-                val bills: List<BillEntity> = gson.fromJson(jsonString, type)
-
-                //bills.forEach { dao.insert(it) }
 
             } catch (e: Exception) {
                 Log.e("Comprobaciones", "Error al poblar base de datos: ${e.message}")

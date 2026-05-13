@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,24 +23,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 
 @Composable
 fun GeneralTopAppBar(
     handleBackNavigation: (Boolean) -> Unit,
-    isNavigating: Boolean = false,
     currentRoute: String?,
 ) {
     if (
         (
             currentRoute != Routes.INITIAL &&
-            currentRoute != Routes.CONTRACT_ACTIVATE &&
-            currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
-            currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
-            currentRoute != Routes.CONTRACT_VERIFY &&
-            currentRoute != Routes.CONTRACT_SUCCESS
+                    currentRoute != Routes.CONTRACT_ACTIVATE &&
+                    currentRoute != Routes.CONTRACT_EMAIL_CHANGE &&
+                    currentRoute != Routes.CONTRACT_PHONE_CHANGE &&
+                    currentRoute != Routes.CONTRACT_VERIFY &&
+                    currentRoute != Routes.CONTRACT_SUCCESS
             ) && currentRoute != null
     ) {
         Row(
@@ -48,9 +52,7 @@ fun GeneralTopAppBar(
                 .padding(LocalSpacing.current.xs)
                 .padding(start = LocalSpacing.current.sm)
                 .clip(RoundedCornerShape(12.dp))
-                .clickable(enabled = !isNavigating) {
-                    handleBackNavigation(false)
-                }
+                .clickable{handleBackNavigation(false)}
         ) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
@@ -76,4 +78,5 @@ fun GeneralTopAppBar(
             )
         }
     }
+
 }

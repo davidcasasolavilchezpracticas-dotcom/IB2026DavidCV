@@ -107,7 +107,6 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractEmail(email: String) {
         viewModelScope.launch {
             if ( _updateContractEmailUseCase(_state.value.contract?.id!!, email) is BaseResult.Success) {
-                Log.d("ComprobacionesContractActionsViewModel", "Email actualizado correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -118,7 +117,6 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractPhone(phone: String) {
         viewModelScope.launch {
             if ( _updateContractPhoneUseCase(_state.value.contract?.id!!, phone) is BaseResult.Success) {
-                Log.d("ComprobacionesContractActionsViewModel", "Número de teléfono actualizado correctamente")
                 _state.update { it.copy(phoneChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el número de teléfono") }
@@ -129,7 +127,6 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractStatus(status: ContractStatus) {
         viewModelScope.launch {
             if ( _updateContractStatusUseCase(_state.value.contract?.id!!, status) is BaseResult.Success) {
-                Log.d("ComprobacionesContractActionsViewModel", "Status actualizado correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -140,7 +137,6 @@ class ContractActionsViewModel @Inject constructor(
     fun updateContractEmailAndStatus(email: String, status: ContractStatus) {
         viewModelScope.launch {
             if ( _updateContractEmailAndStatusUseCase(_state.value.contract?.id!!, email, status) is BaseResult.Success) {
-                Log.d("ComprobacionesContractActionsViewModel", "Email y status actualizados correctamente")
                 _state.update { it.copy(emailChanged = true) }
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
@@ -158,7 +154,6 @@ class ContractActionsViewModel @Inject constructor(
             _getContractByIdUseCase(id).collect { result ->
                 when (result) {
                     is BaseResult.Success -> {
-                        Log.d("Comprobaciones", "Contract -> ${result.data}")
                         _state.value = _state.value.copy(
                             isLoading = false,
                             contract = result.data,
@@ -167,10 +162,8 @@ class ContractActionsViewModel @Inject constructor(
                                 else
                                     ContractActions.MODIFYSTATUSEMAIL
                         )
-                        Log.d("Comprobaciones", "Contract -> ${_state.value.contract}")
                     }
                     is BaseResult.Error -> {
-                        Log.d("Comprobaciones", "Contract -> ${result.exception}")
                         _state.update { it.copy(
                             isLoading = false,
                             errorMessage = result.exception.message ?: "Error desconocido"
@@ -191,10 +184,6 @@ class ContractActionsViewModel @Inject constructor(
         val lastEjecution = sharedPref.getLong("start_time", 0L)
         val nextEjecution = lastEjecution + TimeUnit.HOURS.toMillis(12)
         val timeLeft = abs(System.currentTimeMillis() - nextEjecution)
-
-        Log.d("Comprobaciones", "Last Ejecution -> $lastEjecution")
-        Log.d("Comprobaciones", "Next Ejecution -> $nextEjecution")
-        Log.d("Comprobaciones", "Time Left -> $timeLeft")
 
         _state.update { it.copy(
             timeLeftToResend = if (timeLeft > 0) {

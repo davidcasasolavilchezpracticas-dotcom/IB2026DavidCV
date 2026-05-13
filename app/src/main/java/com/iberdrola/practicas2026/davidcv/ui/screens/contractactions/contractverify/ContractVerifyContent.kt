@@ -47,14 +47,14 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 @Composable
 fun ContractVerifyContent(
     dataStoreViewModel: DataStoreViewModel,
-    state: ContractActionsState,
     events: ContractVerifyEvents,
+    state: ContractActionsState,
+    manager: ClickEventManager,
 ) {
     val context = LocalContext.current
     val trys by dataStoreViewModel.trys.collectAsState()
     val notificationHandler = remember { NotificationHandler(context = context) }
 
-    // Estados locales de UI
     var successBanner by remember { mutableStateOf(false) }
     var showTimeLeftAlertDialog by remember { mutableStateOf(false) }
     var shouldNotifyNewCode by remember { mutableStateOf(false) }
@@ -78,7 +78,6 @@ fun ContractVerifyContent(
         }
     )
 
-    // Launcher para nuevo código (Garantiza tiempo real)
     val requestNewCodePermission = rememberPermissionsLauncher(
         permissions = listOf(AppPermissions.Notifications),
         onAllGranted = {
@@ -103,95 +102,89 @@ fun ContractVerifyContent(
     }
 
 
-    val clickManager = remember { ClickEventManager() }
-
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
-
-        Scaffold(
-            topBar = {
-                ContractTopAppBar(
-                    title = appBarTitle,
-                    progress = 0.75f,
-                    onClose ={
+    Scaffold(
+        topBar = {
+            ContractTopAppBar(
+                title = appBarTitle,
+                progress = 0.75f,
+                onClose ={
+                    canExecuteMethod(
+                        manager,
+                    ) { events.onClose() }
+                },
+            )
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ContractNavigateButtons(
+                    enable = state.canSubmitVerify,
+                    onBack = {
                         canExecuteMethod(
                             manager,
-                        ) { events.onClose() }
+                        ) { events.onBack() }
                     },
-                )
-            },
-            bottomBar = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    ContractNavigateButtons(
-                        enable = state.canSubmitVerify,
-                        onBack = {
-                            canExecuteMethod(
-                                manager,
-                            ) { events.onBack() }
-                        },
-                        onNext = {
-                            canExecuteMethod(
-                                manager,
-                            ) {
-                                events.onNext()
-                                requestSuccessPermission()
-                            }
-                        },
-                    )
-                }
-            }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = LocalSpacing.current.la)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                VerifyInstructionSection(state, events)
-
-                VerifyInputFields(state, events)
-
-                ResendCodeInfoBox(
-                    trys = trys,
-                    resendCode = shouldNotifyNewCode,
-                    onResendClick = {
+                    onNext = {
                         canExecuteMethod(
                             manager,
                         ) {
-                            shouldNotifyNewCode = true
-                            if (trys > 0) {
-                                successBanner = true
-                                events.generateNewCode()
-                                dataStoreViewModel.updateTrys(trys - 1)
-                            } else {
-                                showTimeLeftAlertDialog = true
-                            }
+                            events.onNext()
+                            requestSuccessPermission()
                         }
                     },
                 )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                VerifyFeedbackSection(
-                    successBanner = successBanner,
-                    showTimeLeftDialog = showTimeLeftAlertDialog,
-                    state = state,
-                    events = events,
-                    onDismissBanner = {
-                        canExecuteMethod(
-                            manager,
-                        ) { successBanner = false }
-                    },
-                    onDismissDialog = {
-                        canExecuteMethod(
-                            manager,
-                        ) { showTimeLeftAlertDialog = false }
-                    }
-                )
             }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = LocalSpacing.current.la)
+                .verticalScroll(rememberScrollState())
+        ) {
+            VerifyInstructionSection(state, events)
+
+            VerifyInputFields(state, events)
+
+            ResendCodeInfoBox(
+                trys = trys,
+                resendCode = shouldNotifyNewCode,
+                onResendClick = {
+                    canExecuteMethod(
+                        manager,
+                    ) {
+                        shouldNotifyNewCode = true
+                        if (trys > 0) {
+                            successBanner = true
+                            events.generateNewCode()
+                            dataStoreViewModel.updateTrys(trys - 1)
+                        } else {
+                            showTimeLeftAlertDialog = true
+                        }
+                    }
+                },
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            VerifyFeedbackSection(
+                successBanner = successBanner,
+                showTimeLeftDialog = showTimeLeftAlertDialog,
+                state = state,
+                events = events,
+                onDismissBanner = {
+                    canExecuteMethod(
+                        manager,
+                    ) { successBanner = false }
+                },
+                onDismissDialog = {
+                    canExecuteMethod(
+                        manager,
+                    ) { showTimeLeftAlertDialog = false }
+                }
+            )
         }
     }
 }

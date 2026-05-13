@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +34,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
+import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.GeneralTopAppBar
 import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.NavigationAnalyticsObserver
 import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.UIOverlayManager
@@ -58,7 +62,6 @@ fun NavigationWrapper(
     val dataStoreViewModel: DataStoreViewModel = hiltViewModel()
     val bsCounter by dataStoreViewModel.bsCounter.collectAsState()
 
-    // UI States
     var viewSelected by rememberSaveable { mutableStateOf(true) }
     var showThanksDialog by remember { mutableStateOf(false) }
     var showOpinionBS by remember { mutableStateOf(false) }
@@ -119,41 +122,51 @@ fun NavigationWrapper(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            topBar = {
-                GeneralTopAppBar(
-                    handleBackNavigation = safeBack,
-                    currentRoute = currentRoute,
+    val clickManager = remember { ClickEventManager() }
+
+    CompositionLocalProvider(LocalClickManager provides clickManager) {
+        val manager = LocalClickManager.current
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Scaffold(
+                topBar = {
+                    GeneralTopAppBar(
+                        handleBackNavigation = {
+                            canExecuteMethod(
+                                manager,
+                            ) { safeBack(it) }
+                        },
+                        currentRoute = currentRoute,
+                    )
+                },
+                modifier = modifier,
+            ) { innerPadding ->
+                AppNavHost(
+                    navController = navController,
+                    isProcessing = isProcessing,
+                    viewSelected = viewSelected,
+                    remoteConfig = remoteConfig,
+                    padding = innerPadding,
+                    analytics = analytics,
+                    actions = navActions,
+                    safeBack = safeBack,
+                    manager = manager
                 )
-            },
-            modifier = modifier,
-        ) { innerPadding ->
-            AppNavHost(
-                navController = navController,
+            }
+
+            UIOverlayManager(
                 isProcessing = isProcessing,
-                viewSelected = viewSelected,
-                remoteConfig = remoteConfig,
-                padding = innerPadding,
-                analytics = analytics,
-                actions = navActions,
-                safeBack = safeBack
+                navController = navController,
+                showOpinionBS = showOpinionBS,
+                showThanksDialog = showThanksDialog,
+                onOpinionDismiss = { showOpinionBS = false },
+                onThanksDismiss = { showThanksDialog = false },
+                onLater = { dataStoreViewModel.updateBsCounter(3) },
+                onRated = {
+                    dataStoreViewModel.updateBsCounter(10)
+                    showThanksDialog = true
+                },
             )
         }
-
-        UIOverlayManager(
-            isProcessing = isProcessing,
-            navController = navController,
-            showOpinionBS = showOpinionBS,
-            showThanksDialog = showThanksDialog,
-            onOpinionDismiss = { showOpinionBS = false },
-            onThanksDismiss = { showThanksDialog = false },
-            onLater = { dataStoreViewModel.updateBsCounter(3) },
-            onRated = {
-                dataStoreViewModel.updateBsCounter(10)
-                showThanksDialog = true
-            },
-        )
     }
 }
-

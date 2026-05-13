@@ -103,9 +103,9 @@ class MainActivity : ComponentActivity() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val updated = task.result
-                            Log.d("ComprobacionesRemoteConfig", "Config updated: $updated")
+                            Log.e("RemoteConfig", "Config updated: $updated")
                         } else {
-                            Log.d("ComprobacionesRemoteConfig", "Fetch failed")
+                            Log.e("RemoteConfig", "Fetch failed")
                         }
                     }
             }

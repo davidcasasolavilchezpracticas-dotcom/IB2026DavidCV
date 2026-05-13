@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActions
@@ -25,11 +26,10 @@ fun ContractActiveInfoScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     onBack: (Boolean) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-
-    Log.d("Comprobaciones", "Contract -> ${state.contract}")
 
     LaunchedEffect(Unit) {
         analytics.logEvent ( "ContractActiveInfoScreen" ) {
@@ -81,6 +81,7 @@ fun ContractActiveInfoScreen(
                             param("eventType", "Click")
                         }
                     },
+                    manager = manager
                 )
             }
             else -> {
@@ -92,7 +93,7 @@ fun ContractActiveInfoScreen(
                         analytics.logEvent ( "ButtonBack" ) {
                             param("eventType", "Click")
                         }
-                    }
+                    },
                 )
             }
         }

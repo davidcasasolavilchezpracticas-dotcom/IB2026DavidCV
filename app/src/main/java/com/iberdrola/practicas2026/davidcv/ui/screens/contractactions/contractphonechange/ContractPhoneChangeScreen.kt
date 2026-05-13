@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.navigation.auxiliar.rememberDefaultClickHandler
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
@@ -24,6 +25,7 @@ fun ContractPhoneChangeScreen(
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     onBack: (Boolean) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -45,6 +47,7 @@ fun ContractPhoneChangeScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         ContractPhoneChangeContent(
             onPhoneChanged = viewModel::onPhoneChanged,
+            manager = manager,
             onClose = {
                 onNavigatePopUpTo(Routes.CONTRACTS, Routes.CONTRACTS)
                 Toast.makeText(context, R.string.cpcToast, Toast.LENGTH_SHORT).show()

@@ -34,6 +34,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.EmptyContractsScreen
 import com.iberdrola.practicas2026.davidcv.ui.base.screens.ErrorScreen
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -47,6 +48,7 @@ fun ContractListScreen(
     remoteConfig: FirebaseRemoteConfig,
     analytics: FirebaseAnalytics,
     onNavigate: (String) -> Unit,
+    manager: ClickEventManager,
     onBack: () -> Unit
 ) {
     BackHandler {
@@ -128,6 +130,7 @@ fun ContractListScreen(
                     gasContractActive = gasContractActive,
                     contracts = contracts,
                     modifier = Modifier,
+                    manager = manager,
                     onClick = { id ->
                         onNavigate(Routes.CONTRACT_ACTIONS + "/$id")
                         analytics.logEvent ( "ButtonContractsInfo" ) {

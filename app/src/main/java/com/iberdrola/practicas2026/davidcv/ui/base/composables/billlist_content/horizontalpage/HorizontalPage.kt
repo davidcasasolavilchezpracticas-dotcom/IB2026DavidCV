@@ -22,6 +22,7 @@ import com.google.firebase.analytics.logEvent
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.di.DataSourceConfig
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.TabItem
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
@@ -34,9 +35,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun HorizontalPage(
     state: HorizontalPageState,
+    manager: ClickEventManager,
+    enabled: Boolean = true,
     events: BillListEvents,
     modifier: Modifier,
-    enabled: Boolean = true
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -105,8 +107,9 @@ fun HorizontalPage(
         BillListContent(
             state = currentState,
             modifier = modifier,
+            manager = manager,
+            enabled = enabled,
             events = events,
-            enabled = enabled
         )
     }
 }

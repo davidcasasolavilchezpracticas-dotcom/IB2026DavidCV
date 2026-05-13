@@ -34,66 +34,61 @@ fun ContractListContent(
     modifier: Modifier = Modifier,
     lightContractActive: Boolean,
     gasContractActive: Boolean,
+    manager: ClickEventManager,
     contracts: List<Contract>,
     onEmptyClick: () -> Unit,
     enabled: Boolean = true,
     onClick: (Int) -> Unit,
 ) {
-    val clickManager = remember { ClickEventManager() }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        Text(
+            text = stringResource(R.string.clsTitle),
+            modifier = Modifier
+                .padding(
+                    horizontal = LocalSpacing.current.xl,
+                    vertical = LocalSpacing.current.sm
+                ),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
 
-    CompositionLocalProvider(LocalClickManager provides clickManager) {
-        val manager = LocalClickManager.current
+        if (gasContractActive || lightContractActive) {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .weight(1f)
+            ) {
+                items(contracts) { contract ->
+                    if (
+                        (contract.type == ContractType.GAS && gasContractActive) ||
+                        (contract.type == ContractType.LIGHT && lightContractActive)
+                    ) {
+                        ContractItem(
+                            contract = contract,
+                            onClick = {
+                                canExecuteMethod(
+                                    manager,
+                                ) { onClick(contract.id) }
+                            },
+                            enabled = enabled
+                        )
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-        ) {
-            Text(
-                text = stringResource(R.string.clsTitle),
-                modifier = Modifier
-                    .padding(
-                        horizontal = LocalSpacing.current.xl,
-                        vertical = LocalSpacing.current.sm
-                    ),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            if (gasContractActive || lightContractActive) {
-                LazyColumn(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    items(contracts) { contract ->
-                        if (
-                            (contract.type == ContractType.GAS && gasContractActive) ||
-                            (contract.type == ContractType.LIGHT && lightContractActive)
-                        ) {
-                            ContractItem(
-                                contract = contract,
-                                onClick = {
-                                    canExecuteMethod(
-                                        manager,
-                                    ) { onClick(contract.id) }
-                                },
-                                enabled = enabled
-                            )
-
-                            HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
-                        }
+                        HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
                     }
                 }
-            } else {
-                EmptyContractsScreen(
-                    modifier = modifier,
-                    onBack = {
-                        canExecuteMethod(
-                            manager,
-                        ) { onEmptyClick() }
-                    }
-                )
             }
+        } else {
+            EmptyContractsScreen(
+                modifier = modifier,
+                onBack = {
+                    canExecuteMethod(
+                        manager,
+                    ) { onEmptyClick() }
+                }
+            )
         }
     }
 }
