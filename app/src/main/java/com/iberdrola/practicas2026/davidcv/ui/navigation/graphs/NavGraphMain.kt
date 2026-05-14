@@ -7,6 +7,11 @@ import androidx.navigation.compose.composable
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.ScaleEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.ScaleExit
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.ScalePopEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.ScalePopExit
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.VerticalEnter
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.billfilter.FilterScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.billlist.BillListScreen
@@ -24,7 +29,13 @@ fun NavGraphBuilder.mainGraph(
     viewSelected: Boolean,
     isProcessing: Boolean,
 ) {
-    composable(Routes.LIST_LIGHT) {
+    composable(
+        popEnterTransition = { ScalePopEnter() },
+        popExitTransition = { ScalePopExit() },
+        enterTransition = { ScaleEnter() },
+        exitTransition = { ScaleExit() },
+        route = Routes.LIST_LIGHT,
+    ) {
         BillListScreen(
             onNavigatePopUpTo = onNavigatePopUpTo,
             navController = navController,
@@ -39,7 +50,13 @@ fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable(Routes.LIST_GAS) {
+    composable(
+        popEnterTransition = { ScalePopEnter() },
+        popExitTransition = { ScalePopExit() },
+        enterTransition = { ScaleEnter() },
+        exitTransition = { ScaleExit() },
+        route = Routes.LIST_GAS,
+    ) {
         BillListScreen(
             onNavigatePopUpTo = onNavigatePopUpTo,
             navController = navController,
@@ -54,7 +71,13 @@ fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable(Routes.INITIAL) {
+    composable(
+        popEnterTransition = { ScalePopEnter() },
+        popExitTransition = { ScalePopExit() },
+        enterTransition = { ScaleEnter() },
+        exitTransition = { ScaleExit() },
+        route = Routes.INITIAL,
+    ) {
         InitialScreen(
             navController = navController,
             remoteConfig = remoteConfig,
@@ -65,7 +88,13 @@ fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable(Routes.FILTER) {
+    composable(
+        popEnterTransition = { VerticalEnter() },
+        popExitTransition = { ScalePopExit() },
+        enterTransition = { VerticalEnter() },
+        exitTransition = { ScaleExit() },
+        route = Routes.FILTER,
+    ) {
         FilterScreen(
             navController = navController,
             onBack = { safeBack(false) },
@@ -74,7 +103,13 @@ fun NavGraphBuilder.mainGraph(
         )
     }
 
-    composable(Routes.CONTRACTS) {
+    composable(
+        popEnterTransition = { ScalePopEnter() },
+        popExitTransition = { ScalePopExit() },
+        enterTransition = { ScaleEnter() },
+        exitTransition = { ScaleExit() },
+        route = Routes.CONTRACTS,
+    ) {
         ContractListScreen(
             onBack = { safeBack(false) },
             remoteConfig = remoteConfig,

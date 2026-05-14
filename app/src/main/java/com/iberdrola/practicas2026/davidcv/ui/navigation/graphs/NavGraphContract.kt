@@ -1,7 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.navigation.graphs
 
 import android.os.Build
-import androidx.navigation.navigation
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,19 +16,23 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractStatus
 import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
-import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalExit
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalPopEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalPopExit
 import com.iberdrola.practicas2026.davidcv.ui.navigation.CreateViewModel
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsScreen
+import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess.ContractActionSuccessScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactivate.ContractActivateScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactiveinfo.ContractActiveInfoScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractemailchange.ContractEmailChangeScreen
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractphonechange.ContractPhoneChangeScreen
-import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractactionsuccess.ContractActionSuccessScreen
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.contractverify.ContractVerifyScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun NavGraphBuilder.contractGraph(
@@ -58,24 +61,24 @@ fun NavGraphBuilder.contractGraph(
             LaunchedEffect(state.contract) {
                 if (!hasNavigated && state.contract != null && !state.isLoading) {
                     hasNavigated = true
-                    val route = if (state.contract!!.status == ContractStatus.ACTIVE) {
-                        Routes.CONTRACT_INFO
-                    } else {
-                        Routes.CONTRACT_ACTIVATE
-                    }
 
-                    navController.navigate(route) {
-                        popUpTo(Routes.CONTRACT_ACTIONS + "/{contractId}") { inclusive = true }
-                    }
+                    val route = if (state.contract!!.status == ContractStatus.ACTIVE) { Routes.CONTRACT_INFO }
+                    else { Routes.CONTRACT_ACTIVATE }
+
+                    navController.navigate(route) { popUpTo(Routes.CONTRACT_ACTIONS + "/{contractId}") { inclusive = true } }
                 }
             }
 
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         }
 
-        composable(Routes.CONTRACT_INFO) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_INFO,
+        ) { entry ->
             ContractActiveInfoScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigate = onNavigate,
@@ -85,7 +88,13 @@ fun NavGraphBuilder.contractGraph(
             )
         }
 
-        composable(Routes.CONTRACT_ACTIVATE) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_ACTIVATE,
+        ) { entry ->
             ContractActivateScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
@@ -96,7 +105,13 @@ fun NavGraphBuilder.contractGraph(
             )
         }
 
-        composable(Routes.CONTRACT_EMAIL_CHANGE) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_EMAIL_CHANGE,
+        ) { entry ->
             ContractEmailChangeScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
@@ -107,7 +122,13 @@ fun NavGraphBuilder.contractGraph(
             )
         }
 
-        composable(Routes.CONTRACT_PHONE_CHANGE) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_PHONE_CHANGE,
+        ) { entry ->
             ContractPhoneChangeScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
@@ -118,7 +139,13 @@ fun NavGraphBuilder.contractGraph(
             )
         }
 
-        composable(Routes.CONTRACT_VERIFY) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_VERIFY,
+        ) { entry ->
             ContractVerifyScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
@@ -129,7 +156,13 @@ fun NavGraphBuilder.contractGraph(
             )
         }
 
-        composable(Routes.CONTRACT_SUCCESS) { entry ->
+        composable(
+            popEnterTransition = { HorizontalPopEnter() },
+            popExitTransition = { HorizontalPopExit() },
+            enterTransition = { HorizontalEnter() },
+            exitTransition = { HorizontalExit() },
+            route = Routes.CONTRACT_SUCCESS,
+        ) { entry ->
             ContractActionSuccessScreen(
                 viewModel = CreateViewModel(entry, navController),
                 onNavigatePopUpTo = onNavigatePopUpTo,
