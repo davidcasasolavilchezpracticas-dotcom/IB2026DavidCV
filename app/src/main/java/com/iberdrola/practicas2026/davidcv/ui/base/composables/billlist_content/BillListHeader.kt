@@ -35,7 +35,7 @@ fun BillListHeader (
     )
     Text(
         text = stringResource(R.string.blsSubtitleAddress),
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.titleLarge,
         color = Color.Black,
         modifier = modifier.padding(vertical = LocalSpacing.current.sm)
     )

@@ -219,10 +219,10 @@ class BillListViewModel @Inject constructor(
     fun getLightBills() {
         lightBillsJob?.cancel()
         lightBillsJob = viewModelScope.launch {
-            // Solo ponemos Loading si no estamos ya en Success (evita parpadeo en refresh)
             val wasAlreadyLoaded = allLightBills != null
             if (!wasAlreadyLoaded) {
                 _lightBillsState.value = BillListState.Loading
+                delay(Random.nextLong(1000, 3000))
             }
             _getLightBillsUseCase().collect { result ->
                 when (result) {
@@ -250,6 +250,7 @@ class BillListViewModel @Inject constructor(
             val wasAlreadyLoaded = allGasBills != null
             if (!wasAlreadyLoaded) {
                 _gasBillsState.value = BillListState.Loading
+                delay(Random.nextLong(1000, 3000))
             }
             _getGasBillsUseCase().collect { result ->
                 when (result) {

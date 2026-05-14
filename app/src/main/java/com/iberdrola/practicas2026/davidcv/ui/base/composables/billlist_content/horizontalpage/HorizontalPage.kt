@@ -45,7 +45,7 @@ fun HorizontalPage(
     Row(
         modifier = modifier
             .zIndex(1f)
-            .padding(bottom = LocalSpacing.current.xxs, start = LocalSpacing.current.lg)
+            .padding(bottom = LocalSpacing.current.xxs, start = LocalSpacing.current.xl)
             .fillMaxWidth()
     ) {
         if (state.isLightActive) {

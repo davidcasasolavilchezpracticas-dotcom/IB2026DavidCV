@@ -1,10 +1,17 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,16 +19,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,8 +55,11 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.FacturaItem
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.LastInvoiceCard
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_content.ShowAlertDialogs
+import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 
@@ -62,106 +77,142 @@ fun BillListContentInfo(
     var alertDialogActive by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+    val showFloatingButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+        }
+    }
 
     LaunchedEffect(Unit) { listState.scrollToItem(0) }
 
-    LazyColumn(
-        state = listState,
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ){
+        LazyColumn(
+            state = listState,
+            modifier = modifier
+                .fillMaxWidth()
+        ) {
 
-        item {
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-            ) {
-                LastInvoiceCard(bill = bills[0])
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                ShowAlertDialogs(
-                    alertDialogActive = alertDialogActive,
-                    desactiveAlertDialog = { alertDialogActive = false },
-                    showDeleteDialog = showDeleteDialog,
-                    desactiveDeleteDialog = {  showDeleteDialog = false },
-                    onDeleteFilters = {
-                        canExecuteMethod(
-                            manager,
-                        ) { onDeleteFilters() }
-                    },
-                    getSelectedFilters = getSelectedFilters,
-                    count = filtersCounter
-                )
-            }
-        }
-
-        stickyHeader {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(White)
-                    .padding(horizontal = LocalSpacing.current.lg),
-            ) {
-                Text(
-                    text = stringResource(R.string.blciTitle),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-
-                ButtonFilter(
-                    onFilterClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) { onFilterClick() }
-                    },
-                    onLongClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true }
-                    },
-                    label = stringResource(R.string.blciButtonFilter),
-                    icon = Icons.Default.Tune,
-                    selectedFilters = getSelectedFilters(),
-                    filtersCount = filtersCounter,
-                    enabled = enabled
-                )
-            }
-        }
-
-
-        val groupedBills = bills.groupBy { it.emisionDate.year }
-
-        groupedBills.forEach { (year, billsInYear) ->
             item {
-                Text(
-                    text = year.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(LocalSpacing.current.lg)
-                )
-            }
+                Column(
+                    modifier = Modifier
+                        .background(Color.White)
+                ) {
+                    LastInvoiceCard(bill = bills[0])
 
-            itemsIndexed(billsInYear) { index, bill ->
-                FacturaItem(
-                    bill = bill,
-                    onClick = {
-                        canExecuteMethod(
-                            manager,
-                        ) {  alertDialogActive = true }
-                    },
-                    enabled = enabled
-                )
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                if (index < billsInYear.lastIndex) {
-                    HorizontalDivider(
-                        color = Color.LightGray,
-                        thickness = 0.75.dp,
-                        modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+                    ShowAlertDialogs(
+                        alertDialogActive = alertDialogActive,
+                        desactiveAlertDialog = { alertDialogActive = false },
+                        showDeleteDialog = showDeleteDialog,
+                        desactiveDeleteDialog = { showDeleteDialog = false },
+                        onDeleteFilters = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onDeleteFilters() }
+                        },
+                        getSelectedFilters = getSelectedFilters,
+                        count = filtersCounter
                     )
                 }
+            }
+
+            stickyHeader {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(White)
+                        .padding(horizontal = LocalSpacing.current.lg),
+                ) {
+                    Text(
+                        text = stringResource(R.string.blciTitle),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    ButtonFilter(
+                        onFilterClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) { onFilterClick() }
+                        },
+                        onLongClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) { if (getSelectedFilters().isNotEmpty()) showDeleteDialog = true }
+                        },
+                        label = stringResource(R.string.blciButtonFilter),
+                        icon = Icons.Default.Tune,
+                        selectedFilters = getSelectedFilters(),
+                        filtersCount = filtersCounter,
+                        enabled = enabled
+                    )
+                }
+            }
+
+
+            val groupedBills = bills.groupBy { it.emisionDate.year }
+
+            groupedBills.forEach { (year, billsInYear) ->
+                item {
+                    Text(
+                        text = year.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(LocalSpacing.current.lg)
+                    )
+                }
+
+                itemsIndexed(billsInYear) { index, bill ->
+                    FacturaItem(
+                        bill = bill,
+                        onClick = {
+                            canExecuteMethod(
+                                manager,
+                            ) { alertDialogActive = true }
+                        },
+                        enabled = enabled
+                    )
+
+                    if (index < billsInYear.lastIndex) {
+                        HorizontalDivider(
+                            color = Color.LightGray,
+                            thickness = 0.75.dp,
+                            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+                        )
+                    }
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showFloatingButton,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = LocalSpacing.current.xl)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                },
+                containerColor = EnergyGreen,
+                contentColor = Color.White
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Volver arriba"
+                )
             }
         }
     }
