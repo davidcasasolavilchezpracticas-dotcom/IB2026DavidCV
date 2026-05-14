@@ -57,6 +57,17 @@ fun BillListContent(
 
     PullToRefreshBox (
         isRefreshing = isRefreshing,
+        modifier = modifier,
+        state = pullState,
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                modifier = Modifier.align(Alignment.TopCenter),
+                isRefreshing = isRefreshing,
+                containerColor = White,
+                color = EnergyGreen,
+                state = pullState,
+            )
+        },
         onRefresh = {
             events.onRefresh()
             isRefreshing = true
@@ -65,17 +76,6 @@ fun BillListContent(
                 isRefreshing = false
             }
         },
-        state = pullState,
-        modifier = modifier,
-        indicator = {
-            PullToRefreshDefaults.Indicator(
-                state = pullState,
-                isRefreshing = isRefreshing,
-                modifier = Modifier.align(Alignment.TopCenter),
-                containerColor = White,
-                color = EnergyGreen
-            )
-        }
     ){
         when (state) {
             is BillListState.Loading -> {
@@ -86,24 +86,22 @@ fun BillListContent(
                 ErrorScreen(
                     img = if (state.exception is BillException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                     message = state.exception.message ?: R.string.blcUnknownError.toString(),
+                    isConexionError = state.exception is BillException.ConexionFailed,
                     modifier = modifier.verticalScroll(rememberScrollState()),
                     onClick = { events.onErrorClick(state) },
-                    exception = state.exception,
                 )
             }
 
             is BillListState.Success -> {
-                val bills = state.bills
                 val isFiltered = (events.getCurrentFilters() != BillFilterState())
+                val bills = state.bills
 
 
                 if (bills.isEmpty()) {
                     EmptyBillsScreen(
+                        onRefresh = if(isFiltered) { events.onEmptyFilterClick } else events.onEmptyClick,
                         modifier = modifier.verticalScroll(rememberScrollState()),
                         isFiltered = isFiltered,
-                        onRefresh = if(isFiltered) {
-                            events.onEmptyFilterClick
-                        } else events.onEmptyClick,
                     )
                 } else {
                     BillListContentInfo(

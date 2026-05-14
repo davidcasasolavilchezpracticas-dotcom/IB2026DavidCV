@@ -45,61 +45,60 @@ class BillRepositoryDelegate @Inject constructor(
 
     private val syncMutex = Mutex()
 
-    /**
-     * Sincroniza los datos según la configuración (Network o Mock JSON)
-     * y los guarda en Room. Protegido por Mutex para evitar parpadeos de "no data".
-     */
+    private val MOCK_FILE_NAME = "BillJSON.json"
+
     private suspend fun syncBills() = syncMutex.withLock {
         try {
-            val billsToInsert: List<BillEntity>
-            if (DataSourceConfig.useNetwork) {
-                val response = try {
-                    _apiService.getBills()
-                } catch (e: IOException) {
-                    throw BillException.ConexionFailed
-                }
+            val billsToInsert = if (DataSourceConfig.useNetwork) { fetchFromNetwork() }
+            else { fetchFromMock() }
 
-                if (response.isSuccessful) {
-                    val body = response.body() ?: throw BillException.DataCorrupted
-                    billsToInsert = try {
-                        body.map { it.toModel().toEntity() }
-                    } catch (e: Exception) {
-                        throw BillException.DataCorrupted
-                    }
-
-                    _dao.clearAndInsert(billsToInsert)
-                } else {
-                    throw BillException.ResponseError("Error RED: ${response.code()}")
-                }
-            } else {
-                val jsonString = try {
-                    _context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
-                } catch (e: IOException) {
-                    throw BillException.ResponseError("No se pudo leer el archivo mock local")
-                }
-
-                val type = object : TypeToken<List<BillEntity>>() {}.type
-
-                val entities: List<BillEntity> = try {
-                    _gson.fromJson(jsonString, type)
-                } catch (e: JsonSyntaxException) {
-                    throw BillException.DataCorrupted
-                }
-
-                billsToInsert = try {
-                    entities.map { it.toModel().toEntity() }
-                } catch (e: Exception) {
-                    throw BillException.DataCorrupted
-                }
-
-                _dao.clearAndInsert(billsToInsert)
-            }
+            _dao.clearAndInsert(billsToInsert)
         } catch (e: BillException) {
-            Log.e("BillRepository", "Error controlado: ${e.message}")
             throw e
         } catch (e: Exception) {
-            Log.e("BillRepository", "Excepción no controlada: ${e}")
             throw BillException.UnknownError(e.message)
+        }
+    }
+
+    private suspend fun fetchFromNetwork(): List<BillEntity> {
+        val response = try {
+            _apiService.getBills()
+        } catch (e: IOException) {
+            throw BillException.ConexionFailed
+        }
+
+        if (!response.isSuccessful) {
+            throw BillException.ResponseError("Error RED: ${response.code()}")
+        }
+
+        val body = response.body() ?: throw BillException.DataCorrupted
+
+        return try {
+            body.map { it.toModel().toEntity() }
+        } catch (e: Exception) {
+            throw BillException.DataCorrupted
+        }
+    }
+
+    private fun fetchFromMock(): List<BillEntity> {
+        val jsonString = try {
+            _context.assets.open(MOCK_FILE_NAME).bufferedReader().use { it.readText() }
+        } catch (e: IOException) {
+            throw BillException.ResponseError("No se pudo leer el archivo mock local")
+        }
+
+        val type = object : TypeToken<List<BillEntity>>() {}.type
+
+        val entitiesFromContent: List<BillEntity> = try {
+            _gson.fromJson(jsonString, type)
+        } catch (e: JsonSyntaxException) {
+            throw BillException.DataCorrupted
+        }
+
+        return try {
+            entitiesFromContent.map { it.toModel().toEntity() }
+        } catch (e: Exception) {
+            throw BillException.DataCorrupted
         }
     }
 

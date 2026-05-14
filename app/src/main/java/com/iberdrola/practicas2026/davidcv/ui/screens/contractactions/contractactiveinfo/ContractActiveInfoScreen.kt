@@ -53,8 +53,9 @@ fun ContractActiveInfoScreen(
             }
             state.errorMessage != null -> {
                 ErrorScreen(
-                    message = state.errorMessage!!,
                     img = Icons.Default.ErrorOutline,
+                    message = state.errorMessage!!,
+                    isConexionError = false,
                     onClick = {
                         onBack(false)
                         analytics.logEvent ( "ButtonBack" ) {
@@ -88,6 +89,7 @@ fun ContractActiveInfoScreen(
                 ErrorScreen(
                     message = state.errorMessage ?: "Unknown error",
                     img = Icons.Default.ErrorOutline,
+                    isConexionError = false,
                     onClick = {
                         onBack(false)
                         analytics.logEvent ( "ButtonBack" ) {

@@ -103,9 +103,11 @@ fun ContractListScreen(
     when (state.value) {
         is ContractListState.Error -> {
             ErrorScreen(
+                isConexionError = (state.value as ContractListState.Error).exception is ContractException.ConexionFailed,
                 message = (state.value as ContractListState.Error).exception.message ?: R.string.blcUnknownError.toString(),
+                img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed)
+                    Icons.Default.WifiOff else Icons.Default.Error,
                 modifier = Modifier,
-                img = if ((state.value as ContractListState.Error).exception is ContractException.ConexionFailed) Icons.Default.WifiOff else Icons.Default.Error,
                 onClick = {
                     DataSourceConfig.useNetwork = !DataSourceConfig.useNetwork
                     onBack()

@@ -109,25 +109,6 @@
           "default": false,
           "crudKey": "id",
           "callbacks": []
-        },
-        {
-          "uuid": "96d55dcb-6f58-4df2-98c0-0ca35c05a872",
-          "body": "{}",
-          "latency": 0,
-          "statusCode": 400,
-          "label": "Error de conexión",
-          "headers": [],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false,
-          "crudKey": "id",
-          "callbacks": []
         }
       ],
       "responseMode": null,
@@ -156,7 +137,7 @@
           "rulesOperator": "OR",
           "disableTemplating": false,
           "fallbackTo404": false,
-          "default": true,
+          "default": false,
           "crudKey": "id",
           "callbacks": []
         },
@@ -213,7 +194,7 @@
           "rulesOperator": "OR",
           "disableTemplating": false,
           "fallbackTo404": false,
-          "default": false,
+          "default": true,
           "crudKey": "id",
           "callbacks": []
         }

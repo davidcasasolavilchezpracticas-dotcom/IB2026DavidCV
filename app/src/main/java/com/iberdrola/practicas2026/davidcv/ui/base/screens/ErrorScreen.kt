@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,70 +21,64 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.R
 import com.iberdrola.practicas2026.davidcv.domain.exception.BillException
+import com.iberdrola.practicas2026.davidcv.domain.exception.ContractException
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
-/**
- * Pantalla que muestra un mensaje de error en caso de fallo en la conexión con el servidor
- * @param message Mensaje de error a mostrar
- * @param modifier Modificador para personalizar la apariencia de la pantalla
- * @param onClick Función a ejecutar al hacer clic en el botón de acción
- */
 @Composable
 fun ErrorScreen(
-    exception: Exception? = null,
-    message: String,
     modifier: Modifier = Modifier,
+    isConexionError: Boolean,
+    onClick: () -> Unit,
     img: ImageVector,
-    onClick: () -> Unit
+    message: String,
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxSize()
             .padding(LocalSpacing.current.xl),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = img,
             contentDescription = stringResource(R.string.error),
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier.size(80.dp),
+            imageVector = img,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = if (exception is BillException.ConexionFailed) stringResource(R.string.serverFail) else stringResource(R.string.dataFail),
+            text = if (isConexionError) stringResource(R.string.serverFail) else stringResource(R.string.dataFail),
             style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = message,
+            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
+            text = message,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
+            modifier = Modifier.padding(top = LocalSpacing.current.lg),
             onClick = { onClick() },
-            modifier = Modifier.padding(top = LocalSpacing.current.lg)
         ) {
             Text(
-                text = if (exception is BillException.ConexionFailed) stringResource(R.string.useLocal)
-                        else stringResource(R.string.goBack),
+                text = if (isConexionError) stringResource(R.string.useLocal) else stringResource(R.string.goBack),
+                modifier = Modifier.padding(horizontal = LocalSpacing.current.lg),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = White,
-                modifier = Modifier.padding(horizontal = LocalSpacing.current.lg)
             )
         }
 
