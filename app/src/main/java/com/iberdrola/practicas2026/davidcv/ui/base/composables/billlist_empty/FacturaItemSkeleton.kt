@@ -48,7 +48,6 @@ fun FacturaItemSkeleton(modifier: Modifier = Modifier) {
                     modifier = modifier
                         .size(36.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(color = SkeletonGreen)
                         .shimmerEffect()
                 )
 
@@ -60,19 +59,15 @@ fun FacturaItemSkeleton(modifier: Modifier = Modifier) {
                             .width(200.dp)
                             .height(36.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .background(color = SkeletonGreen)
                             .shimmerEffect()
                 )
             }
-
-            //Spacer(modifier = Modifier.width(125.dp))
 
             Box(
                 modifier = modifier
                     .size(24.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .align(Alignment.CenterVertically)
-                    .background( color = SkeletonGreen )
                     .shimmerEffect()
             )
         }

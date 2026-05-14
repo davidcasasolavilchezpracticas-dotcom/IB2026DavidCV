@@ -26,16 +26,10 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.La
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
 import com.iberdrola.practicas2026.davidcv.ui.theme.SkeletonGreen
 
-/**
- * BillListContentEmpty
- * Muestra una estructura de carga (Skeleton) mientras se obtienen los datos de las facturas
- *
- * @param size
- * @param modifier
- */
+
 @Composable
 fun BillListContentEmpty(
-    size: Int = 4,
+    size: Int = 2,
     modifier: Modifier
 ) {
     Column(
@@ -46,11 +40,7 @@ fun BillListContentEmpty(
     ) {
         LastInvoiceSkeleton(modifier)
 
-        Spacer(modifier = modifier.height(4.dp))
-
         BillFilterButtonSkeleton(modifier)
-
-        Spacer(modifier = modifier.height(4.dp))
 
         repeat(size) {
             FacturaItemSkeleton(modifier)
@@ -58,10 +48,6 @@ fun BillListContentEmpty(
     }
 }
 
-/**
- * PreviewBLCE
- * Vista previa del estado de carga del listado
- */
 @Composable
 @Preview(showBackground = true)
 fun PreviewBLCE(){

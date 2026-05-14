@@ -14,10 +14,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import com.iberdrola.practicas2026.davidcv.ui.theme.SkeletonGreen
 
-/**
- * Modifier.shimmerEffect
- * Crea el efecto de carga en el esqueleto
- */
 @Composable
 fun Modifier.shimmerEffect(): Modifier {
     val transition = rememberInfiniteTransition(label = "shimmer")
@@ -34,9 +30,9 @@ fun Modifier.shimmerEffect(): Modifier {
 
     val shimmerColors =
         listOf(
-            SkeletonGreen.copy(alpha = 0.6f),
-            SkeletonGreen.copy(alpha = 0.2f),
-            SkeletonGreen.copy(alpha = 0.6f),
+            SkeletonGreen,
+            SkeletonGreen.copy(alpha = 0.75f),
+            SkeletonGreen,
         )
 
     val brush =

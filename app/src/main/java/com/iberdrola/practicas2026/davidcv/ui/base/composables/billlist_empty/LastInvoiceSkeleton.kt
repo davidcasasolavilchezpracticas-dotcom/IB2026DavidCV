@@ -49,7 +49,6 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
                         modifier = modifier
                             .size(128.dp, 24.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .background( color = SkeletonGreen )
                             .shimmerEffect()
                     )
 
@@ -57,7 +56,6 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
                         modifier = modifier
                             .size(250.dp, 20.dp)
                             .clip(RoundedCornerShape(4.dp))
-                            .background( color = SkeletonGreen )
                             .shimmerEffect()
                     )
                 }
@@ -66,7 +64,6 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
                     modifier = modifier
                         .size(36.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .background( color = SkeletonGreen )
                         .shimmerEffect()
                 )
             }
@@ -77,7 +74,6 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .size(160.dp, 36.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background( color = SkeletonGreen )
                     .shimmerEffect()
             )
 
@@ -94,20 +90,17 @@ fun LastInvoiceSkeleton(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .size(60.dp, 24.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background( color = SkeletonGreen )
                     .shimmerEffect()
             )
 
             Spacer(modifier = modifier.height(16.dp))
 
             Box(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background( color = SkeletonGreen )
-                        .shimmerEffect(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmerEffect(),
             )
         }
     }
