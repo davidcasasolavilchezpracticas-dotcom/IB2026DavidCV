@@ -24,6 +24,10 @@ import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalEnter
 import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalExit
 import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalPopEnter
 import com.iberdrola.practicas2026.davidcv.ui.base.transitions.HorizontalPopExit
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.VerticalEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.VerticalExit
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.VerticalPopEnter
+import com.iberdrola.practicas2026.davidcv.ui.base.transitions.VerticalPopExit
 import com.iberdrola.practicas2026.davidcv.ui.navigation.CreateViewModel
 import com.iberdrola.practicas2026.davidcv.ui.navigation.Routes
 import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsViewModel
@@ -157,10 +161,10 @@ fun NavGraphBuilder.contractGraph(
         }
 
         composable(
-            popEnterTransition = { HorizontalPopEnter() },
-            popExitTransition = { HorizontalPopExit() },
-            enterTransition = { HorizontalEnter() },
-            exitTransition = { HorizontalExit() },
+            popEnterTransition = { VerticalPopEnter() },
+            popExitTransition = { VerticalPopExit() },
+            enterTransition = { VerticalEnter() },
+            exitTransition = { VerticalExit() },
             route = Routes.CONTRACT_SUCCESS,
         ) { entry ->
             ContractActionSuccessScreen(

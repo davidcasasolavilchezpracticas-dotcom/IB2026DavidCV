@@ -27,6 +27,9 @@ data class ContractActionsState(
     val canSubmitVerify: Boolean
         get() = verifyCodeTry == verifyCode
 
+    val buttonEnabledVerify: Boolean
+        get() = verifyCodeTry.length == 6
+
     val canSubmitEmail: Boolean
         get() = isEmailValid
 

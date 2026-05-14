@@ -86,20 +86,32 @@ fun ContractVerifyScreen(
                 param("eventType", "Click")
             }
         },
-        onNext = {
-            when (state.action) {
-                MODIFYEMAIL -> {
-                    viewModel.updateContractEmail(state.emailTry)
+        onNext = { notificator ->
+            if (state.canSubmitVerify){
+                when (state.action) {
+                    MODIFYEMAIL -> {
+                        viewModel.updateContractEmail(state.emailTry)
+                    }
+
+                    MODIFYPHONE -> {
+                        viewModel.updateContractPhone(state.phoneTry)
+                    }
+
+                    MODIFYSTATUSEMAIL -> {
+                        viewModel.updateContractEmail(state.emailTry)
+                    }
                 }
-                MODIFYPHONE -> {
-                    viewModel.updateContractPhone(state.phoneTry)
-                }
-                MODIFYSTATUSEMAIL -> {
-                    viewModel.updateContractEmail(state.emailTry)
-                }
+
+                onNavigate(Routes.CONTRACT_SUCCESS)
+                notificator()
+            } else {
+                Toast.makeText(
+                    context,
+                    "Código de verificación incorrecto",
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
-            onNavigate(Routes.CONTRACT_SUCCESS)
             analytics.logEvent ( "ButtonNext" ) {
                 param("eventType", "Click")
             }

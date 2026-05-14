@@ -8,9 +8,9 @@ data class ContractVerifyEvents(
     val onVerifyCodeChanged: (String) -> Unit,
     val phoneCensurator: (String) -> String,
     val getTimeLeft: (Context) -> Boolean,
+    val onNext: (() -> Unit) -> Unit,
     val generateNewCode: () -> Unit,
     val onLoadEnd: () -> Unit,
     val onClose: () -> Unit,
     val onBack: () -> Unit,
-    val onNext: () -> Unit,
 )

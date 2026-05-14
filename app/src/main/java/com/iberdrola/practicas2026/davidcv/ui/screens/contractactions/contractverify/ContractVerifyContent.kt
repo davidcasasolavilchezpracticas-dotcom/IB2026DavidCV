@@ -55,9 +55,9 @@ fun ContractVerifyContent(
     val trys by dataStoreViewModel.trys.collectAsState()
     val notificationHandler = remember { NotificationHandler(context = context) }
 
-    var successBanner by remember { mutableStateOf(false) }
     var showTimeLeftAlertDialog by remember { mutableStateOf(false) }
     var shouldNotifyNewCode by remember { mutableStateOf(false) }
+    var successBanner by remember { mutableStateOf(false) }
 
     val (appBarTitle, successNotifyText) = getActionResources(state.action)
 
@@ -107,7 +107,7 @@ fun ContractVerifyContent(
             ContractTopAppBar(
                 title = appBarTitle,
                 progress = 0.75f,
-                onClose ={
+                onClose = {
                     canExecuteMethod(
                         manager,
                     ) { events.onClose() }
@@ -119,7 +119,7 @@ fun ContractVerifyContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ContractNavigateButtons(
-                    enable = state.canSubmitVerify,
+                    enable = state.buttonEnabledVerify,
                     onBack = {
                         canExecuteMethod(
                             manager,
@@ -129,8 +129,7 @@ fun ContractVerifyContent(
                         canExecuteMethod(
                             manager,
                         ) {
-                            events.onNext()
-                            requestSuccessPermission()
+                            events.onNext(requestSuccessPermission)
                         }
                     },
                 )
@@ -149,8 +148,8 @@ fun ContractVerifyContent(
             VerifyInputFields(state, events)
 
             ResendCodeInfoBox(
-                trys = trys,
                 resendCode = shouldNotifyNewCode,
+                trys = trys,
                 onResendClick = {
                     canExecuteMethod(
                         manager,
@@ -170,10 +169,10 @@ fun ContractVerifyContent(
             Spacer(modifier = Modifier.weight(1f))
 
             VerifyFeedbackSection(
-                successBanner = successBanner,
                 showTimeLeftDialog = showTimeLeftAlertDialog,
-                state = state,
+                successBanner = successBanner,
                 events = events,
+                state = state,
                 onDismissBanner = {
                     canExecuteMethod(
                         manager,
