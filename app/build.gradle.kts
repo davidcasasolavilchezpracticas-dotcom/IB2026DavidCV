@@ -63,8 +63,20 @@ android {
         }
     }
 
+    tasks.register<Exec>("debugViewAnalytics") {
+        val adbPath = android.sdkDirectory.resolve("platform-tools/adb.exe").absolutePath
+        commandLine(adbPath, "shell", "setprop", "debug.firebase.analytics.app", "com.iberdrola.practicas2026.davidcv")
+        isIgnoreExitValue = true
+
+        doLast {
+            println("DebugView de GoogleAnalytics")
+        }
+    }
+
+
     tasks.named("preBuild") {
         dependsOn("adbReverseMockoon")
+        dependsOn("debugViewAnalytics")
     }
 }
 

@@ -1,6 +1,7 @@
 package com.iberdrola.practicas2026.davidcv.ui.screens.billlist
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -75,7 +76,6 @@ fun BillListScreen(
         pageCount = { if (isLightActive && isGasActive) 2 else 1 }
     )
 
-    // Observar el resultado de los filtros
     val filterResult by navController.currentBackStackEntry
         ?.savedStateHandle
         ?.getLiveData<BillFilterState>("filters_result")
