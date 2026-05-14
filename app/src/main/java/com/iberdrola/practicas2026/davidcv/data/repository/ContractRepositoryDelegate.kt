@@ -83,7 +83,7 @@ class ContractRepositoryDelegate @Inject constructor(
 
     private fun fetchFromMock(): List<ContractEntity> {
         val jsonString = try {
-            _context.assets.open(MOCK_FILE_NAME).bufferedReader().use { it.readText() }
+            getMockJsonContent()
         } catch (e: IOException) {
             throw ContractException.ResponseError("No se pudo leer el archivo mock local")
         }
@@ -123,7 +123,7 @@ class ContractRepositoryDelegate @Inject constructor(
         try {
             val currentEntities = _dao.getAll().first()
             val jsonString = _gson.toJson(currentEntities)
-            val internalFile = File(_context.filesDir, MOCK_FILE_NAME)
+            val internalFile = File(_context.filesDir, MOCK_INTERNAL_FILE_NAME)
             internalFile.writeText(jsonString)
         } catch (e: Exception) {
             Log.e("ContractRepository", "Error al guardar en JSON: ${e.message}")

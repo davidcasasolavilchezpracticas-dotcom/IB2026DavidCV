@@ -108,8 +108,10 @@ class ContractActionsViewModel @Inject constructor(
         viewModelScope.launch {
             if ( _updateContractEmailUseCase(_state.value.contract?.id!!, email) is BaseResult.Success) {
                 _state.update { it.copy(emailChanged = true) }
+                Log.d("Comprobaciones", "P Actualizado")
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
+                Log.d("Comprobaciones", "P No Actualizado")
             }
         }
     }
@@ -118,8 +120,12 @@ class ContractActionsViewModel @Inject constructor(
         viewModelScope.launch {
             if ( _updateContractPhoneUseCase(_state.value.contract?.id!!, phone) is BaseResult.Success) {
                 _state.update { it.copy(phoneChanged = true) }
+                Log.d("Comprobaciones", "P Actualizado")
+
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el número de teléfono") }
+                Log.d("Comprobaciones", "P No Actualizado")
+
             }
         }
     }

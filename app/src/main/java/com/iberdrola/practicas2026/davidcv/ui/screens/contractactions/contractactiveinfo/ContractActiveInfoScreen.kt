@@ -66,7 +66,7 @@ fun ContractActiveInfoScreen(
             }
             state.contract != null -> {
                 ContractActiveInfoContent(
-                    contract = state.contract!!,
+                    state = state,
 
                     onModifyEmail = {
                         onNavigate(Routes.CONTRACT_EMAIL_CHANGE)

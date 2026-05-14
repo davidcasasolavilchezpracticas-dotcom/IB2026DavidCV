@@ -3,10 +3,6 @@ package com.iberdrola.practicas2026.davidcv.data.local.converters
 import androidx.room.TypeConverter
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.ContractType
 
-/**
- * ContractTypeConverter
- * Convertidor para la base de datos
- */
 class ContractTypeConverter {
 
     @TypeConverter

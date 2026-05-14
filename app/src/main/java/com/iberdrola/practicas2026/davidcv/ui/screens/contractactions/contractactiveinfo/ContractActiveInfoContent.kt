@@ -45,15 +45,16 @@ import com.iberdrola.practicas2026.davidcv.ui.base.common.ClickEventManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalClickManager
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.common.SafeClickTools.Companion.canExecuteMethod
+import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractActionsState
 import com.iberdrola.practicas2026.davidcv.ui.theme.IB2026DavidCVTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContractActiveInfoContent(
+    state: ContractActionsState,
     manager: ClickEventManager,
     onModifyEmail: () -> Unit,
     onModifyPhone: () -> Unit,
-    contract: Contract,
 ) {
     Column(
         modifier = Modifier
@@ -85,7 +86,6 @@ fun ContractActiveInfoContent(
 
             Spacer(modifier = Modifier.height(LocalSpacing.current.xl))
 
-            // Sección Email
             Text(
                 text = stringResource(R.string.caicEmailTitle),
                 style = MaterialTheme.typography.bodyLarge,
@@ -95,7 +95,7 @@ fun ContractActiveInfoContent(
             Spacer(modifier = Modifier.height(LocalSpacing.current.md))
 
             Text(
-                text = contract.email!!,
+                text = state.contract?.email!!,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = LocalSpacing.current.xxs)
@@ -199,13 +199,7 @@ fun ContractActiveInfoContent(
 fun ContractActiveInfoContentPreview() {
     IB2026DavidCVTheme {
         ContractActiveInfoContent(
-            contract = Contract(
-                id = 1,
-                type = ContractType.LIGHT,
-                status = ContractStatus.ACTIVE,
-                email = "ejemplo@correo.com",
-                phone = "600000000"
-            ),
+            state = ContractActionsState(),
             onModifyEmail = {},
             onModifyPhone = {},
             manager = remember { ClickEventManager() }

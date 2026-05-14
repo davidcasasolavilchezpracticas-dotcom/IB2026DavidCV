@@ -3,10 +3,6 @@ package com.iberdrola.practicas2026.davidcv.data.local.converters
 import androidx.room.TypeConverter
 import com.iberdrola.practicas2026.davidcv.domain.model.bill.PaymentStatus
 
-/**
- * PaymentStatusConverter
- * Convertidor para la base de datos
- */
 class PaymentStatusConverter {
 
     @TypeConverter
