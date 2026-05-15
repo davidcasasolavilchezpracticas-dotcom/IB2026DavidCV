@@ -175,4 +175,6 @@ dependencies {
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.android.compiler)
 
+    //? Librerías para validación de números de teléfono
+    implementation(libs.libphonenumber)
 }

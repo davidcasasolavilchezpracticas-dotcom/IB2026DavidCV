@@ -2,6 +2,7 @@ package com.iberdrola.practicas2026.davidcv.ui.screens.contractactions
 
 import android.os.Parcelable
 import android.util.Patterns
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.iberdrola.practicas2026.davidcv.domain.model.contract.Contract
 import kotlinx.parcelize.Parcelize
 
@@ -12,7 +13,7 @@ data class ContractActionsState(
     val timeLeftToResend: String = "",
 
     val emailTry: String = "",
-    val phoneTry: String = "",
+    var phoneTry: String = "",
     val isAcceptedPolicy: Boolean = false,
 
     val contract: Contract? = null,
@@ -37,12 +38,29 @@ data class ContractActionsState(
         get() = isEmailValid && isAcceptedPolicy
 
     val isEmailValid: Boolean
-        get() = emailTry.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailTry).matches()
+        get() = emailTry.isNotEmpty() && emailPattern.matches(emailTry)
 
     val canSubmitPhone: Boolean
         get() = isPhoneValid
 
     val isPhoneValid: Boolean
-        get() = phoneTry.isNotEmpty() && Patterns.PHONE.matcher(phoneTry).matches()
+        get() = validatePhone(phoneTry) { phoneTry = it }
+
+    companion object {
+        val emailPattern = "^\\w(?!\\.)(?!.*\\.\\.)[A-Za-z0-9._-]+@[A-Za-z\\d]{2,}\\.[A-Za-z]{2,}$".toRegex()
+
+        fun validatePhone(phone: String, modifyFormat: (String) -> Unit): Boolean {
+            var isValid: Boolean
+            try {
+                val phoneUtil = PhoneNumberUtil.getInstance()
+                val phoneNumber = phoneUtil.parse(phone, "ES")
+                isValid = phoneUtil.isValidNumber(phoneNumber)
+                if(isValid) { modifyFormat(phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)) }
+            }
+            catch (e: Exception) { isValid = false }
+
+            return isValid
+        }
+    }
 
 }
