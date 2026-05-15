@@ -34,11 +34,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class ContractActionsViewModel @Inject constructor(
-    private val _updateContractEmailAndStatusUseCase: UpdateContractEmailAndStatusUseCase,
     private val _updateContractEmailUseCase: UpdateContractEmailUseCase,
     private val _updateContractPhoneUseCase: UpdateContractPhoneUseCase,
     private val _getContractByIdUseCase: GetContractByIdUseCase,
-    private val _updateContractStatusUseCase: UpdateContractStatusUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ContractActionsState())
@@ -92,7 +90,7 @@ class ContractActionsViewModel @Inject constructor(
         return "a*****z@gmail.com"
     }
 
-    fun phoneCensurator(phone: String) : String {
+    fun phoneCensurator() : String {
         val censuredText = "******"
         return censuredText + if (state.value.contract?.phone != null) {
             if (state.value.contract?.phone?.length!! <= 4) state.value.contract?.phone
@@ -108,10 +106,8 @@ class ContractActionsViewModel @Inject constructor(
         viewModelScope.launch {
             if ( _updateContractEmailUseCase(_state.value.contract?.id!!, email) is BaseResult.Success) {
                 _state.update { it.copy(emailChanged = true) }
-                Log.d("Comprobaciones", "P Actualizado")
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el email") }
-                Log.d("Comprobaciones", "P No Actualizado")
             }
         }
     }
@@ -120,32 +116,8 @@ class ContractActionsViewModel @Inject constructor(
         viewModelScope.launch {
             if ( _updateContractPhoneUseCase(_state.value.contract?.id!!, phone) is BaseResult.Success) {
                 _state.update { it.copy(phoneChanged = true) }
-                Log.d("Comprobaciones", "P Actualizado")
-
             } else {
                 _state.update { it.copy(errorMessage = "Error al actualizar el número de teléfono") }
-                Log.d("Comprobaciones", "P No Actualizado")
-
-            }
-        }
-    }
-
-    fun updateContractStatus(status: ContractStatus) {
-        viewModelScope.launch {
-            if ( _updateContractStatusUseCase(_state.value.contract?.id!!, status) is BaseResult.Success) {
-                _state.update { it.copy(emailChanged = true) }
-            } else {
-                _state.update { it.copy(errorMessage = "Error al actualizar el email") }
-            }
-        }
-    }
-
-    fun updateContractEmailAndStatus(email: String, status: ContractStatus) {
-        viewModelScope.launch {
-            if ( _updateContractEmailAndStatusUseCase(_state.value.contract?.id!!, email, status) is BaseResult.Success) {
-                _state.update { it.copy(emailChanged = true) }
-            } else {
-                _state.update { it.copy(errorMessage = "Error al actualizar el email") }
             }
         }
     }

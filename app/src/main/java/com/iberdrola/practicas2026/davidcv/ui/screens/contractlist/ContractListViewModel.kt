@@ -26,19 +26,14 @@ class ContractListViewModel @Inject constructor(
     val contractsState: StateFlow<ContractListState> = _contractsState
 
     init {
-        // Carga inicial (usará caché local si existe)
-        getContracts(forceRefresh = false)
+        getContracts()
     }
 
-    /**
-     * getContracts
-     * @param forceRefresh Si es true, fuerza la carga desde la red o reinicia desde el JSON original
-     */
-    fun getContracts(forceRefresh: Boolean = false) {
+
+    fun getContracts() {
         viewModelScope.launch {
             _contractsState.value = ContractListState.Loading
-            
-            // Delay para feedback visual (Shimmer)
+
             delay(Random.nextLong(1000, 1500))
             
             _getContractsUseCase().collect { result ->
@@ -54,12 +49,5 @@ class ContractListViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    /**
-     * Función para refrescar manualmente desde la red o JSON
-     */
-    fun refreshContracts() {
-        getContracts(forceRefresh = true)
     }
 }

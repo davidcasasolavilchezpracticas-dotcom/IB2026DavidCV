@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 data class ContractVerifyEvents(
     val createText: (Boolean, String, String) -> Unit,
     val onVerifyCodeChanged: (String) -> Unit,
-    val phoneCensurator: (String) -> String,
     val getTimeLeft: (Context) -> Boolean,
+    val phoneCensurator: () -> String,
     val onNext: (() -> Unit) -> Unit,
     val generateNewCode: () -> Unit,
     val onLoadEnd: () -> Unit,

@@ -151,7 +151,6 @@ fun FilterScreen(
                                 }
                             }
                         },
-                        onValidDate = viewModel::onValidStartDate,
                         maxDate = state.endDate?.minusDays(1) ?: maxDateLimit,
                         minDate = minDateLimit,
                     )
@@ -169,7 +168,6 @@ fun FilterScreen(
                                 }
                             }
                         },
-                        onValidDate = viewModel::onValidEndDate,
                         minDate = state.startDate?.plusDays(1) ?: minDateLimit,
                         maxDate = maxDateLimit,
                     )

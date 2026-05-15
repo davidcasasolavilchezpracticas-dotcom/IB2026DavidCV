@@ -20,13 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 
 
-/**
- * SatisfactionPicker
- * Muestra un selector de satisfacción para la encuesta de satisfacción del usuario
- *
- * @param modifier
- * @param onRatingSelected Función a ejecutar al seleccionar una calificación
- */
 @Composable
 fun SatisfactionPicker(
     modifier: Modifier = Modifier,

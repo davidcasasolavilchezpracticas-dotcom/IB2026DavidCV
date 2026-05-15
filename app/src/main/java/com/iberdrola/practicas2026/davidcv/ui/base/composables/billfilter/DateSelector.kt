@@ -47,18 +47,16 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateSelector(
-    label: String,
-    date: LocalDateTime?,
     modifier: Modifier = Modifier,
     onConfirm: (String) -> Unit,
-    onValidDate: (String) -> Boolean,
     minDate: LocalDateTime?,
     maxDate: LocalDateTime?,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    date: LocalDateTime?,
+    label: String,
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    
-    // Configuramos las fechas seleccionables para restringir el calendario
+
     val selectableDates = remember(minDate, maxDate) {
         object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
@@ -172,11 +170,10 @@ fun DateSelector(
 @Composable
 fun pwDateSelector(){
     DateSelector(
-        label = "Fecha",
         date = LocalDateTime.now(),
+        label = "Fecha",
         onConfirm = {},
-        onValidDate = {true},
         minDate = null,
-        maxDate = null
+        maxDate = null,
     )
 }

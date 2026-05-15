@@ -22,8 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class BillViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getLightBillsUseCase: GetLightBillsUseCase,
-    private val getGasBillsUseCase: GetGasBillsUseCase
 ) : ViewModel() {
 
     private val _initialFiltersKey = "initial_filters"
@@ -34,7 +32,6 @@ class BillViewModel @Inject constructor(
     private var minDateLimit: LocalDateTime? = null
     private var maxDateLimit: LocalDateTime? = null
 
-    // 1. Fuente de verdad de los filtros seleccionados
     private val _state = MutableStateFlow(
         savedStateHandle.get<BillFilterState>(_initialFiltersKey) ?: BillFilterState()
     )
@@ -45,9 +42,7 @@ class BillViewModel @Inject constructor(
         validatePriceRange()
     }
 
-    /**
-     * Inicializa los filtros y los límites sugeridos desde la pantalla anterior.
-     */
+
     fun setInitialFilters(
         filters: BillFilterState,
         min: Float? = null,
@@ -134,13 +129,9 @@ class BillViewModel @Inject constructor(
         }
     }
 
-    private fun parseDate(date: String): java.time.LocalDateTime? = try {
+    private fun parseDate(date: String): LocalDateTime? = try {
         LocalDate.parse(date, dfValidateDate).atStartOfDay()
     } catch (e: Exception) { null }
-
-    fun onValidEndDate(date: String): Boolean = parseDate(date)?.let {
-        _state.value.startDate == null || _state.value.startDate!! < it
-    } ?: false
 
     fun onValidStartDate(date: String): Boolean = parseDate(date)?.let {
         _state.value.endDate == null || _state.value.endDate!! > it

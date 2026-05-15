@@ -30,11 +30,6 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * BillRepositoryDelegate
- * Repositorio que hace de nexo entre ambos para poder hacer uso de los dos indistintamente.
- * Implementa la estrategia de Single Source of Truth usando Room con protección contra race conditions.
- */
 @Singleton
 class BillRepositoryDelegate @Inject constructor(
     private val _apiService: ApiService,

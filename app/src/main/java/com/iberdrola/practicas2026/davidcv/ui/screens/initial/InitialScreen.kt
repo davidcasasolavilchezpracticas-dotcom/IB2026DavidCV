@@ -35,17 +35,10 @@ import com.iberdrola.practicas2026.davidcv.ui.base.composables.initial.WelcomeHe
 import com.iberdrola.practicas2026.davidcv.ui.theme.EnergyGreen
 import com.iberdrola.practicas2026.davidcv.ui.theme.White
 
-/**
- * InitialScreen
- * Se define la pantalla principal de la aplicación con el resumen de servicios
- *
- * @param navController
- * @param modifier
- */@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitialScreen(
     remoteConfig: FirebaseRemoteConfig,
-    navController: NavHostController,
     modifier: Modifier = Modifier,
     onNavigate: (String) -> Unit,
     analytics: FirebaseAnalytics,
@@ -116,10 +109,6 @@ fun InitialScreen(
     }
 }
 
-/**
- * InitialScreenPreview
- * Vista previa de la pantalla inicial
- */
 @Preview
 @Composable
 fun InitialScreenPreview() {
@@ -127,7 +116,6 @@ fun InitialScreenPreview() {
     InitialScreen(
         analytics = FirebaseAnalytics.getInstance(navController.context),
         remoteConfig = FirebaseRemoteConfig.getInstance(),
-        navController = navController,
         manager = ClickEventManager(),
         modifier = Modifier,
         onNavigate = {},

@@ -79,7 +79,6 @@ fun NavGraphBuilder.mainGraph(
         route = Routes.INITIAL,
     ) {
         InitialScreen(
-            navController = navController,
             remoteConfig = remoteConfig,
             onNavigate = onNavigate,
             analytics = analytics,

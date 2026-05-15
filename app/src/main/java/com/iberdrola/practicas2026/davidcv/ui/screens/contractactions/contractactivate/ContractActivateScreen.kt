@@ -23,7 +23,6 @@ import com.iberdrola.practicas2026.davidcv.ui.screens.contractactions.ContractAc
 
 @Composable
 fun ContractActivateScreen(
-    viewModelDS: DataStoreViewModel = hiltViewModel(),
     onNavigatePopUpTo: (String, String) -> Unit,
     viewModel: ContractActionsViewModel,
     analytics: FirebaseAnalytics,

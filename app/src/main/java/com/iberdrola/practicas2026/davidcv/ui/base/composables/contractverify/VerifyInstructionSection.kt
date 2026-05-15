@@ -31,7 +31,7 @@ fun VerifyInstructionSection(
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = stringResource(R.string.cvcTextVerifyIdentity) +
-                    events.phoneCensurator(state.contract?.phone ?: "") +
+                    events.phoneCensurator() +
                     stringResource(R.string.cvcTextVerifyIdentityEnd),
             style = MaterialTheme.typography.bodyMedium
         )

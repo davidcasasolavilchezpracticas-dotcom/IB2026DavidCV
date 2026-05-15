@@ -60,50 +60,14 @@ abstract class BillDatabase : RoomDatabase() {
                             BillDatabase::class.java,
                             "final_bills_database.db",
                         )
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration(false)
                         .addCallback(
                             object : Callback() {
-                                override fun onCreate(db: SupportSQLiteDatabase) {
-                                    super.onCreate(db)
-                                    INSTANCE?.let { database ->
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            prepopulateDatabase(context, database)
-                                        }
-                                    }
-                                }
 
-                                override fun onOpen(db: SupportSQLiteDatabase) {
-                                    super.onOpen(db)
-                                    INSTANCE?.let { database ->
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            prepopulateDatabase(context, database)
-                                        }
-                                    }
-                                }
                             },
                         ).build()
                 INSTANCE = instance
                 instance
             }
-
-        private suspend fun prepopulateDatabase(context: Context, database: BillDatabase) {
-            try {
-                // val dao = database.billDao()
-
-                val jsonString = context.assets.open("BillJSON.json").bufferedReader().use { it.readText() }
-
-                val gson = GsonBuilder()
-                    .registerTypeAdapter(LocalDateTime::class.java, JsonDeserializer { json, _, _ ->
-                        val dateStr = json.asString.replace("Z", "")
-                        LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                    })
-                    .create()
-
-                val type = object : TypeToken<List<BillEntity>>() {}.type
-
-            } catch (e: Exception) {
-                Log.e("Comprobaciones", "Error al poblar base de datos: ${e.message}")
-            }
-        }
     }
 }
