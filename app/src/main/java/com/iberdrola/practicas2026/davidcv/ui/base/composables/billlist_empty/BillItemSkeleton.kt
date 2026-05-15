@@ -1,6 +1,6 @@
 package com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,60 +16,66 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
 import com.iberdrola.practicas2026.davidcv.ui.theme.SkeletonGreen
 
-/**
- * FacturaItemSkeleton
- * Muestra un esqueleto de factura para la lista de facturas
- *
- * @param modifier
- */
+
 @Composable
 @Preview(showBackground = true)
-fun FacturaItemSkeleton(modifier: Modifier = Modifier) {
+fun BillItemSkeleton(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = LocalSpacing.current.lg),
+                .padding(vertical = LocalSpacing.current.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
+            Column(
                 modifier = modifier
-                    .fillMaxWidth(0.9f),
-                verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxWidth(0.8f),
+                verticalArrangement = Arrangement.Top
             ) {
                 Box(
                     modifier = modifier
-                        .size(36.dp)
+                        .height(16.dp)
+                        .width(160.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .shimmerEffect()
                 )
 
-                Spacer(modifier = modifier.width(4.dp))
+                Spacer(modifier = modifier.height(4.dp))
 
                 Box(
-                    modifier =
-                        modifier
-                            .width(200.dp)
-                            .height(36.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .shimmerEffect()
+                    modifier = modifier
+                        .height(12.dp)
+                        .width(96.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+
+                Spacer(modifier = modifier.height(4.dp))
+
+                Box(
+                    modifier = modifier
+                        .height(16.dp)
+                        .width(120.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
                 )
             }
 
             Box(
                 modifier = modifier
-                    .size(24.dp)
+                    .height(24.dp)
+                    .width(64.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .align(Alignment.CenterVertically)
                     .shimmerEffect()
             )
+
         }
 
         HorizontalDivider(thickness = 0.75.dp, color = SkeletonGreen)

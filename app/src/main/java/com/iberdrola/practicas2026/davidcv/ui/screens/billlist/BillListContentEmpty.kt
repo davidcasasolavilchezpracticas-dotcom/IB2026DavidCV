@@ -21,10 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.iberdrola.practicas2026.davidcv.ui.base.common.LocalSpacing
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.BillFilterButtonSkeleton
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.FacturaItemSkeleton
+import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.BillItemSkeleton
 import com.iberdrola.practicas2026.davidcv.ui.base.composables.billlist_empty.LastInvoiceSkeleton
-import com.iberdrola.practicas2026.davidcv.ui.base.composables.modifier_extensions.shimmerEffect
-import com.iberdrola.practicas2026.davidcv.ui.theme.SkeletonGreen
 
 
 @Composable
@@ -43,7 +41,7 @@ fun BillListContentEmpty(
         BillFilterButtonSkeleton(modifier)
 
         repeat(size) {
-            FacturaItemSkeleton(modifier)
+            BillItemSkeleton(modifier)
         }
     }
 }
